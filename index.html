@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IA-CRM V.1.1.2 - Supabase Edition</title>
+    <title>IA-CRM V.1.1.3 - Supabase Edition</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -204,7 +204,7 @@
                                 <label class="text-[10px] font-bold uppercase text-gray-500 block">Funil de Vendas</label>
                                 <select id="pipeline-funnel-filter" onchange="renderKanban()" class="p-2 border rounded-lg text-xs font-bold bg-gray-50"></select>
                             </div>
-                            <div>
+                            <div id="wrapper-seller-filter">
                                 <label class="text-[10px] font-bold uppercase text-gray-500 block">Filtrar Vendedor/BDR</label>
                                 <select id="pipeline-seller-filter" onchange="renderKanban()" class="p-2 border rounded-lg text-xs font-bold bg-gray-50">
                                     <option value="all">Todos os Vendedores</option>
@@ -335,6 +335,7 @@
                     </div>
                 </section>
 
+                <!-- VISÃO DE CONTAS - COMPARTILHADA PARA TODOS -->
                 <section id="view-contas" class="tab-content hidden">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-2xl font-bold text-gray-800">Contas (Empresas)</h2>
@@ -350,6 +351,7 @@
                     </div>
                 </section>
 
+                <!-- VISÃO DE CONTATOS - COMPARTILHADA PARA TODOS -->
                 <section id="view-contatos" class="tab-content hidden">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-2xl font-bold text-gray-800">Contatos (Pessoas)</h2>
@@ -384,7 +386,7 @@
         </div>
 
         <footer class="bg-slate-900 text-slate-400 text-xs py-3 px-6 border-t border-slate-800 flex justify-between items-center">
-            <div>IA-CRM V.1.1.2</div>
+            <div>IA-CRM V.1.1.3</div>
             <div>Desenvolvido por <span class="text-slate-200 font-bold">Rafael Nascimento</span></div>
         </footer>
     </div>
@@ -686,8 +688,17 @@
                 sellerSelect.innerHTML = '<option value="all">Todos os Vendedores</option>' + state.users.map(u => `<option value="${u.id}">${u.name}</option>`).join('');
             }
 
-            if (isManagerRole(state.currentUser.role)) { document.getElementById('admin-menu').classList.remove('hidden'); switchTab('analytics'); }
-            else { document.getElementById('admin-menu').classList.add('hidden'); switchTab('vendas'); }
+            // SE NÃO FOR GESTOR: Oculta seletor de vendedor no Kanban e oculta menus de gestão
+            const sellerFilterWrapper = document.getElementById('wrapper-seller-filter');
+            if (!isManagerRole(state.currentUser.role)) {
+                if (sellerFilterWrapper) sellerFilterWrapper.classList.add('hidden');
+                document.getElementById('admin-menu').classList.add('hidden');
+                switchTab('vendas');
+            } else {
+                if (sellerFilterWrapper) sellerFilterWrapper.classList.remove('hidden');
+                document.getElementById('admin-menu').classList.remove('hidden');
+                switchTab('analytics');
+            }
         }
 
         function switchTab(tab) {
@@ -705,7 +716,7 @@
         function openPlansModal() { document.getElementById('modal-plans').classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-        // ABERTURA DE MODAIS GERAIS
+        // ABERTURA DE MODAIS
         function openQualModal() { document.getElementById('modal-admin-qual').classList.remove('hidden'); }
         function openProductModal() { document.getElementById('modal-admin-product').classList.remove('hidden'); }
         function openLossReasonModal() { document.getElementById('modal-admin-loss').classList.remove('hidden'); }
@@ -851,7 +862,15 @@
 
             const sellerSelect = document.getElementById('deal-seller-id');
             sellerSelect.innerHTML = state.users.map(u => `<option value="${u.id}">${u.name}</option>`).join('');
-            sellerSelect.value = state.currentUser.id;
+            
+            // Se for vendedor, SDR ou BDR, trava o campo no nome dele
+            if (!isManagerRole(state.currentUser.role)) {
+                sellerSelect.value = state.currentUser.id;
+                sellerSelect.disabled = true;
+            } else {
+                sellerSelect.disabled = false;
+                sellerSelect.value = state.currentUser.id;
+            }
 
             const originSelect = document.getElementById('deal-origin-id');
             originSelect.innerHTML = '<option value="">Selecione uma Origem...</option>' + state.origins.map(o => `<option value="${o.id}">${o.name}</option>`).join('');
@@ -925,7 +944,12 @@
             const contact_id = document.getElementById('deal-contact-id').value;
             const funnel_id = document.getElementById('deal-funnel-id').value;
             const stage_id = document.getElementById('deal-stage-id').value;
-            const seller_id = document.getElementById('deal-seller-id').value;
+            
+            // Garante que vendedor não altera a autoria
+            const seller_id = isManagerRole(state.currentUser.role) 
+                ? document.getElementById('deal-seller-id').value 
+                : state.currentUser.id;
+
             const origin_id = document.getElementById('deal-origin-id').value;
             const setup_value = parseFloat(document.getElementById('deal-setup-value').value || 0);
             const mrr_value = parseFloat(document.getElementById('deal-mrr-value').value || 0);
@@ -1041,7 +1065,7 @@
             renderCadastrosAdmin();
         }
 
-        // RENDERIZADORES DE TABELA
+        // RENDERIZADORES
         function renderAccounts() {
             document.getElementById('table-contas-body').innerHTML = state.accounts.map(a => {
                 const phonesText = (a.phones || []).map(p => `<span class="bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded text-[10px] font-semibold border border-blue-200 block w-max my-0.5">${p.type}: ${p.number}</span>`).join('') || '-';
@@ -1161,7 +1185,12 @@
 
         function renderKanban() {
             const funnelId = document.getElementById('pipeline-funnel-filter').value;
-            const sellerFilter = document.getElementById('pipeline-seller-filter').value;
+            
+            // FILTRO DE PERMISSÃO: Vendedor só enxerga as próprias oportunidades
+            const sellerFilter = isManagerRole(state.currentUser.role) 
+                ? document.getElementById('pipeline-seller-filter').value 
+                : state.currentUser.id;
+
             const currentFunnel = state.funnels.find(f => f.id === funnelId) || state.funnels[0];
             const board = document.getElementById('kanban-board');
             if (!currentFunnel) {
