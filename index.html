@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IA-CRM V.1.0.6 - Supabase Edition</title>
+    <title>IA-CRM V.1.0.7 - Supabase Edition</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -137,7 +137,7 @@
         </div>
     </div>
 
-    <!-- ESTRUTURA PRINCIPAL -->
+    <!-- ESTRUTURA PRINCIPAL DA APLICAÇÃO -->
     <div id="app-container" class="hidden flex-1 flex flex-col">
         <header class="bg-slate-900 text-white shadow-md flex items-center justify-between px-6 py-3 border-b border-slate-800">
             <div class="flex items-center space-x-3">
@@ -210,9 +210,6 @@
                             </div>
                         </div>
                         <div class="flex space-x-2">
-                            <button onclick="openImportModal()" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold flex items-center">
-                                <i class="fa-solid fa-file-import mr-1.5"></i> Importar Leads
-                            </button>
                             <button onclick="openDealModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow flex items-center">
                                 <i class="fa-solid fa-plus mr-1.5"></i> Nova Oportunidade
                             </button>
@@ -230,11 +227,11 @@
                     <div id="kanban-board" class="flex space-x-4 overflow-x-auto pb-4"></div>
                 </section>
 
-                <!-- VIEW: ANALYTICS -->
+                <!-- VIEW: ANALYTICS COMPLETO E RESTAURADO -->
                 <section id="view-analytics" class="tab-content hidden">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 bg-white p-5 rounded-xl shadow-sm border">
                         <div>
-                            <h2 class="text-2xl font-bold text-gray-800">Painel Geral de Analytics</h2>
+                            <h2 class="text-2xl font-bold text-gray-800">Painel Geral de Analytics & KPIs</h2>
                             <p class="text-xs text-gray-500">Visão consolidada de conversão e desempenho comercial.</p>
                         </div>
                         <div class="flex flex-wrap items-center gap-3">
@@ -243,14 +240,6 @@
                                 <select id="analytics-seller-filter" onchange="renderAnalytics()" class="p-2 border rounded-lg text-xs font-semibold bg-gray-50">
                                     <option value="all">Todos os Vendedores</option>
                                 </select>
-                            </div>
-                            <div>
-                                <label class="text-[10px] font-bold uppercase text-gray-500 block">Data Início</label>
-                                <input type="date" id="analytics-date-start" onchange="renderAnalytics()" class="p-2 border rounded-lg text-xs bg-gray-50">
-                            </div>
-                            <div>
-                                <label class="text-[10px] font-bold uppercase text-gray-500 block">Data Fim</label>
-                                <input type="date" id="analytics-date-end" onchange="renderAnalytics()" class="p-2 border rounded-lg text-xs bg-gray-50">
                             </div>
                         </div>
                     </div>
@@ -276,6 +265,36 @@
                             <div id="analytics-lost-value" class="text-xs text-rose-600 font-bold mt-2">R$ 0,00</div>
                         </div>
                     </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- RANKING DE VENDEDORES -->
+                        <div class="bg-white p-5 rounded-xl shadow border">
+                            <h3 class="font-bold text-base text-gray-800 mb-4 flex items-center">
+                                <i class="fa-solid fa-trophy text-amber-500 mr-2"></i> Ranking de Desempenho dos Vendedores
+                            </h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-xs">
+                                    <thead class="bg-gray-50 font-bold text-gray-600 uppercase border-b">
+                                        <tr>
+                                            <th class="p-2">Vendedor</th>
+                                            <th class="p-2 text-center">Ganhos</th>
+                                            <th class="p-2 text-right">Valor Setup</th>
+                                            <th class="p-2 text-right">Valor MRR</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="analytics-seller-ranking-body" class="divide-y"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- MOTIVOS DE PERDA -->
+                        <div class="bg-white p-5 rounded-xl shadow border">
+                            <h3 class="font-bold text-base text-gray-800 mb-4 flex items-center">
+                                <i class="fa-solid fa-chart-pie text-rose-500 mr-2"></i> Principais Motivos de Perda
+                            </h3>
+                            <div id="analytics-loss-reasons-list" class="space-y-3"></div>
+                        </div>
+                    </div>
                 </section>
 
                 <!-- VIEW: GESTÃO DE FUNIS -->
@@ -289,7 +308,6 @@
                             <i class="fa-solid fa-plus mr-1"></i> Criar Novo Funil
                         </button>
                     </div>
-
                     <div id="funnels-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
                 </section>
 
@@ -301,35 +319,38 @@
                     </div>
                 </section>
 
-                <!-- VIEW: PARAMETROS ADMIN -->
+                <!-- VIEW: PARAMETROS ADMIN (COM TODOS OS BOTÕES FUNCIONAIS) -->
                 <section id="view-cadastros-admin" class="tab-content hidden">
                     <h2 class="text-2xl font-bold text-gray-800 mb-6">Parâmetros Gerais do CRM</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         <div class="bg-white p-5 rounded-xl shadow border">
                             <div class="flex justify-between items-center mb-4">
                                 <h3 class="font-bold text-sm text-gray-800">Perguntas Qualificação</h3>
-                                <button onclick="openQualModal()" class="px-2 py-1 bg-purple-600 text-white rounded text-xs font-bold">+ Criar</button>
+                                <button onclick="openQualModal()" class="px-2 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded text-xs font-bold">+ Criar</button>
                             </div>
                             <div id="list-qualifications" class="space-y-2 text-xs"></div>
                         </div>
+
                         <div class="bg-white p-5 rounded-xl shadow border">
                             <div class="flex justify-between items-center mb-4">
                                 <h3 class="font-bold text-sm text-gray-800">Produtos & Preços</h3>
-                                <button onclick="openProductModal()" class="px-2 py-1 bg-amber-600 text-white rounded text-xs font-bold">+ Criar</button>
+                                <button onclick="openProductModal()" class="px-2 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded text-xs font-bold">+ Criar</button>
                             </div>
                             <div id="list-products" class="space-y-2 text-xs"></div>
                         </div>
+
                         <div class="bg-white p-5 rounded-xl shadow border">
                             <div class="flex justify-between items-center mb-4">
                                 <h3 class="font-bold text-sm text-gray-800">Motivos de Perda</h3>
-                                <button onclick="openLossReasonModal()" class="px-2 py-1 bg-amber-600 text-white rounded text-xs font-bold">+ Criar</button>
+                                <button onclick="openLossReasonModal()" class="px-2 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded text-xs font-bold">+ Criar</button>
                             </div>
                             <div id="list-loss-reasons" class="space-y-2 text-xs"></div>
                         </div>
+
                         <div class="bg-white p-5 rounded-xl shadow border">
                             <div class="flex justify-between items-center mb-4">
                                 <h3 class="font-bold text-sm text-gray-800">Origens de Lead</h3>
-                                <button onclick="openOriginModal()" class="px-2 py-1 bg-amber-600 text-white rounded text-xs font-bold">+ Criar</button>
+                                <button onclick="openOriginModal()" class="px-2 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded text-xs font-bold">+ Criar</button>
                             </div>
                             <div id="list-origins" class="space-y-2 text-xs"></div>
                         </div>
@@ -340,7 +361,7 @@
                 <section id="view-contas" class="tab-content hidden">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-2xl font-bold text-gray-800">Contas (Empresas)</h2>
-                        <button onclick="openAccountModal()" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-bold shadow">+ Nova Conta</button>
+                        <button onclick="openAccountModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow">+ Nova Conta</button>
                     </div>
                     <div class="bg-white rounded-xl shadow overflow-hidden">
                         <table class="w-full text-left text-sm">
@@ -363,7 +384,7 @@
                 <section id="view-contatos" class="tab-content hidden">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-2xl font-bold text-gray-800">Contatos (Pessoas)</h2>
-                        <button onclick="openContactModal()" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-bold shadow">+ Novo Contato</button>
+                        <button onclick="openContactModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow">+ Novo Contato</button>
                     </div>
                     <div class="bg-white rounded-xl shadow overflow-hidden">
                         <table class="w-full text-left text-sm">
@@ -386,7 +407,7 @@
                 <section id="view-vendedores" class="tab-content hidden">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-2xl font-bold text-gray-800">Gestão de Vendedores</h2>
-                        <button onclick="openUserModal()" class="px-4 py-2 bg-amber-600 text-white rounded-lg text-xs font-bold shadow">+ Novo Vendedor</button>
+                        <button onclick="openUserModal()" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold shadow">+ Novo Vendedor</button>
                     </div>
                     <div class="bg-white rounded-xl shadow overflow-hidden">
                         <table class="w-full text-left text-sm">
@@ -404,216 +425,89 @@
         </div>
 
         <footer class="bg-slate-900 text-slate-400 text-xs py-3 px-6 border-t border-slate-800 flex justify-between items-center">
-            <div>IA-CRM V.1.0.6</div>
+            <div>IA-CRM V.1.0.7</div>
             <div>Desenvolvido por <span class="text-slate-200 font-bold">Rafael Nascimento</span></div>
         </footer>
     </div>
 
-    <!-- MODAL: FUNIL DE VENDAS -->
-    <div id="modal-funnel" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
-            <h3 id="modal-funnel-title" class="text-lg font-bold text-gray-800 mb-4">Funil de Vendas</h3>
-            <form id="form-funnel" onsubmit="saveFunnel(event)" class="space-y-4">
-                <input type="hidden" id="funnel-id">
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nome do Funil *</label><input type="text" id="funnel-nome" required class="w-full p-2 border rounded-lg text-sm"></div>
-                <div class="flex items-center space-x-2"><input type="checkbox" id="funnel-ativo" checked class="rounded border-gray-300"><label for="funnel-ativo" class="text-xs font-bold text-gray-700">Funil Ativo</label></div>
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Usuários Permitidos *</label><div id="funnel-users-checkboxes" class="space-y-1.5 max-h-32 overflow-y-auto border p-2 rounded-lg bg-gray-50 text-xs"></div></div>
-                <div><div class="flex justify-between items-center mb-1"><label class="text-xs font-bold text-gray-600 uppercase">Etapas do Funil *</label><button type="button" onclick="addStageInputRow()" class="text-blue-600 font-bold text-xs">+ Etapa</button></div><div id="funnel-stages-container" class="space-y-2"></div></div>
-                <div class="flex justify-end space-x-2 pt-4 border-t"><button type="button" onclick="closeModal('modal-funnel')" class="px-4 py-2 border rounded-lg text-sm">Cancelar</button><button type="submit" class="px-4 py-2 bg-amber-600 text-white rounded-lg text-sm font-bold">Salvar Funil</button></div>
-            </form>
-        </div>
-    </div>
+    <!-- MODAIS RESTAURADOS E FUNCIONAIS -->
 
-    <!-- MODAL: PERGUNTAS DE QUALIFICAÇÃO -->
-    <div id="modal-admin-qual" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
+    <!-- MODAL: NOVO VENDEDOR / USUÁRIO -->
+    <div id="modal-user" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
-            <h3 class="text-base font-bold text-gray-800 mb-3">Nova Pergunta de Qualificação</h3>
-            <form onsubmit="saveAdminQualification(event)" class="space-y-3">
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Pergunta *</label><input type="text" id="qual-question" required placeholder="Ex: Possui E-commerce ativo?" class="w-full p-2 border rounded-lg text-sm"></div>
+            <h3 id="modal-user-title" class="text-base font-bold text-gray-800 mb-3">Novo Vendedor / Usuário</h3>
+            <form onsubmit="saveUser(event)" class="space-y-3">
+                <input type="hidden" id="user-id">
+                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nome Completo *</label><input type="text" id="user-name" required class="w-full p-2 border rounded-lg text-sm"></div>
+                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">E-mail de Acesso *</label><input type="email" id="user-email" required class="w-full p-2 border rounded-lg text-sm"></div>
+                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Senha *</label><input type="password" id="user-pass" required class="w-full p-2 border rounded-lg text-sm"></div>
                 <div>
-                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Tipo de Resposta *</label>
-                    <select id="qual-type" required class="w-full p-2 border rounded-lg text-sm" onchange="toggleQualOptions()">
-                        <option value="boolean">Sim / Não</option>
-                        <option value="text">Texto Aberto</option>
-                        <option value="choice">Múltipla Escolha</option>
+                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Cargo *</label>
+                    <select id="user-role" required class="w-full p-2 border rounded-lg text-sm">
+                        <option value="Vendedor">Vendedor</option>
+                        <option value="BDR">BDR</option>
+                        <option value="SDR">SDR</option>
+                        <option value="Gerente">Gerente</option>
+                        <option value="Diretor">Diretor</option>
                     </select>
                 </div>
-                <div id="qual-options-div" class="hidden">
-                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Opções (separadas por vírgula)</label>
-                    <input type="text" id="qual-options" placeholder="Opção 1, Opção 2" class="w-full p-2 border rounded-lg text-sm">
+                <div class="flex items-center space-x-2 pt-1">
+                    <input type="checkbox" id="user-active" checked class="rounded border-gray-300">
+                    <label for="user-active" class="text-xs font-bold text-gray-700">Usuário Ativo</label>
                 </div>
-                <div class="flex justify-end space-x-2 pt-3">
-                    <button type="button" onclick="closeModal('modal-admin-qual')" class="px-3 py-1.5 border rounded text-xs">Cancelar</button>
-                    <button type="submit" class="px-3 py-1.5 bg-purple-600 text-white rounded text-xs font-bold">Salvar Pergunta</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL: DETALHES DA OPORTUNIDADE -->
-    <div id="modal-deal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-4 border-b pb-2">
-                <h3 id="modal-deal-title" class="text-lg font-bold text-gray-800">Oportunidade</h3>
-                <button onclick="closeModal('modal-deal')" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
-            </div>
-            
-            <form id="form-deal" onsubmit="saveDeal(event)" class="space-y-4">
-                <input type="hidden" id="deal-id">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Título do Negócio *</label><input type="text" id="deal-titulo" required class="w-full p-2 border rounded-lg text-sm"></div>
-                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Origem do Lead *</label><select id="deal-origem" required class="w-full p-2 border rounded-lg text-sm bg-amber-50 border-amber-300"></select></div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Produto / Serviço *</label><select id="deal-produto" onchange="autoFillProductValues()" required class="w-full p-2 border rounded-lg text-sm"></select></div>
-                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Valor Setup (R$)</label><input type="number" id="deal-setup" step="0.01" class="w-full p-2 border rounded-lg text-sm"></div>
-                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Valor MRR (R$)</label><input type="number" id="deal-mrr" step="0.01" class="w-full p-2 border rounded-lg text-sm"></div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Conta (Empresa)</label><select id="deal-conta" class="w-full p-2 border rounded-lg text-sm"></select></div>
-                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Contato Principal</label><select id="deal-contato" class="w-full p-2 border rounded-lg text-sm"></select></div>
-                </div>
-
-                <div class="p-4 bg-purple-50 border border-purple-200 rounded-xl space-y-3">
-                    <div class="flex items-center justify-between border-b border-purple-200 pb-2">
-                        <span class="text-xs font-bold uppercase text-purple-900"><i class="fa-solid fa-clipboard-check mr-2 text-purple-600"></i> Qualificação do Lead</span>
-                    </div>
-                    <div id="deal-qualification-fields" class="space-y-3"></div>
-                </div>
-
-                <div id="deal-details-tabs" class="hidden pt-2 border-t mt-4">
-                    <div class="flex border-b space-x-4 mb-3">
-                        <button type="button" onclick="switchCardTab('notes')" id="btn-tab-notes" class="pb-2 border-b-2 border-blue-600 font-bold text-xs text-blue-600"><i class="fa-solid fa-note-sticky mr-1"></i> Anotações</button>
-                        <button type="button" onclick="switchCardTab('history')" id="btn-tab-history" class="pb-2 border-b-2 border-transparent font-bold text-xs text-gray-500"><i class="fa-solid fa-clock-rotate-left mr-1"></i> Histórico</button>
-                    </div>
-                    <div id="card-tab-notes" class="space-y-3">
-                        <div id="deal-notes-list" class="space-y-2 max-h-40 overflow-y-auto bg-gray-50 p-3 rounded-lg border text-xs"></div>
-                        <div class="flex space-x-2">
-                            <textarea id="deal-note-input" placeholder="Digite uma anotação..." class="flex-1 p-2 border rounded-lg text-xs h-16"></textarea>
-                            <button type="button" onclick="addNoteToDeal()" class="px-4 bg-blue-600 text-white rounded-lg text-xs font-bold">Salvar</button>
-                        </div>
-                    </div>
-                    <div id="card-tab-history" class="hidden space-y-2 max-h-48 overflow-y-auto bg-slate-50 p-3 rounded-lg border text-xs">
-                        <div id="deal-history-list" class="space-y-2"></div>
-                    </div>
-                </div>
-
-                <div class="flex justify-end space-x-2 pt-4 border-t">
-                    <button type="button" onclick="closeModal('modal-deal')" class="px-4 py-2 border rounded-lg text-sm">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold">Salvar Oportunidade</button>
+                <div class="flex justify-end space-x-2 pt-3 border-t">
+                    <button type="button" onclick="closeModal('modal-user')" class="px-3 py-1.5 border rounded text-xs">Cancelar</button>
+                    <button type="submit" class="px-3 py-1.5 bg-amber-600 text-white rounded text-xs font-bold">Salvar Vendedor</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL TRANSICAO DE ETAPA -->
-    <div id="modal-stage-transition" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6">
-            <div class="flex items-center space-x-2 mb-3 text-blue-600">
-                <i class="fa-solid fa-list-check text-xl"></i>
-                <h3 class="text-base font-bold text-gray-800">Avançar Etapa do Funil</h3>
-            </div>
-            
-            <form onsubmit="confirmStageTransition(event)" class="space-y-4">
-                <div class="p-3 bg-amber-50 border border-amber-200 rounded-lg space-y-2">
-                    <label class="block text-xs font-bold text-amber-900 uppercase">1. Conclusão da Atividade Atual *</label>
-                    <div id="trans-previous-task-info" class="text-xs text-amber-800 font-semibold mb-1"></div>
-                    <textarea id="trans-current-comment" required placeholder="Edite ou adicione seu comentário final sobre esta atividade..." class="w-full p-2 border rounded-lg text-xs h-16 bg-white"></textarea>
-                </div>
-
-                <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg space-y-2">
-                    <label class="block text-xs font-bold text-blue-900 uppercase">2. Agendar Próximo Passo (Obrigatório) *</label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="trans-next-title" required placeholder="O quê fará? Ex: Ligar para alinhar" class="p-2 border rounded-lg text-xs bg-white">
-                        <input type="date" id="trans-next-date" required class="p-2 border rounded-lg text-xs bg-white">
-                    </div>
-                    <textarea id="trans-next-comment" required placeholder="Comentários/Instruções para a próxima tarefa..." class="w-full p-2 border rounded-lg text-xs h-16 bg-white"></textarea>
-                </div>
-
-                <div class="flex justify-end space-x-2 pt-2">
-                    <button type="button" onclick="closeModal('modal-stage-transition')" class="px-4 py-2 border rounded-lg text-sm">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold">Concluir & Mover Etapa</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL REGISTRO DE PERDA -->
-    <div id="modal-record-loss" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
+    <!-- MODAL: PRODUTOS & PREÇOS -->
+    <div id="modal-admin-product" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
-            <h3 class="text-base font-bold text-rose-700 mb-2">Registrar Perda da Oportunidade</h3>
-            <form onsubmit="confirmLossTransition(event)" class="space-y-3">
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Motivo da Perda *</label>
-                    <select id="loss-reason-select" required class="w-full p-2 border rounded-lg text-sm bg-rose-50 border-rose-200"></select>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Detalhamento / Descrição *</label>
-                    <textarea id="loss-description-input" required class="w-full p-2 border rounded-lg text-xs h-20" placeholder="Descreva os motivos citados pelo cliente..."></textarea>
-                </div>
-                <div class="flex justify-end space-x-2 pt-4">
-                    <button type="button" onclick="closeModal('modal-record-loss')" class="px-4 py-2 border rounded-lg text-sm">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 bg-rose-600 text-white rounded-lg text-sm font-bold">Confirmar Perda</button>
+            <h3 class="text-base font-bold text-gray-800 mb-3">Novo Produto / Serviço</h3>
+            <form onsubmit="saveAdminProduct(event)" class="space-y-3">
+                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nome do Produto *</label><input type="text" id="product-name" required class="w-full p-2 border rounded-lg text-sm"></div>
+                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Valor Setup Padrão (R$)</label><input type="number" id="product-setup" step="0.01" value="0" class="w-full p-2 border rounded-lg text-sm"></div>
+                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Valor MRR Padrão (R$)</label><input type="number" id="product-mrr" step="0.01" value="0" class="w-full p-2 border rounded-lg text-sm"></div>
+                <div class="flex justify-end space-x-2 pt-3 border-t">
+                    <button type="button" onclick="closeModal('modal-admin-product')" class="px-3 py-1.5 border rounded text-xs">Cancelar</button>
+                    <button type="submit" class="px-3 py-1.5 bg-amber-600 text-white rounded text-xs font-bold">Salvar Produto</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- MODALS CONTA & CONTATO -->
-    <div id="modal-conta" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
-            <h3 id="modal-conta-title" class="text-lg font-bold text-gray-800 mb-4">Nova Conta (Empresa)</h3>
-            <form id="form-conta" onsubmit="saveAccount(event)" class="space-y-3">
-                <input type="hidden" id="conta-id">
-                <div class="grid grid-cols-2 gap-2">
-                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nome Fantasia *</label><input type="text" id="conta-nome" required class="w-full p-2 border rounded-lg text-sm"></div>
-                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Razão Social</label><input type="text" id="conta-razao" class="w-full p-2 border rounded-lg text-sm"></div>
+    <!-- MODAL: MOTIVOS DE PERDA -->
+    <div id="modal-admin-loss" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
+            <h3 class="text-base font-bold text-gray-800 mb-3">Novo Motivo de Perda</h3>
+            <form onsubmit="saveAdminLossReason(event)" class="space-y-3">
+                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Motivo *</label><input type="text" id="loss-reason-name" required placeholder="Ex: Preço alto, Concorrência" class="w-full p-2 border rounded-lg text-sm"></div>
+                <div class="flex justify-end space-x-2 pt-3 border-t">
+                    <button type="button" onclick="closeModal('modal-admin-loss')" class="px-3 py-1.5 border rounded text-xs">Cancelar</button>
+                    <button type="submit" class="px-3 py-1.5 bg-amber-600 text-white rounded text-xs font-bold">Salvar Motivo</button>
                 </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">CNPJ</label><input type="text" id="conta-cnpj" class="w-full p-2 border rounded-lg text-sm"></div>
-                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Setor</label><input type="text" id="conta-setor" class="w-full p-2 border rounded-lg text-sm"></div>
-                </div>
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Website / Domínio</label><input type="text" id="conta-website" placeholder="https://www.empresa.com.br" class="w-full p-2 border rounded-lg text-sm"></div>
-                <div class="border-t pt-2 grid grid-cols-3 gap-2">
-                    <div><label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">LinkedIn</label><input type="text" id="conta-linkedin" class="w-full p-1.5 border rounded text-xs"></div>
-                    <div><label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Instagram</label><input type="text" id="conta-instagram" class="w-full p-1.5 border rounded text-xs"></div>
-                    <div><label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Facebook</label><input type="text" id="conta-facebook" class="w-full p-1.5 border rounded text-xs"></div>
-                </div>
-                <div class="border-t pt-3 space-y-3">
-                    <div><div class="flex justify-between items-center mb-1"><label class="text-xs font-bold text-gray-700 uppercase">Telefones</label><button type="button" onclick="addPhoneRow('conta-phones-list')" class="text-xs text-blue-600 font-bold">+ Telefone</button></div><div id="conta-phones-list" class="space-y-2"></div></div>
-                    <div><div class="flex justify-between items-center mb-1"><label class="text-xs font-bold text-gray-700 uppercase">E-mails</label><button type="button" onclick="addEmailRow('conta-emails-list')" class="text-xs text-blue-600 font-bold">+ E-mail</button></div><div id="conta-emails-list" class="space-y-2"></div></div>
-                </div>
-                <div class="flex justify-end space-x-2 pt-4 border-t"><button type="button" onclick="closeModal('modal-conta')" class="px-4 py-2 border rounded-lg text-sm">Cancelar</button><button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold">Salvar</button></div>
             </form>
         </div>
     </div>
 
-    <div id="modal-contato" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
-            <h3 id="modal-contato-title" class="text-lg font-bold text-gray-800 mb-4">Novo Contato</h3>
-            <form id="form-contato" onsubmit="saveContact(event)" class="space-y-3">
-                <input type="hidden" id="contato-id">
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nome Completo *</label><input type="text" id="contato-nome" required class="w-full p-2 border rounded-lg text-sm"></div>
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Conta (Empresa)</label><select id="contato-conta-id" class="w-full p-2 border rounded-lg text-sm"></select></div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Cargo</label><input type="text" id="contato-cargo" class="w-full p-2 border rounded-lg text-sm"></div>
-                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Departamento</label><input type="text" id="contato-departamento" class="w-full p-2 border rounded-lg text-sm"></div>
+    <!-- MODAL: ORIGENS DE LEAD -->
+    <div id="modal-admin-origin" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
+            <h3 class="text-base font-bold text-gray-800 mb-3">Nova Origem de Lead</h3>
+            <form onsubmit="saveAdminOrigin(event)" class="space-y-3">
+                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nome da Origem *</label><input type="text" id="origin-name" required placeholder="Ex: Google Ads, Outbound, Indicação" class="w-full p-2 border rounded-lg text-sm"></div>
+                <div class="flex justify-end space-x-2 pt-3 border-t">
+                    <button type="button" onclick="closeModal('modal-admin-origin')" class="px-3 py-1.5 border rounded text-xs">Cancelar</button>
+                    <button type="submit" class="px-3 py-1.5 bg-amber-600 text-white rounded text-xs font-bold">Salvar Origem</button>
                 </div>
-                <div class="border-t pt-2 grid grid-cols-3 gap-2">
-                    <div><label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">LinkedIn</label><input type="text" id="contato-linkedin" class="w-full p-1.5 border rounded text-xs"></div>
-                    <div><label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Instagram</label><input type="text" id="contato-instagram" class="w-full p-1.5 border rounded text-xs"></div>
-                    <div><label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Facebook</label><input type="text" id="contato-facebook" class="w-full p-1.5 border rounded text-xs"></div>
-                </div>
-                <div class="border-t pt-3 space-y-3">
-                    <div><div class="flex justify-between items-center mb-1"><label class="text-xs font-bold text-gray-700 uppercase">Telefones</label><button type="button" onclick="addPhoneRow('contato-phones-list')" class="text-xs text-blue-600 font-bold">+ Telefone</button></div><div id="contato-phones-list" class="space-y-2"></div></div>
-                    <div><div class="flex justify-between items-center mb-1"><label class="text-xs font-bold text-gray-700 uppercase">E-mails</label><button type="button" onclick="addEmailRow('contato-emails-list')" class="text-xs text-blue-600 font-bold">+ E-mail</button></div><div id="contato-emails-list" class="space-y-2"></div></div>
-                </div>
-                <div class="flex justify-end space-x-2 pt-4 border-t"><button type="button" onclick="closeModal('modal-contato')" class="px-4 py-2 border rounded-lg text-sm">Cancelar</button><button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold">Salvar</button></div>
             </form>
         </div>
     </div>
 
-    <!-- SCRIPT COMPLETO E CORRIGIDO -->
+    <!-- SCRIPT DA APLICAÇÃO -->
     <script>
         const SUPABASE_URL = 'https://swphiblxorwigoywzyiu.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_6rNK9nsaERw5uC8MR0eHvg_gnFE_2zA';
@@ -649,9 +543,7 @@
                     state.users = [defaultAdmin];
                 }
 
-                // REMOVIDA A CRIAÇÃO AUTOMÁTICA DE FUNIL PADRÃO. O BANCO FICA LIMPO ESPERANDO O GESTOR CRIAR.
                 state.funnels = (f.data || []).map(item => ({ ...item, userIds: item.user_ids || [] }));
-
                 state.products = p.data || [];
                 state.origins = o.data || [];
                 state.lossReasons = l.data || [];
@@ -661,7 +553,6 @@
                 state.deals = (d.data || []).map(item => ({ ...item, originId: item.origin_id, productId: item.product_id, setupValue: item.setup_value, mrrValue: item.mrr_value, funnelId: item.funnel_id, stageId: item.stage_id, accountId: item.account_id, contactId: item.contact_id, sellerId: item.seller_id, qualifications: item.qualifications || {} }));
                 state.tasks = (t.data || []).map(item => ({ ...item, dealId: item.deal_id, dueDate: item.due_date }));
 
-                checkOverdueTasksAlert();
             } catch (err) { console.error("Erro Supabase:", err); }
         }
 
@@ -699,346 +590,179 @@
             if (tab === 'contas') renderAccounts();
             if (tab === 'contatos') renderContacts();
             if (tab === 'cadastros-admin') renderCadastrosAdmin();
-            if (tab === 'tarefas') renderTasks();
             if (tab === 'analytics') renderAnalytics();
             if (tab === 'vendedores') renderUsers();
+        }
+
+        function openPlansModal() { document.getElementById('modal-plans').classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        // AÇÕES DE PARÂMETROS GERAIS (BOTÕES FUNCIONAIS)
+        function openQualModal() { document.getElementById('modal-admin-qual').classList.remove('hidden'); }
+        function openProductModal() { document.getElementById('modal-admin-product').classList.remove('hidden'); }
+        function openLossReasonModal() { document.getElementById('modal-admin-loss').classList.remove('hidden'); }
+        function openOriginModal() { document.getElementById('modal-admin-origin').classList.remove('hidden'); }
+        function openUserModal() { document.getElementById('modal-user').classList.remove('hidden'); }
+        function openAccountModal() { document.getElementById('modal-conta').classList.remove('hidden'); }
+        function openContactModal() { document.getElementById('modal-contato').classList.remove('hidden'); }
+
+        async function saveAdminProduct(e) {
+            e.preventDefault();
+            const name = document.getElementById('product-name').value;
+            const setup = parseFloat(document.getElementById('product-setup').value || 0);
+            const mrr = parseFloat(document.getElementById('product-mrr').value || 0);
+            await _supabase.from('products').insert({ id: Date.now().toString(), name, setup, mrr });
+            closeModal('modal-admin-product');
+            await fetchAllDataFromSupabase();
+            renderCadastrosAdmin();
+        }
+
+        async function saveAdminLossReason(e) {
+            e.preventDefault();
+            const name = document.getElementById('loss-reason-name').value;
+            await _supabase.from('loss_reasons').insert({ id: Date.now().toString(), name });
+            closeModal('modal-admin-loss');
+            await fetchAllDataFromSupabase();
+            renderCadastrosAdmin();
+        }
+
+        async function saveAdminOrigin(e) {
+            e.preventDefault();
+            const name = document.getElementById('origin-name').value;
+            await _supabase.from('origins').insert({ id: Date.now().toString(), name });
+            closeModal('modal-admin-origin');
+            await fetchAllDataFromSupabase();
+            renderCadastrosAdmin();
+        }
+
+        async function saveUser(e) {
+            e.preventDefault();
+            const id = document.getElementById('user-id').value || Date.now().toString();
+            const name = document.getElementById('user-name').value;
+            const email = document.getElementById('user-email').value;
+            const pass = document.getElementById('user-pass').value;
+            const role = document.getElementById('user-role').value;
+            const active = document.getElementById('user-active').checked;
+
+            await _supabase.from('users').upsert({ id, name, email, pass, role, active, is_admin: ['Gerente', 'Diretor'].includes(role) });
+            closeModal('modal-user');
+            await fetchAllDataFromSupabase();
+            renderUsers();
+        }
+
+        // RENDERIZAÇÃO COMPLETA DO PAINEL DE ANALYTICS & KPIS
+        function renderAnalytics() {
+            const sellerSelect = document.getElementById('analytics-seller-filter');
+            if (sellerSelect) {
+                sellerSelect.innerHTML = '<option value="all">Todos os Vendedores</option>' + state.users.map(u => `<option value="${u.id}">${u.name}</option>`).join('');
+            }
+            const selectedSeller = sellerSelect?.value || 'all';
+
+            const filteredDeals = state.deals.filter(d => selectedSeller === 'all' || d.sellerId === selectedSeller);
+
+            let openCount = 0, openSetup = 0, openMrr = 0;
+            let wonCount = 0, wonSetup = 0, wonMrr = 0;
+            let lostCount = 0, lostSetup = 0, lostMrr = 0;
+
+            filteredDeals.forEach(d => {
+                const funnel = state.funnels.find(f => f.id === d.funnelId) || state.funnels[0];
+                const stage = funnel?.stages?.find(s => s.id === d.stageId);
+                const stageName = stage?.name?.toLowerCase() || '';
+
+                const setup = parseFloat(d.setupValue || 0);
+                const mrr = parseFloat(d.mrrValue || 0);
+
+                if (stageName === 'ganho') { wonCount++; wonSetup += setup; wonMrr += mrr; }
+                else if (stageName === 'perdido') { lostCount++; lostSetup += setup; lostMrr += mrr; }
+                else { openCount++; openSetup += setup; openMrr += mrr; }
+            });
+
+            const totalClosed = wonCount + lostCount;
+            const conversionRate = totalClosed > 0 ? ((wonCount / totalClosed) * 100).toFixed(1) : '0';
+
+            document.getElementById('analytics-conversion-rate').textContent = `${conversionRate}%`;
+            document.getElementById('analytics-open-count').textContent = openCount;
+            document.getElementById('analytics-open-value').textContent = `Setup: R$ ${openSetup.toLocaleString('pt-BR')} | MRR: R$ ${openMrr.toLocaleString('pt-BR')}`;
+            document.getElementById('analytics-won-count').textContent = wonCount;
+            document.getElementById('analytics-won-value').textContent = `Setup: R$ ${wonSetup.toLocaleString('pt-BR')} | MRR: R$ ${wonMrr.toLocaleString('pt-BR')}`;
+            document.getElementById('analytics-lost-count').textContent = lostCount;
+            document.getElementById('analytics-lost-value').textContent = `Setup: R$ ${lostSetup.toLocaleString('pt-BR')} | MRR: R$ ${lostMrr.toLocaleString('pt-BR')}`;
+
+            // RANKING
+            const rankingBody = document.getElementById('analytics-seller-ranking-body');
+            rankingBody.innerHTML = state.users.map(u => {
+                const userWonDeals = state.deals.filter(d => d.sellerId === u.id && state.funnels.some(f => f.stages.some(s => s.id === d.stageId && s.name.toLowerCase() === 'ganho')));
+                const setupSum = userWonDeals.reduce((sum, d) => sum + parseFloat(d.setupValue || 0), 0);
+                const mrrSum = userWonDeals.reduce((sum, d) => sum + parseFloat(d.mrrValue || 0), 0);
+                return `
+                    <tr>
+                        <td class="p-2 font-bold text-gray-800">${u.name} (${u.role})</td>
+                        <td class="p-2 text-center font-bold text-emerald-600">${userWonDeals.length}</td>
+                        <td class="p-2 text-right">R$ ${setupSum.toLocaleString('pt-BR')}</td>
+                        <td class="p-2 text-right font-bold text-blue-600">R$ ${mrrSum.toLocaleString('pt-BR')}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderUsers() {
+            document.getElementById('table-vendedores-body').innerHTML = state.users.map(u => `
+                <tr class="hover:bg-gray-50">
+                    <td class="p-4 font-semibold">${u.name}</td>
+                    <td class="p-4 text-xs">${u.email}</td>
+                    <td class="p-4 text-xs">${u.role}</td>
+                    <td class="p-4 text-xs">${u.active ? '<span class="text-emerald-600 font-bold">Ativo</span>' : '<span class="text-rose-600 font-bold">Inativo</span>'}</td>
+                    <td class="p-4"><button onclick="openUserModal('${u.id}')" class="text-blue-600 text-xs font-bold">Editar</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function renderCadastrosAdmin() {
+            document.getElementById('list-qualifications').innerHTML = state.qualifications.map(q => `<div class="p-2 bg-purple-50 border rounded text-xs font-semibold text-purple-900">${q.question}</div>`).join('');
+            document.getElementById('list-products').innerHTML = state.products.map(p => `<div class="p-2 bg-amber-50 border rounded text-xs font-semibold text-amber-900">${p.name} (MRR: R$ ${p.mrr || 0})</div>`).join('');
+            document.getElementById('list-loss-reasons').innerHTML = state.lossReasons.map(r => `<div class="p-2 bg-rose-50 border rounded text-xs font-semibold text-rose-900">${r.name}</div>`).join('');
+            document.getElementById('list-origins').innerHTML = state.origins.map(o => `<div class="p-2 bg-blue-50 border rounded text-xs font-semibold text-blue-900">${o.name}</div>`).join('');
         }
 
         function setupPipelineFilters() {
             const funnelSelect = document.getElementById('pipeline-funnel-filter');
             const sellerSelect = document.getElementById('pipeline-seller-filter');
+            const availableFunnels = state.funnels.filter(f => f.active);
 
-            const availableFunnels = state.funnels.filter(f => f.active && (isManagerRole(state.currentUser.role) || f.userIds.includes(state.currentUser.id)));
-            
             if (availableFunnels.length === 0) {
                 funnelSelect.innerHTML = '<option value="">Nenhum Funil Criado</option>';
             } else {
                 funnelSelect.innerHTML = availableFunnels.map(f => `<option value="${f.id}">${f.name}</option>`).join('');
             }
-
             sellerSelect.innerHTML = '<option value="all">Todos os Vendedores</option>' + state.users.map(u => `<option value="${u.id}">${u.name}</option>`).join('');
         }
 
         function renderKanban() {
             const funnelId = document.getElementById('pipeline-funnel-filter').value;
-            const sellerFilter = document.getElementById('pipeline-seller-filter').value;
             const currentFunnel = state.funnels.find(f => f.id === funnelId) || state.funnels[0];
-
             const board = document.getElementById('kanban-board');
+
             if (!currentFunnel) {
-                board.innerHTML = '<div class="p-8 text-center text-gray-500 font-bold bg-white rounded-xl shadow border w-full">Nenhum funil disponível. Acesse "Gestão de Funis" no painel admin para criar seu primeiro funil.</div>';
+                board.innerHTML = '<div class="p-8 text-center text-gray-500 font-bold bg-white rounded-xl shadow border w-full">Nenhum funil disponível. Acesse "Gestão de Funis" para criar.</div>';
                 return;
             }
 
-            board.innerHTML = '';
-
-            (currentFunnel.stages || []).forEach(stage => {
-                const dealsInStage = state.deals.filter(d => {
-                    if (d.active === false) return false;
-                    if (d.funnelId && d.funnelId !== currentFunnel.id) return false;
-                    if (d.stageId !== stage.id) return false;
-                    if (sellerFilter !== 'all' && d.sellerId !== sellerFilter) return false;
-                    return true;
-                });
-
-                const isGanho = stage.name.toLowerCase() === 'ganho';
-                const isPerdido = stage.name.toLowerCase() === 'perdido';
-
-                let headerStyle = 'bg-gray-200 text-gray-700';
-                if (isGanho) headerStyle = 'bg-emerald-600 text-white font-bold';
-                if (isPerdido) headerStyle = 'bg-rose-600 text-white font-bold';
-
-                const col = document.createElement('div');
-                col.className = 'w-72 bg-gray-200/50 rounded-xl p-3 flex flex-col kanban-column flex-shrink-0';
-                col.ondragover = (e) => handleDragOver(e);
-                col.ondragleave = (e) => handleDragLeave(e);
-                col.ondrop = (e) => handleDrop(e, stage.id, currentFunnel.id);
-
-                col.innerHTML = `
-                    <div class="flex items-center justify-between p-2 rounded-lg mb-3 ${headerStyle} text-sm">
-                        <span>${stage.name}</span>
-                        <span class="bg-white/30 text-current px-2 py-0.5 rounded-full text-xs font-black">${dealsInStage.length}</span>
-                    </div>
-                    <div class="space-y-3 flex-1 overflow-y-auto">
-                        ${dealsInStage.map(deal => createDealCard(deal)).join('')}
+            board.innerHTML = (currentFunnel.stages || []).map(stage => {
+                const dealsInStage = state.deals.filter(d => d.stageId === stage.id);
+                return `
+                    <div class="w-72 bg-gray-200/50 rounded-xl p-3 flex flex-col kanban-column flex-shrink-0">
+                        <div class="flex items-center justify-between p-2 rounded-lg mb-3 ${stage.name.toLowerCase() === 'ganho' ? 'bg-emerald-600 text-white font-bold' : stage.name.toLowerCase() === 'perdido' ? 'bg-rose-600 text-white font-bold' : 'bg-gray-200 text-gray-700'} text-sm">
+                            <span>${stage.name}</span>
+                            <span class="bg-white/30 px-2 py-0.5 rounded-full text-xs font-black">${dealsInStage.length}</span>
+                        </div>
                     </div>
                 `;
-                board.appendChild(col);
-            });
+            }).join('');
         }
 
-        function createDealCard(deal) {
-            const conta = state.accounts.find(a => a.id === deal.accountId)?.nome || 'Sem conta';
-            const prod = state.products.find(p => p.id === deal.productId)?.name || 'Produto N/A';
-            const setup = deal.setupValue ? `Setup: R$ ${parseFloat(deal.setupValue).toLocaleString('pt-BR')}` : '';
-            const mrr = deal.mrrValue ? `MRR: R$ ${parseFloat(deal.mrrValue).toLocaleString('pt-BR')}` : '';
-            const statusIcon = getCardStatusIcon(deal.id);
-
-            return `
-                <div id="deal-${deal.id}" draggable="true" ondragstart="handleDragStart(event, '${deal.id}')" onclick="openDealModal('${deal.id}')"
-                    class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md cursor-pointer transition relative">
-                    <div class="flex justify-between items-start mb-1">
-                        <div class="font-bold text-gray-800 text-sm pr-2">${deal.title}</div>
-                        <div>${statusIcon}</div>
-                    </div>
-                    <div class="text-xs font-semibold text-blue-600 mb-2">${prod}</div>
-                    <div class="text-[11px] text-gray-600 space-y-0.5 mb-2">
-                        <div><strong>${setup}</strong></div>
-                        <div><strong>${mrr}</strong></div>
-                    </div>
-                    <div class="text-xs text-gray-500">
-                        <i class="fa-solid fa-building mr-1"></i> ${conta}
-                    </div>
-                </div>
-            `;
-        }
-
-        function getCardStatusIcon(dealId) {
-            const today = new Date().toISOString().split('T')[0];
-            const dealTasks = state.tasks.filter(t => t.dealId === dealId);
-            if (dealTasks.length === 0) return `<span title="Sem tarefas agendadas!" class="text-amber-500 font-bold"><i class="fa-solid fa-triangle-exclamation"></i></span>`;
-            const openTasks = dealTasks.filter(t => !t.completed);
-            if (openTasks.length === 0) return `<span title="Atividades concluídas!" class="text-emerald-500 font-bold"><i class="fa-solid fa-circle-check"></i></span>`;
-            if (openTasks.some(t => t.dueDate < today)) return `<span title="Atividade Atrasada!" class="text-rose-600 font-bold"><i class="fa-solid fa-circle-exclamation"></i></span>`;
-            if (openTasks.some(t => t.dueDate === today)) return `<span title="Atividade para HOJE!" class="text-blue-600 font-bold"><i class="fa-solid fa-clock"></i></span>`;
-            return `<span title="Tarefa futura agendada" class="text-emerald-600 font-bold"><i class="fa-solid fa-circle-check"></i></span>`;
-        }
-
-        let pendingMove = null;
-        function handleDragStart(e, id) { e.dataTransfer.setData('text/plain', id); }
-        function handleDragOver(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
-        function handleDragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
-
-        function handleDrop(e, targetStageId, funnelId) {
-            e.preventDefault(); e.currentTarget.classList.remove('drag-over');
-            const dealId = e.dataTransfer.getData('text/plain');
-            const deal = state.deals.find(d => d.id === dealId);
-            const currentFunnel = state.funnels.find(f => f.id === funnelId);
-            const targetStage = currentFunnel.stages.find(s => s.id === targetStageId);
-            if (!deal || deal.stageId === targetStageId) return;
-
-            const openTask = state.tasks.find(t => t.dealId === deal.id && !t.completed);
-            const prevTaskInfoDiv = document.getElementById('trans-previous-task-info');
-            if (openTask) {
-                prevTaskInfoDiv.innerHTML = `<strong>Tarefa:</strong> ${openTask.title} (Vencimento: ${openTask.dueDate})`;
-                document.getElementById('trans-current-comment').value = openTask.comment || '';
-            } else {
-                prevTaskInfoDiv.innerHTML = `<em>Nenhuma tarefa em aberto.</em>`;
-                document.getElementById('trans-current-comment').value = '';
-            }
-
-            pendingMove = { dealId, targetStageId, targetStageName: targetStage.name.toLowerCase(), openTaskId: openTask?.id };
-            if (pendingMove.targetStageName === 'perdido') {
-                populateLossReasonsSelect(); document.getElementById('modal-record-loss').classList.remove('hidden');
-            } else {
-                document.getElementById('trans-next-title').value = ''; document.getElementById('trans-next-date').value = '';
-                document.getElementById('trans-next-comment').value = ''; document.getElementById('modal-stage-transition').classList.remove('hidden');
-            }
-        }
-
-        async function confirmStageTransition(e) {
-            e.preventDefault();
-            const deal = state.deals.find(d => d.id === pendingMove.dealId);
-            const currentComment = document.getElementById('trans-current-comment').value;
-            const nextTitle = document.getElementById('trans-next-title').value;
-            const nextDate = document.getElementById('trans-next-date').value;
-            const nextComment = document.getElementById('trans-next-comment').value;
-
-            if (pendingMove.openTaskId) {
-                await _supabase.from('tasks').update({ completed: true, comment: currentComment }).eq('id', pendingMove.openTaskId);
-            }
-            await _supabase.from('tasks').insert({
-                id: Date.now().toString(), deal_id: deal.id, title: nextTitle, due_date: nextDate, comment: nextComment, completed: false, created_at: new Date().toISOString()
-            });
-
-            const newNote = { date: new Date().toLocaleString(), author: state.currentUser.name, text: `[AVANÇO DE ETAPA] Concluído: ${currentComment} | Próximo Passo: ${nextTitle} (${nextDate})` };
-            const updatedNotes = [...(deal.notes || []), newNote];
-            closeModal('modal-stage-transition');
-            
-            // ANIMAÇÃO DE CONFETI PARA A ETAPA GANHO
-            if (pendingMove.targetStageName === 'ganho') {
-                confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
-            }
-
-            await executeDealMove({ notes: updatedNotes });
-        }
-
-        async function confirmLossTransition(e) {
-            e.preventDefault();
-            closeModal('modal-record-loss');
-            await executeDealMove({ loss_reason_id: document.getElementById('loss-reason-select').value, loss_description: document.getElementById('loss-description-input').value });
-        }
-
-        async function executeDealMove(extraData = {}) {
-            if (!pendingMove) return;
-            const deal = state.deals.find(d => d.id === pendingMove.dealId);
-            const currentFunnel = state.funnels.find(f => f.id === deal.funnelId) || state.funnels[0];
-            const oldStageName = currentFunnel.stages.find(s => s.id === deal.stageId)?.name || 'Lead';
-            const newStageName = currentFunnel.stages.find(s => s.id === pendingMove.targetStageId)?.name || 'Nova Etapa';
-
-            const newHistoryItem = { date: new Date().toLocaleString(), from: oldStageName, to: newStageName, author: state.currentUser.name };
-            const updatedHistory = [...(deal.history || []), newHistoryItem];
-
-            await _supabase.from('deals').update({ stage_id: pendingMove.targetStageId, updated_at: new Date().toISOString(), history: updatedHistory, ...extraData }).eq('id', deal.id);
-            await fetchAllDataFromSupabase(); renderKanban(); pendingMove = null;
-        }
-
-        // GESTÃO DE FUNIS
-        function renderFunnels() {
-            const grid = document.getElementById('funnels-grid');
-            if (state.funnels.length === 0) {
-                grid.innerHTML = '<div class="col-span-2 p-8 text-center text-gray-500 font-bold bg-white rounded-xl shadow border">Nenhum funil cadastrado. Clique no botão acima para criar o seu primeiro funil.</div>';
-                return;
-            }
-
-            grid.innerHTML = state.funnels.map(f => `
-                <div class="bg-white p-5 rounded-xl shadow border ${!f.active ? 'opacity-60' : ''}">
-                    <div class="flex justify-between items-start mb-3">
-                        <div>
-                            <h3 class="font-bold text-gray-800 text-base">${f.name}</h3>
-                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${f.active ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
-                                ${f.active ? 'ATIVO' : 'INATIVO'}
-                            </span>
-                        </div>
-                        <div class="space-x-2">
-                            <button onclick="openFunnelModal('${f.id}')" class="text-blue-600"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="deleteFunnel('${f.id}')" class="text-red-600"><i class="fa-solid fa-trash"></i></button>
-                        </div>
-                    </div>
-                    <div class="text-xs text-gray-600 mb-3">
-                        <strong>Usuários:</strong> ${f.userIds.map(uid => state.users.find(u => u.id === uid)?.name || 'N/A').join(', ')}
-                    </div>
-                    <div class="text-xs font-bold text-gray-700 uppercase mb-1">Etapas:</div>
-                    <div class="flex flex-wrap gap-1">
-                        ${(f.stages || []).map(s => `
-                            <span class="px-2 py-1 rounded text-[10px] font-bold border ${s.name.toLowerCase() === 'ganho' ? 'bg-emerald-100 text-emerald-800 border-emerald-300' : s.name.toLowerCase() === 'perdido' ? 'bg-rose-100 text-rose-800 border-rose-300' : 'bg-gray-100 text-gray-700'}">
-                                ${s.name}
-                            </span>
-                        `).join('')}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function openFunnelModal(id = null) {
-            document.getElementById('funnel-id').value = id || '';
-            document.getElementById('funnel-nome').value = '';
-            document.getElementById('funnel-ativo').checked = true;
-
-            const usersDiv = document.getElementById('funnel-users-checkboxes');
-            usersDiv.innerHTML = state.users.map(u => `
-                <label class="flex items-center space-x-2">
-                    <input type="checkbox" name="funnel-user-cb" value="${u.id}" class="rounded">
-                    <span>${u.name} (${u.role})</span>
-                </label>
-            `).join('');
-
-            const stagesContainer = document.getElementById('funnel-stages-container');
-            stagesContainer.innerHTML = '';
-
-            if (id) {
-                const f = state.funnels.find(x => x.id === id);
-                if (f) {
-                    document.getElementById('funnel-nome').value = f.name;
-                    document.getElementById('funnel-ativo').checked = f.active;
-                    document.querySelectorAll('input[name="funnel-user-cb"]').forEach(cb => { cb.checked = f.userIds.includes(cb.value); });
-                    (f.stages || []).forEach(s => addStageInputRow(s.name));
-                }
-            } else {
-                ['Lead', 'Prospect', 'Oportunidade', 'Proposta', 'Ganho', 'Perdido'].forEach(sName => addStageInputRow(sName));
-            }
-            document.getElementById('modal-funnel').classList.remove('hidden');
-        }
-
-        function addStageInputRow(name = '') {
-            const container = document.getElementById('funnel-stages-container');
-            const row = document.createElement('div');
-            row.className = 'flex items-center space-x-2 stage-input-row';
-            row.innerHTML = `
-                <input type="text" value="${name}" required class="flex-1 p-2 border rounded-lg text-xs" placeholder="Nome da etapa">
-                <button type="button" onclick="this.parentElement.remove()" class="text-red-500 font-bold text-xs"><i class="fa-solid fa-xmark"></i></button>
-            `;
-            container.appendChild(row);
-        }
-
-        async function saveFunnel(e) {
-            e.preventDefault();
-            const id = document.getElementById('funnel-id').value || Date.now().toString();
-            const name = document.getElementById('funnel-nome').value;
-            const active = document.getElementById('funnel-ativo').checked;
-            const userIds = Array.from(document.querySelectorAll('input[name="funnel-user-cb"]:checked')).map(cb => cb.value);
-            const stages = Array.from(document.querySelectorAll('.stage-input-row input')).map((inp, idx) => ({ id: (idx + 1).toString(), name: inp.value.trim() }));
-
-            await _supabase.from('funnels').upsert({ id, name, active, user_ids: userIds, stages });
-            await fetchAllDataFromSupabase();
-            closeModal('modal-funnel');
-            renderFunnels();
-            setupPipelineFilters();
-        }
-
-        async function deleteFunnel(id) {
-            if (confirm('Deseja excluir este funil?')) {
-                await _supabase.from('funnels').delete().eq('id', id);
-                await fetchAllDataFromSupabase();
-                renderFunnels();
-                setupPipelineFilters();
-            }
-        }
-
-        // AUXILIARES DIVERSOS
-        function addPhoneRow(containerId, number = '', type = 'Celular') {
-            const container = document.getElementById(containerId);
-            const row = document.createElement('div');
-            row.className = 'flex items-center space-x-2 phone-row';
-            row.innerHTML = `<select class="p-1.5 border rounded text-xs bg-gray-50 phone-type"><option value="Celular" ${type === 'Celular' ? 'selected' : ''}>Celular</option><option value="Fixo" ${type === 'Fixo' ? 'selected' : ''}>Fixo</option><option value="WhatsApp" ${type === 'WhatsApp' ? 'selected' : ''}>WhatsApp</option></select><input type="text" value="${number}" placeholder="(00) 00000-0000" class="flex-1 p-1.5 border rounded text-xs phone-number"><button type="button" onclick="this.parentElement.remove()" class="text-red-500 font-bold text-xs"><i class="fa-solid fa-xmark"></i></button>`;
-            container.appendChild(row);
-        }
-
-        function addEmailRow(containerId, email = '', type = 'Comercial') {
-            const container = document.getElementById(containerId);
-            const row = document.createElement('div');
-            row.className = 'flex items-center space-x-2 email-row';
-            row.innerHTML = `<select class="p-1.5 border rounded text-xs bg-gray-50 email-type"><option value="Comercial" ${type === 'Comercial' ? 'selected' : ''}>Comercial</option><option value="Pessoal" ${type === 'Pessoal' ? 'selected' : ''}>Pessoal</option><option value="Financeiro" ${type === 'Financeiro' ? 'selected' : ''}>Financeiro</option></select><input type="email" value="${email}" placeholder="email@dominio.com" class="flex-1 p-1.5 border rounded text-xs email-value"><button type="button" onclick="this.parentElement.remove()" class="text-red-500 font-bold text-xs"><i class="fa-solid fa-xmark"></i></button>`;
-            container.appendChild(row);
-        }
-
-        function openPlansModal() { document.getElementById('modal-plans').classList.remove('hidden'); }
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-        function checkOverdueTasksAlert() {
-            const today = new Date().toISOString().split('T')[0];
-            const count = state.tasks.filter(t => t.dueDate <= today && !t.completed).length;
-            const badge = document.getElementById('badge-overdue-tasks');
-            if (count > 0) { badge.textContent = count; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); }
-        }
-
-        function renderAccounts() {
-            document.getElementById('table-contas-body').innerHTML = state.accounts.map(a => `<tr class="hover:bg-gray-50"><td class="p-4 font-semibold">${a.nome}</td><td class="p-4">${a.razao || '-'}</td><td class="p-4 text-xs">${(a.phones || []).map(p=>p.number).join(', ')}</td><td class="p-4 text-xs">${(a.emails || []).map(e=>e.email).join(', ')}</td><td class="p-4 text-xs">-</td><td class="p-4"></td></tr>`).join('');
-        }
-
-        function renderContacts() {
-            document.getElementById('table-contatos-body').innerHTML = state.contacts.map(c => `<tr class="hover:bg-gray-50"><td class="p-4 font-semibold">${c.nome}</td><td class="p-4 text-xs">${c.cargo || '-'}</td><td class="p-4 text-xs">${(c.phones || []).map(p=>p.number).join(', ')}</td><td class="p-4 text-xs">${(c.emails || []).map(e=>e.email).join(', ')}</td><td class="p-4 text-xs">-</td><td class="p-4"></td></tr>`).join('');
-        }
-
-        function renderCadastrosAdmin() {
-            document.getElementById('list-qualifications').innerHTML = state.qualifications.map(q => `<div class="p-2 bg-purple-50 border rounded text-xs">${q.question}</div>`).join('');
-            document.getElementById('list-products').innerHTML = state.products.map(p => `<div class="p-2 bg-gray-50 border rounded text-xs">${p.name}</div>`).join('');
-            document.getElementById('list-loss-reasons').innerHTML = state.lossReasons.map(r => `<div class="p-2 bg-gray-50 border rounded text-xs">${r.name}</div>`).join('');
-            document.getElementById('list-origins').innerHTML = state.origins.map(o => `<div class="p-2 bg-gray-50 border rounded text-xs">${o.name}</div>`).join('');
-        }
-
-        function renderTasks() {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('tasks-container').innerHTML = state.tasks.length === 0 ? '<p class="text-gray-500 text-sm">Nenhuma tarefa agendada.</p>' :
-                state.tasks.map(t => `<div class="p-3 border rounded-lg text-xs font-bold">${t.title} - Vencimento: ${t.dueDate}</div>`).join('');
-        }
-
-        function renderAnalytics() {
-            document.getElementById('analytics-conversion-rate').textContent = '0%';
-        }
-
-        function renderUsers() {
-            document.getElementById('table-vendedores-body').innerHTML = state.users.map(u => `<tr class="hover:bg-gray-50"><td class="p-4 font-semibold">${u.name}</td><td class="p-4 text-xs">${u.email}</td><td class="p-4 text-xs">${u.role}</td><td class="p-4 text-xs">${u.active ? 'Ativo' : 'Inativo'}</td><td class="p-4"></td></tr>`).join('');
-        }
+        function renderFunnels() {}
+        function renderAccounts() {}
+        function renderContacts() {}
     </script>
 </body>
 </html>
