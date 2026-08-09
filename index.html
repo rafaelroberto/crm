@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IA-CRM V.1.0.2</title>
+    <title>IA-CRM V.1.0.3 - Supabase Edition</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -12,6 +12,8 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <!-- Canvas Confetti CDN -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Supabase JS Client v2 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         .kanban-column { min-height: 70vh; }
         .drag-over { border: 2px dashed #3b82f6; background-color: #eff6ff; }
@@ -40,7 +42,7 @@
                     <input type="password" id="login-password" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none transition" placeholder="••••••••">
                 </div>
                 <div id="login-error" class="hidden text-red-500 text-xs font-medium text-center"></div>
-                <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition duration-200">
+                <button type="submit" id="btn-login-submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition duration-200">
                     Acessar Plataforma
                 </button>
             </form>
@@ -401,7 +403,7 @@
 
         <!-- FOOTER -->
         <footer class="bg-slate-900 text-slate-400 text-xs py-3 px-6 border-t border-slate-800 flex justify-between items-center">
-            <div>IA-CRM V.1.0.2</div>
+            <div>IA-CRM V.1.0.3</div>
             <div>Desenvolvido por <span class="text-slate-200 font-bold">Rafael Nascimento</span></div>
         </footer>
     </div>
@@ -618,7 +620,6 @@
                     <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Setor</label><input type="text" id="conta-setor" class="w-full p-2 border rounded-lg text-sm"></div>
                 </div>
 
-                <!-- LISTAS DINÂMICAS DE TELEFONES E EMAILS -->
                 <div class="border-t pt-3 space-y-3">
                     <div>
                         <div class="flex justify-between items-center mb-1">
@@ -652,7 +653,6 @@
                 <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nome Completo *</label><input type="text" id="contato-nome" required class="w-full p-2 border rounded-lg text-sm"></div>
                 <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Conta (Empresa)</label><select id="contato-conta-id" class="w-full p-2 border rounded-lg text-sm"></select></div>
 
-                <!-- LISTAS DINÂMICAS DE TELEFONES E EMAILS -->
                 <div class="border-t pt-3 space-y-3">
                     <div>
                         <div class="flex justify-between items-center mb-1">
@@ -750,81 +750,95 @@
         </div>
     </div>
 
-    <!-- LOGICA EM JAVASCRIPT -->
+    <!-- LÓGICA EM JAVASCRIPT COM CONEXÃO SUPABASE ASSÍNCRONA -->
     <script>
-        const defaultUsers = [
-            { id: '1', name: 'Rafael Admin', email: 'rafaelroberto@gmail.com', pass: 'lifeapps123', role: 'Diretor', isAdmin: true, active: true },
-            { id: '2', name: 'Vendedor Exemplo', email: 'vendedor@ia.com', pass: '123456', role: 'SDR', isAdmin: false, active: true }
-        ];
-
-        const defaultFunnels = [
-            {
-                id: 'f1',
-                name: 'Funil de Vendas Geral',
-                active: true,
-                userIds: ['1', '2'],
-                stages: [
-                    { id: '1', name: 'Lead' },
-                    { id: '2', name: 'Prospect' },
-                    { id: '3', name: 'Oportunidade' },
-                    { id: '4', name: 'Proposta' },
-                    { id: '5', name: 'Negociação' },
-                    { id: '6', name: 'Ganho' },
-                    { id: '7', name: 'Perdido' }
-                ]
-            }
-        ];
-
-        const defaultProducts = [
-            { id: '1', name: 'Sistema CRM Pro', setup: 1500, mrr: 350 },
-            { id: '2', name: 'Plataforma ERP Cloud', setup: 3000, mrr: 800 }
-        ];
-
-        const defaultOrigins = [
-            { id: '1', name: 'Inbound / Site' },
-            { id: '2', name: 'Outbound / Cold Call' },
-            { id: '3', name: 'Indicação' },
-            { id: '4', name: 'Importação de Lista' }
-        ];
-
-        const defaultLossReasons = [
-            { id: '1', name: 'Preço / Sem Orçamento' },
-            { id: '2', name: 'Escolheu Concorrente' },
-            { id: '3', name: 'Sem Fit Técnico' }
-        ];
+        // CREDENCIAIS DO SEU PROJETO SUPABASE
+        const SUPABASE_URL = 'https://SEU-PROJETO.supabase.co';
+        const SUPABASE_KEY = 'SUA-CHAVE-ANON-PUBLIC-KEY';
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let state = {
             currentUser: null,
-            users: JSON.parse(localStorage.getItem('iacrm_users')) || defaultUsers,
-            funnels: JSON.parse(localStorage.getItem('iacrm_funnels')) || defaultFunnels,
-            products: JSON.parse(localStorage.getItem('iacrm_products')) || defaultProducts,
-            origins: JSON.parse(localStorage.getItem('iacrm_origins')) || defaultOrigins,
-            lossReasons: JSON.parse(localStorage.getItem('iacrm_loss_reasons')) || defaultLossReasons,
-            accounts: JSON.parse(localStorage.getItem('iacrm_accounts')) || [],
-            contacts: JSON.parse(localStorage.getItem('iacrm_contacts')) || [],
-            deals: JSON.parse(localStorage.getItem('iacrm_deals')) || [],
-            tasks: JSON.parse(localStorage.getItem('iacrm_tasks')) || []
+            users: [],
+            funnels: [],
+            products: [],
+            origins: [],
+            lossReasons: [],
+            accounts: [],
+            contacts: [],
+            deals: [],
+            tasks: []
         };
 
-        function persistData() {
-            localStorage.setItem('iacrm_users', JSON.stringify(state.users));
-            localStorage.setItem('iacrm_funnels', JSON.stringify(state.funnels));
-            localStorage.setItem('iacrm_products', JSON.stringify(state.products));
-            localStorage.setItem('iacrm_origins', JSON.stringify(state.origins));
-            localStorage.setItem('iacrm_loss_reasons', JSON.stringify(state.lossReasons));
-            localStorage.setItem('iacrm_accounts', JSON.stringify(state.accounts));
-            localStorage.setItem('iacrm_contacts', JSON.stringify(state.contacts));
-            localStorage.setItem('iacrm_deals', JSON.stringify(state.deals));
-            localStorage.setItem('iacrm_tasks', JSON.stringify(state.tasks));
-            checkOverdueTasksAlert();
+        // CARREGA TODOS OS DADOS DIRETO DO SUPABASE
+        async function fetchAllDataFromSupabase() {
+            try {
+                const [u, f, p, o, l, a, c, d, t] = await Promise.all([
+                    _supabase.from('users').select('*'),
+                    _supabase.from('funnels').select('*'),
+                    _supabase.from('products').select('*'),
+                    _supabase.from('origins').select('*'),
+                    _supabase.from('loss_reasons').select('*'),
+                    _supabase.from('accounts').select('*'),
+                    _supabase.from('contacts').select('*'),
+                    _supabase.from('deals').select('*'),
+                    _supabase.from('tasks').select('*')
+                ]);
+
+                state.users = u.data || [];
+                state.funnels = (f.data || []).map(item => ({
+                    ...item,
+                    userIds: item.user_ids || []
+                }));
+                state.products = p.data || [];
+                state.origins = o.data || [];
+                state.lossReasons = l.data || [];
+                state.accounts = a.data || [];
+                state.contacts = (c.data || []).map(item => ({
+                    ...item,
+                    contaId: item.conta_id
+                }));
+                state.deals = (d.data || []).map(item => ({
+                    ...item,
+                    originId: item.origin_id,
+                    productId: item.product_id,
+                    setupValue: item.setup_value,
+                    mrrValue: item.mrr_value,
+                    funnelId: item.funnel_id,
+                    stageId: item.stage_id,
+                    accountId: item.account_id,
+                    contactId: item.contact_id,
+                    sellerId: item.seller_id,
+                    createdAt: item.created_at,
+                    updatedAt: item.updated_at,
+                    lossReasonId: item.loss_reason_id,
+                    lossDescription: item.loss_description
+                }));
+                state.tasks = (t.data || []).map(item => ({
+                    ...item,
+                    dealId: item.deal_id,
+                    dueDate: item.due_date,
+                    createdAt: item.created_at
+                }));
+
+                checkOverdueTasksAlert();
+            } catch (err) {
+                console.error("Erro ao carregar dados do Supabase:", err);
+            }
         }
 
         // AUTH & INIT
-        function handleLogin(e) {
+        async function handleLogin(e) {
             e.preventDefault();
+            const btn = document.getElementById('btn-login-submit');
+            btn.textContent = 'Autenticando...';
+            btn.disabled = true;
+
             const email = document.getElementById('login-email').value;
             const pass = document.getElementById('login-password').value;
             const errDiv = document.getElementById('login-error');
+
+            await fetchAllDataFromSupabase();
 
             const user = state.users.find(u => u.email === email && u.pass === pass && u.active);
             if (user) {
@@ -836,6 +850,8 @@
                 errDiv.textContent = 'Credenciais inválidas ou usuário inativo.';
                 errDiv.classList.remove('hidden');
             }
+            btn.textContent = 'Acessar Plataforma';
+            btn.disabled = false;
         }
 
         function handleLogout() {
@@ -850,13 +866,11 @@
 
             if (state.currentUser.isAdmin) {
                 document.getElementById('admin-menu').classList.remove('hidden');
-                switchTab('analytics'); // ADMIN ABRE PRIMEIRA TELA KPI
+                switchTab('analytics');
             } else {
                 document.getElementById('admin-menu').classList.add('hidden');
                 switchTab('vendas');
             }
-
-            checkOverdueTasksAlert();
         }
 
         function switchTab(tab) {
@@ -895,7 +909,7 @@
                     </div>
                     <div class="text-xs font-bold text-gray-700 uppercase mb-1">Etapas:</div>
                     <div class="flex flex-wrap gap-1">
-                        ${f.stages.map(s => `<span class="bg-gray-100 border text-gray-700 px-2 py-1 rounded text-[10px]">${s.name}</span>`).join('')}
+                        ${(f.stages || []).map(s => `<span class="bg-gray-100 border text-gray-700 px-2 py-1 rounded text-[10px]">${s.name}</span>`).join('')}
                     </div>
                 </div>
             `).join('');
@@ -906,7 +920,6 @@
             document.getElementById('funnel-nome').value = '';
             document.getElementById('funnel-ativo').checked = true;
 
-            // Checkboxes Vendedores
             const usersDiv = document.getElementById('funnel-users-checkboxes');
             usersDiv.innerHTML = state.users.map(u => `
                 <label class="flex items-center space-x-2">
@@ -928,7 +941,7 @@
                         cb.checked = f.userIds.includes(cb.value);
                     });
 
-                    f.stages.forEach(s => addStageInputRow(s.name));
+                    (f.stages || []).forEach(s => addStageInputRow(s.name));
                 }
             } else {
                 ['Lead', 'Prospect', 'Oportunidade', 'Proposta', 'Ganho', 'Perdido'].forEach(sName => addStageInputRow(sName));
@@ -948,9 +961,9 @@
             container.appendChild(row);
         }
 
-        function saveFunnel(e) {
+        async function saveFunnel(e) {
             e.preventDefault();
-            const id = document.getElementById('funnel-id').value;
+            const id = document.getElementById('funnel-id').value || Date.now().toString();
             const name = document.getElementById('funnel-nome').value;
             const active = document.getElementById('funnel-ativo').checked;
 
@@ -960,22 +973,19 @@
                 name: inp.value.trim()
             }));
 
-            if (id) {
-                const fIndex = state.funnels.findIndex(x => x.id === id);
-                state.funnels[fIndex] = { id, name, active, userIds, stages };
-            } else {
-                state.funnels.push({ id: Date.now().toString(), name, active, userIds, stages });
-            }
+            await _supabase.from('funnels').upsert({
+                id, name, active, user_ids: userIds, stages
+            });
 
-            persistData();
+            await fetchAllDataFromSupabase();
             closeModal('modal-funnel');
             renderFunnels();
         }
 
-        function deleteFunnel(id) {
+        async function deleteFunnel(id) {
             if (confirm('Deseja excluir este funil?')) {
-                state.funnels = state.funnels.filter(f => f.id !== id);
-                persistData();
+                await _supabase.from('funnels').delete().eq('id', id);
+                await fetchAllDataFromSupabase();
                 renderFunnels();
             }
         }
@@ -985,11 +995,9 @@
             const funnelSelect = document.getElementById('pipeline-funnel-filter');
             const sellerSelect = document.getElementById('pipeline-seller-filter');
 
-            // Funis ativos permitidos
             const availableFunnels = state.funnels.filter(f => f.active && (state.currentUser.isAdmin || f.userIds.includes(state.currentUser.id)));
             funnelSelect.innerHTML = availableFunnels.map(f => `<option value="${f.id}">${f.name}</option>`).join('');
 
-            // Vendedores/BDRs
             sellerSelect.innerHTML = '<option value="all">Todos os Vendedores</option>' +
                 state.users.map(u => `<option value="${u.id}">${u.name}</option>`).join('');
         }
@@ -1007,7 +1015,7 @@
 
             board.innerHTML = '';
 
-            currentFunnel.stages.forEach(stage => {
+            (currentFunnel.stages || []).forEach(stage => {
                 const dealsInStage = state.deals.filter(d => {
                     if (d.active === false) return false;
                     if (d.funnelId && d.funnelId !== currentFunnel.id) return false;
@@ -1110,7 +1118,6 @@
 
             if (!deal || deal.stageId === targetStageId) return;
 
-            // BLOQUEIO: NÃO VOLTAR ETAPAS
             const currentIndex = currentFunnel.stages.findIndex(s => s.id === deal.stageId);
             const targetIndex = currentFunnel.stages.findIndex(s => s.id === targetStageId);
             if (targetIndex < currentIndex) {
@@ -1118,7 +1125,6 @@
                 return;
             }
 
-            // BUSCA A TAREFA ABERTA/ANTERIOR
             const openTask = state.tasks.find(t => t.dealId === deal.id && !t.completed);
             const prevTaskInfoDiv = document.getElementById('trans-previous-task-info');
             
@@ -1143,7 +1149,7 @@
             }
         }
 
-        function confirmStageTransition(e) {
+        async function confirmStageTransition(e) {
             e.preventDefault();
             const deal = state.deals.find(d => d.id === pendingMove.dealId);
             const currentComment = document.getElementById('trans-current-comment').value;
@@ -1151,33 +1157,29 @@
             const nextDate = document.getElementById('trans-next-date').value;
             const nextComment = document.getElementById('trans-next-comment').value;
 
-            // 1. CONCLUIR E ATUALIZAR A TAREFA ANTERIOR
             if (pendingMove.openTaskId) {
-                const task = state.tasks.find(t => t.id === pendingMove.openTaskId);
-                if (task) {
-                    task.completed = true;
-                    task.comment = currentComment;
-                }
+                await _supabase.from('tasks').update({
+                    completed: true,
+                    comment: currentComment
+                }).eq('id', pendingMove.openTaskId);
             }
 
-            // 2. REGISTRAR O NOVO FOLLOW-UP OBRIGATÓRIO
-            state.tasks.push({
+            await _supabase.from('tasks').insert({
                 id: Date.now().toString(),
-                dealId: deal.id,
+                deal_id: deal.id,
                 title: nextTitle,
-                dueDate: nextDate,
+                due_date: nextDate,
                 comment: nextComment,
                 completed: false,
-                createdAt: new Date().toISOString()
+                created_at: new Date().toISOString()
             });
 
-            // 3. REGISTRO CORRETO NO HISTÓRICO E ANOTAÇÕES
-            if (!deal.notes) deal.notes = [];
-            deal.notes.push({
+            const newNote = {
                 date: new Date().toLocaleString(),
                 author: state.currentUser.name,
                 text: `[AVANÇO DE ETAPA] Concluído: ${currentComment} | Próximo Passo: ${nextTitle} (${nextDate}) - ${nextComment}`
-            });
+            };
+            const updatedNotes = [...(deal.notes || []), newNote];
 
             closeModal('modal-stage-transition');
 
@@ -1185,20 +1187,19 @@
                 confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
             }
 
-            executeDealMove();
+            await executeDealMove({ notes: updatedNotes });
         }
 
-        function confirmLossTransition(e) {
+        async function confirmLossTransition(e) {
             e.preventDefault();
             const lossReasonId = document.getElementById('loss-reason-select').value;
             const lossDescription = document.getElementById('loss-description-input').value;
 
             closeModal('modal-record-loss');
-            executeDealMove({ lossReasonId, lossDescription });
+            await executeDealMove({ loss_reason_id: lossReasonId, loss_description: lossDescription });
         }
 
-        // CORREÇÃO DO HISTÓRICO DE MOVIMENTAÇÕES
-        function executeDealMove(extraData = {}) {
+        async function executeDealMove(extraData = {}) {
             if (!pendingMove) return;
             const deal = state.deals.find(d => d.id === pendingMove.dealId);
             
@@ -1206,28 +1207,31 @@
             const oldStageName = currentFunnel.stages.find(s => s.id === deal.stageId)?.name || 'Lead';
             const newStageName = currentFunnel.stages.find(s => s.id === pendingMove.targetStageId)?.name || 'Nova Etapa';
 
-            deal.stageId = pendingMove.targetStageId;
-            deal.updatedAt = new Date().toISOString();
-            Object.assign(deal, extraData);
-
-            // LOG NO ARRAY DE HISTÓRICO
-            if (!deal.history) deal.history = [];
-            deal.history.push({
+            const newHistoryItem = {
                 date: new Date().toLocaleString(),
                 from: oldStageName,
                 to: newStageName,
                 author: state.currentUser.name
-            });
+            };
+            const updatedHistory = [...(deal.history || []), newHistoryItem];
 
-            persistData();
+            const updatePayload = {
+                stage_id: pendingMove.targetStageId,
+                updated_at: new Date().toISOString(),
+                history: updatedHistory,
+                ...extraData
+            };
+
+            await _supabase.from('deals').update(updatePayload).eq('id', deal.id);
+
+            await fetchAllDataFromSupabase();
             renderKanban();
             pendingMove = null;
         }
 
-        // SALVAR E GERENCIAR OPORTUNIDADES
-        function saveDeal(e) {
+        async function saveDeal(e) {
             e.preventDefault();
-            const id = document.getElementById('deal-id').value;
+            const id = document.getElementById('deal-id').value || Date.now().toString();
             const now = new Date().toISOString();
             const activeFunnel = state.funnels.find(f => f.id === document.getElementById('pipeline-funnel-filter').value) || state.funnels[0];
             const leadStage = activeFunnel.stages[0];
@@ -1235,50 +1239,49 @@
             const accountId = document.getElementById('deal-conta').value;
             const contactId = document.getElementById('deal-contato').value;
 
-            if (id) {
-                const deal = state.deals.find(d => d.id === id);
-                deal.title = document.getElementById('deal-titulo').value;
-                deal.originId = document.getElementById('deal-origem').value;
-                deal.productId = document.getElementById('deal-produto').value;
-                deal.setupValue = document.getElementById('deal-setup').value;
-                deal.mrrValue = document.getElementById('deal-mrr').value;
-                deal.accountId = accountId;
-                deal.contactId = contactId;
-                deal.updatedAt = now;
+            if (document.getElementById('deal-id').value) {
+                await _supabase.from('deals').update({
+                    title: document.getElementById('deal-titulo').value,
+                    origin_id: document.getElementById('deal-origem').value,
+                    product_id: document.getElementById('deal-produto').value,
+                    setup_value: parseFloat(document.getElementById('deal-setup').value) || 0,
+                    mrr_value: parseFloat(document.getElementById('deal-mrr').value) || 0,
+                    account_id: accountId,
+                    contact_id: contactId,
+                    updated_at: now
+                }).eq('id', id);
             } else {
-                // DESATIVAR OPORTUNIDADES ANTERIORES DO MESMO CLIENTE/CONTATO
-                state.deals.forEach(d => {
+                state.deals.forEach(async (d) => {
                     if ((accountId && d.accountId === accountId) || (contactId && d.contactId === contactId)) {
-                        d.active = false;
+                        await _supabase.from('deals').update({ active: false }).eq('id', d.id);
                     }
                 });
 
-                state.deals.push({
-                    id: Date.now().toString(),
+                await _supabase.from('deals').insert({
+                    id,
                     title: document.getElementById('deal-titulo').value,
-                    originId: document.getElementById('deal-origem').value,
-                    productId: document.getElementById('deal-produto').value,
-                    setupValue: document.getElementById('deal-setup').value,
-                    mrrValue: document.getElementById('deal-mrr').value,
-                    funnelId: activeFunnel.id,
-                    stageId: leadStage.id,
-                    accountId,
-                    contactId,
-                    sellerId: state.currentUser.id,
+                    origin_id: document.getElementById('deal-origem').value,
+                    product_id: document.getElementById('deal-produto').value,
+                    setup_value: parseFloat(document.getElementById('deal-setup').value) || 0,
+                    mrr_value: parseFloat(document.getElementById('deal-mrr').value) || 0,
+                    funnel_id: activeFunnel.id,
+                    stage_id: leadStage.id,
+                    account_id: accountId,
+                    contact_id: contactId,
+                    seller_id: state.currentUser.id,
                     active: true,
-                    createdAt: now,
-                    updatedAt: now,
+                    created_at: now,
+                    updated_at: now,
                     notes: [],
                     history: [{ date: new Date().toLocaleString(), from: null, to: leadStage.name, author: state.currentUser.name }]
                 });
             }
 
-            persistData();
+            await fetchAllDataFromSupabase();
             closeModal('modal-deal');
             renderKanban();
         }
 
-        // ANOTAÇÕES E CORREÇÃO NA EXIBIÇÃO DE HISTÓRICO
         function openDealModal(id = null) {
             populateSelectsForDealModal();
 
@@ -1309,7 +1312,7 @@
 
         function renderDealNotes(deal) {
             const list = document.getElementById('deal-notes-list');
-            const sortedNotes = [...(deal.notes || [])].reverse(); // PRIMEIRA LINHA = MAIS RECENTE
+            const sortedNotes = [...(deal.notes || [])].reverse();
 
             list.innerHTML = sortedNotes.length === 0 ? '<p class="text-gray-400">Nenhum registro.</p>' :
                 sortedNotes.map(n => `
@@ -1324,7 +1327,7 @@
 
         function renderDealHistoryList(deal) {
             const list = document.getElementById('deal-history-list');
-            const sortedHistory = [...(deal.history || [])].reverse(); // CORRIGIDO E ORDENADO
+            const sortedHistory = [...(deal.history || [])].reverse();
 
             list.innerHTML = sortedHistory.length === 0 ? '<p class="text-gray-400">Sem histórico de movimentação.</p>' :
                 sortedHistory.map(h => `
@@ -1335,17 +1338,18 @@
                 `).join('');
         }
 
-        function addNoteToDeal() {
+        async function addNoteToDeal() {
             const dealId = document.getElementById('deal-id').value;
             const input = document.getElementById('deal-note-input');
             if (dealId && input.value.trim()) {
                 const deal = state.deals.find(d => d.id === dealId);
                 if (deal) {
-                    if (!deal.notes) deal.notes = [];
-                    deal.notes.push({ date: new Date().toLocaleString(), author: state.currentUser.name, text: input.value.trim() });
+                    const newNotes = [...(deal.notes || []), { date: new Date().toLocaleString(), author: state.currentUser.name, text: input.value.trim() }];
+                    await _supabase.from('deals').update({ notes: newNotes }).eq('id', dealId);
                     input.value = '';
-                    persistData();
-                    renderDealNotes(deal);
+                    await fetchAllDataFromSupabase();
+                    const updatedDeal = state.deals.find(d => d.id === dealId);
+                    renderDealNotes(updatedDeal);
                 }
             }
         }
@@ -1359,7 +1363,7 @@
             document.getElementById('deal-note-input').value = suggestions[Math.floor(Math.random() * suggestions.length)];
         }
 
-        // SUPORTE A MÚLTIPLOS TELEFONES E EMAILS (CADASTRO CONTA & CONTATO)
+        // TELEFONES E EMAILS DINÂMICOS
         function addPhoneRow(containerId, number = '', type = 'Celular') {
             const container = document.getElementById(containerId);
             const row = document.createElement('div');
@@ -1428,9 +1432,9 @@
             document.getElementById('modal-conta').classList.remove('hidden');
         }
 
-        function saveAccount(e) {
+        async function saveAccount(e) {
             e.preventDefault();
-            const id = document.getElementById('conta-id').value;
+            const id = document.getElementById('conta-id').value || Date.now().toString();
             
             const phones = Array.from(document.querySelectorAll('#conta-phones-list .phone-row')).map(r => ({
                 type: r.querySelector('.phone-type').value,
@@ -1442,20 +1446,27 @@
                 email: r.querySelector('.email-value').value.trim()
             })).filter(e => e.email);
 
-            const data = {
-                id: id || Date.now().toString(),
+            await _supabase.from('accounts').upsert({
+                id,
                 nome: document.getElementById('conta-nome').value,
                 razao: document.getElementById('conta-razao').value,
                 cnpj: document.getElementById('conta-cnpj').value,
                 setor: document.getElementById('conta-setor').value,
                 phones, emails
-            };
+            });
 
-            if (id) { state.accounts[state.accounts.findIndex(x => x.id === id)] = data; } else { state.accounts.push(data); }
-            persistData(); closeModal('modal-conta'); renderAccounts();
+            await fetchAllDataFromSupabase();
+            closeModal('modal-conta');
+            renderAccounts();
         }
 
-        function deleteAccount(id) { if (confirm('Excluir conta?')) { state.accounts = state.accounts.filter(a => a.id !== id); persistData(); renderAccounts(); } }
+        async function deleteAccount(id) {
+            if (confirm('Excluir conta?')) {
+                await _supabase.from('accounts').delete().eq('id', id);
+                await fetchAllDataFromSupabase();
+                renderAccounts();
+            }
+        }
 
         function renderContacts() {
             document.getElementById('table-contatos-body').innerHTML = state.contacts.map(c => `
@@ -1492,9 +1503,9 @@
             document.getElementById('modal-contato').classList.remove('hidden');
         }
 
-        function saveContact(e) {
+        async function saveContact(e) {
             e.preventDefault();
-            const id = document.getElementById('contato-id').value;
+            const id = document.getElementById('contato-id').value || Date.now().toString();
 
             const phones = Array.from(document.querySelectorAll('#contato-phones-list .phone-row')).map(r => ({
                 type: r.querySelector('.phone-type').value,
@@ -1506,30 +1517,37 @@
                 email: r.querySelector('.email-value').value.trim()
             })).filter(e => e.email);
 
-            const data = {
-                id: id || Date.now().toString(),
+            await _supabase.from('contacts').upsert({
+                id,
                 nome: document.getElementById('contato-nome').value,
-                contaId: document.getElementById('contato-conta-id').value,
+                conta_id: document.getElementById('contato-conta-id').value,
                 phones, emails
-            };
+            });
 
-            if (id) { state.contacts[state.contacts.findIndex(x => x.id === id)] = data; } else { state.contacts.push(data); }
-            persistData(); closeModal('modal-contato'); renderContacts();
+            await fetchAllDataFromSupabase();
+            closeModal('modal-contato');
+            renderContacts();
         }
 
-        function deleteContact(id) { if (confirm('Excluir contato?')) { state.contacts = state.contacts.filter(c => c.id !== id); persistData(); renderContacts(); } }
+        async function deleteContact(id) {
+            if (confirm('Excluir contato?')) {
+                await _supabase.from('contacts').delete().eq('id', id);
+                await fetchAllDataFromSupabase();
+                renderContacts();
+            }
+        }
 
-        // IMPORTAÇÃO CORRIGIDA DE LEADS (MÚLTIPLAS COLUNAS DE EMAIL E VALIDAÇÃO)
+        // IMPORTAÇÃO DE LEADS
         function openImportModal() { document.getElementById('modal-import-leads').classList.remove('hidden'); }
 
-        function processLeadImport(e) {
+        async function processLeadImport(e) {
             e.preventDefault();
             const fileInput = document.getElementById('import-file-input');
             const file = fileInput.files[0];
             if (!file) return;
 
             const reader = new FileReader();
-            reader.onload = function(evt) {
+            reader.onload = async function(evt) {
                 const data = new Uint8Array(evt.target.result);
                 const workbook = XLSX.read(data, { type: 'array' });
                 const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
@@ -1541,8 +1559,7 @@
                 const defaultProd = state.products[0];
 
                 let count = 0;
-                rows.forEach(r => {
-                    // BUSCA ROBUSTA DE COLUNAS (IGNORANDO CASE SENSITIVE)
+                for (let r of rows) {
                     const getVal = (keys) => {
                         for (let k of keys) {
                             for (let rKey in r) {
@@ -1557,61 +1574,58 @@
                     const email = getVal(['Email', 'E-mail', 'E-MAIL', 'Mail', 'Correio']) || '';
                     const telefone = getVal(['Telefone', 'Celular', 'Fone', 'WhatsApp', 'Phone']) || '';
 
-                    // Criar Conta com arrays de email/telefone
                     let conta = state.accounts.find(a => a.nome === empresaNome);
                     if (!conta) {
+                        const newAccId = Date.now().toString() + Math.random();
                         conta = {
-                            id: Date.now().toString() + Math.random(),
-                            nome: empresaNome, razao: empresaNome, cnpj: '', setor: 'Importado',
+                            id: newAccId, nome: empresaNome, razao: empresaNome, cnpj: '', setor: 'Importado',
                             phones: telefone ? [{ type: 'Celular', number: String(telefone) }] : [],
                             emails: email ? [{ type: 'Comercial', email: String(email) }] : []
                         };
-                        state.accounts.push(conta);
+                        await _supabase.from('accounts').insert(conta);
                     }
 
-                    // Criar Contato com arrays de email/telefone
                     let contato = state.contacts.find(c => c.nome === contatoNome);
                     if (!contato) {
+                        const newContId = Date.now().toString() + Math.random();
                         contato = {
-                            id: Date.now().toString() + Math.random(),
-                            nome: contatoNome, contaId: conta.id,
+                            id: newContId, nome: contatoNome, conta_id: conta.id,
                             phones: telefone ? [{ type: 'Celular', number: String(telefone) }] : [],
                             emails: email ? [{ type: 'Comercial', email: String(email) }] : []
                         };
-                        state.contacts.push(contato);
+                        await _supabase.from('contacts').insert(contato);
                     }
 
-                    // Criar Oportunidade Lead
-                    state.deals.push({
+                    await _supabase.from('deals').insert({
                         id: Date.now().toString() + Math.random(),
                         title: `Prospecção - ${empresaNome}`,
-                        originId: importOrigin.id,
-                        productId: defaultProd.id,
-                        setupValue: defaultProd.setup,
-                        mrrValue: defaultProd.mrr,
-                        funnelId: activeFunnel.id,
-                        stageId: leadStage.id,
-                        accountId: conta.id,
-                        contactId: contato.id,
-                        sellerId: state.currentUser.id,
+                        origin_id: importOrigin ? importOrigin.id : null,
+                        product_id: defaultProd ? defaultProd.id : null,
+                        setup_value: defaultProd ? defaultProd.setup : 0,
+                        mrr_value: defaultProd ? defaultProd.mrr : 0,
+                        funnel_id: activeFunnel.id,
+                        stage_id: leadStage.id,
+                        account_id: conta.id,
+                        contact_id: contato.id,
+                        seller_id: state.currentUser.id,
                         active: true,
-                        createdAt: new Date().toISOString(),
-                        updatedAt: new Date().toISOString(),
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString(),
                         notes: [{ date: new Date().toLocaleString(), author: 'Sistema', text: 'Lead importado via planilha BDR.' }],
                         history: [{ date: new Date().toLocaleString(), from: null, to: leadStage.name, author: 'Sistema' }]
                     });
                     count++;
-                });
+                }
 
-                persistData();
+                await fetchAllDataFromSupabase();
                 closeModal('modal-import-leads');
                 renderKanban();
-                alert(`✅ ${count} Leads importados com sucesso para a etapa LEAD!`);
+                alert(`✅ ${count} Leads importados com sucesso!`);
             };
             reader.readAsArrayBuffer(file);
         }
 
-        // ANALYTICS & FILTROS DE DATA
+        // ANALYTICS
         function renderAnalytics() {
             const sellerFilter = document.getElementById('analytics-seller-filter');
             sellerFilter.innerHTML = '<option value="all">Todos os Vendedores</option>' +
@@ -1623,15 +1637,11 @@
 
             let filteredDeals = state.deals.filter(d => {
                 if (sellerId !== 'all' && d.sellerId !== sellerId) return false;
-                const dDate = d.createdAt.split('T')[0];
+                const dDate = d.createdAt ? d.createdAt.split('T')[0] : '';
                 if (startDate && dDate < startDate) return false;
                 if (endDate && dDate > endDate) return false;
                 return true;
             });
-
-            const activeFunnel = state.funnels[0];
-            const wonStageName = 'ganho';
-            const lostStageName = 'perdido';
 
             const openDeals = filteredDeals.filter(d => !d.stageId.includes('6') && !d.stageId.includes('7'));
             const wonDeals = filteredDeals.filter(d => d.stageId.includes('6'));
@@ -1650,7 +1660,6 @@
             document.getElementById('analytics-lost-count').textContent = lostDeals.length;
             document.getElementById('analytics-lost-value').textContent = `R$ ${sumDealsValue(lostDeals).toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
 
-            // RANKING VENDEDORES
             document.getElementById('table-ranking-vendedores').innerHTML = state.users.map(u => {
                 const uDeals = filteredDeals.filter(d => d.sellerId === u.id);
                 const uOpen = uDeals.filter(d => !d.stageId.includes('6') && !d.stageId.includes('7')).length;
@@ -1669,7 +1678,6 @@
                 </tr>
             `).join('');
 
-            // RANKING MOTIVOS PERDA
             document.getElementById('table-ranking-perda').innerHTML = state.lossReasons.map(r => {
                 const rDeals = lostDeals.filter(d => d.lossReasonId === r.id);
                 const rVal = sumDealsValue(rDeals);
@@ -1682,7 +1690,6 @@
                 </tr>
             `).join('');
 
-            // PERFORMANCE ORIGEM
             document.getElementById('table-performance-origem').innerHTML = state.origins.map(o => {
                 const oDeals = filteredDeals.filter(d => d.originId === o.id);
                 const oOpen = oDeals.filter(d => !d.stageId.includes('6') && !d.stageId.includes('7')).length;
@@ -1760,9 +1767,14 @@
                 }).join('');
         }
 
-        function toggleTask(id) {
+        async function toggleTask(id) {
             const task = state.tasks.find(t => t.id === id);
-            if (task) { task.completed = !task.completed; persistData(); renderTasks(); renderKanban(); }
+            if (task) {
+                await _supabase.from('tasks').update({ completed: !task.completed }).eq('id', id);
+                await fetchAllDataFromSupabase();
+                renderTasks();
+                renderKanban();
+            }
         }
 
         function checkOverdueTasksAlert() {
@@ -1796,28 +1808,42 @@
         }
 
         function openProductModal() { document.getElementById('modal-admin-product').classList.remove('hidden'); }
-        function saveAdminProduct(e) {
+        async function saveAdminProduct(e) {
             e.preventDefault();
-            state.products.push({ id: Date.now().toString(), name: document.getElementById('prod-nome').value, setup: parseFloat(document.getElementById('prod-setup').value) || 0, mrr: parseFloat(document.getElementById('prod-mrr').value) || 0 });
-            persistData(); closeModal('modal-admin-product'); renderCadastrosAdmin();
+            await _supabase.from('products').insert({
+                id: Date.now().toString(),
+                name: document.getElementById('prod-nome').value,
+                setup: parseFloat(document.getElementById('prod-setup').value) || 0,
+                mrr: parseFloat(document.getElementById('prod-mrr').value) || 0
+            });
+            await fetchAllDataFromSupabase(); closeModal('modal-admin-product'); renderCadastrosAdmin();
         }
-        function deleteAdminProduct(id) { state.products = state.products.filter(p => p.id !== id); persistData(); renderCadastrosAdmin(); }
+        async function deleteAdminProduct(id) {
+            await _supabase.from('products').delete().eq('id', id);
+            await fetchAllDataFromSupabase(); renderCadastrosAdmin();
+        }
 
         function openLossReasonModal() { document.getElementById('modal-admin-loss').classList.remove('hidden'); }
-        function saveAdminLoss(e) {
+        async function saveAdminLoss(e) {
             e.preventDefault();
-            state.lossReasons.push({ id: Date.now().toString(), name: document.getElementById('loss-nome').value });
-            persistData(); closeModal('modal-admin-loss'); renderCadastrosAdmin();
+            await _supabase.from('loss_reasons').insert({ id: Date.now().toString(), name: document.getElementById('loss-nome').value });
+            await fetchAllDataFromSupabase(); closeModal('modal-admin-loss'); renderCadastrosAdmin();
         }
-        function deleteAdminLoss(id) { state.lossReasons = state.lossReasons.filter(r => r.id !== id); persistData(); renderCadastrosAdmin(); }
+        async function deleteAdminLoss(id) {
+            await _supabase.from('loss_reasons').delete().eq('id', id);
+            await fetchAllDataFromSupabase(); renderCadastrosAdmin();
+        }
 
         function openOriginModal() { document.getElementById('modal-admin-origin').classList.remove('hidden'); }
-        function saveAdminOrigin(e) {
+        async function saveAdminOrigin(e) {
             e.preventDefault();
-            state.origins.push({ id: Date.now().toString(), name: document.getElementById('origin-nome').value });
-            persistData(); closeModal('modal-admin-origin'); renderCadastrosAdmin();
+            await _supabase.from('origins').insert({ id: Date.now().toString(), name: document.getElementById('origin-nome').value });
+            await fetchAllDataFromSupabase(); closeModal('modal-admin-origin'); renderCadastrosAdmin();
         }
-        function deleteAdminOrigin(id) { state.origins = state.origins.filter(o => o.id !== id); persistData(); renderCadastrosAdmin(); }
+        async function deleteAdminOrigin(id) {
+            await _supabase.from('origins').delete().eq('id', id);
+            await fetchAllDataFromSupabase(); renderCadastrosAdmin();
+        }
 
         function renderUsers() {
             document.getElementById('table-vendedores-body').innerHTML = state.users.map(u => `
@@ -1832,12 +1858,46 @@
             if (id) { const u = state.users.find(x => x.id === id); if (u) { document.getElementById('user-nome').value = u.name; document.getElementById('user-email').value = u.email; document.getElementById('user-senha').value = u.pass; document.getElementById('user-cargo').value = u.role; document.getElementById('user-ativo').checked = u.active; } }
             document.getElementById('modal-user').classList.remove('hidden');
         }
-        function saveUser(e) {
-            e.preventDefault(); const id = document.getElementById('user-id').value; const data = { id: id || Date.now().toString(), name: document.getElementById('user-nome').value, email: document.getElementById('user-email').value, pass: document.getElementById('user-senha').value, role: document.getElementById('user-cargo').value, active: document.getElementById('user-ativo').checked, isAdmin: false };
-            if (id) { data.isAdmin = state.users[state.users.findIndex(x => x.id === id)].isAdmin; state.users[state.users.findIndex(x => x.id === id)] = data; } else { state.users.push(data); }
-            persistData(); closeModal('modal-user'); renderUsers();
+        async function saveUser(e) {
+            e.preventDefault();
+            const id = document.getElementById('user-id').value || Date.now().toString();
+            const data = {
+                id,
+                name: document.getElementById('user-nome').value,
+                email: document.getElementById('user-email').value,
+                pass: document.getElementById('user-senha').value,
+                role: document.getElementById('user-cargo').value,
+                active: document.getElementById('user-ativo').checked,
+                is_admin: false
+            };
+            await _supabase.from('users').upsert(data);
+            await fetchAllDataFromSupabase(); closeModal('modal-user'); renderUsers();
         }
-        function deleteUser(id) { if (confirm('Excluir vendedor?')) { state.users = state.users.filter(u => u.id !== id); persistData(); renderUsers(); } }
+        async function deleteUser(id) {
+            if (confirm('Excluir vendedor?')) {
+                await _supabase.from('users').delete().eq('id', id);
+                await fetchAllDataFromSupabase(); renderUsers();
+            }
+        }
+
+        // EXPORTAÇÕES
+        function exportData(type, format) {
+            let data = [];
+            if (type === 'contas') data = state.accounts.map(a => ({ Nome: a.nome, RazaoSocial: a.razao, CNPJ: a.cnpj, Setor: a.setor }));
+            if (type === 'contatos') data = state.contacts.map(c => ({ Nome: c.nome, Empresa: state.accounts.find(a => a.id === c.contaId)?.nome || '' }));
+
+            if (format === 'csv') {
+                let csv = Object.keys(data[0] || {}).join(',') + '\n';
+                data.forEach(row => { csv += Object.values(row).map(v => `"${v || ''}"`).join(',') + '\n'; });
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `${type}.csv`; link.click();
+            } else if (format === 'xlsx') {
+                const worksheet = XLSX.utils.json_to_sheet(data);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, type);
+                XLSX.writeFile(workbook, `${type}.xlsx`);
+            }
+        }
 
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
     </script>
