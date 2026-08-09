@@ -21,10 +21,9 @@
 </head>
 <body class="bg-gray-100 font-sans text-gray-800 flex flex-col min-h-screen">
 
-    <!-- TELA DE LOGIN COM RODAPÉ E BOTÃO DE PLANOS -->
+    <!-- TELA DE LOGIN -->
     <div id="login-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-between bg-cover bg-center p-6" style="background-image: linear-gradient(rgba(15, 23, 42, 0.88), rgba(15, 23, 42, 0.88)), url('https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1920&q=80');">
-        
-        <div></div> <!-- Espaçador Superior -->
+        <div></div>
 
         <div class="w-full max-w-md p-8 bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-white/20">
             <div class="text-center mb-6">
@@ -57,7 +56,6 @@
             </div>
         </div>
 
-        <!-- RODAPÉ DA TELA DE LOGIN -->
         <footer class="text-center text-slate-300 text-xs py-2">
             Criado por <a href="https://www.linkedin.com/in/rafaelrobertonascimento" target="_blank" class="text-blue-400 font-bold hover:underline inline-flex items-center gap-1">
                 Rafael Roberto Nascimento <i class="fa-brands fa-linkedin text-sm"></i>
@@ -65,7 +63,7 @@
         </footer>
     </div>
 
-    <!-- MODAL DE PLANOS E CONTRATAÇÃO VIA WHATSAPP -->
+    <!-- MODAL PLANOS DE VENDA -->
     <div id="modal-plans" class="fixed inset-0 bg-black/75 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl p-6 md:p-8 max-h-[90vh] overflow-y-auto relative">
             <button onclick="closeModal('modal-plans')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold">
@@ -79,7 +77,7 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- PLANO BASIC -->
+                <!-- BASIC -->
                 <div class="border rounded-xl p-5 flex flex-col justify-between hover:border-blue-500 transition shadow-sm">
                     <div>
                         <h3 class="font-bold text-lg text-gray-800">Basic</h3>
@@ -97,7 +95,7 @@
                     </a>
                 </div>
 
-                <!-- PLANO PROFESSIONAL (DESTACADO) -->
+                <!-- PROFESSIONAL -->
                 <div class="border-2 border-blue-600 rounded-xl p-5 flex flex-col justify-between shadow-lg relative bg-blue-50/30">
                     <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[10px] font-black px-3 py-0.5 rounded-full uppercase">Mais Vendido</span>
                     <div>
@@ -115,7 +113,7 @@
                     </a>
                 </div>
 
-                <!-- PLANO ENTERPRISE -->
+                <!-- ENTERPRISE -->
                 <div class="border rounded-xl p-5 flex flex-col justify-between hover:border-purple-500 transition shadow-sm">
                     <div>
                         <h3 class="font-bold text-lg text-gray-800">Enterprise</h3>
@@ -134,14 +132,13 @@
             </div>
 
             <div class="mt-8 text-center border-t pt-4">
-                <p class="text-xs text-gray-500">Dúvidas? Entre em contato diretamente pelo WhatsApp: <strong>(62) 99632-3618</strong></p>
+                <p class="text-xs text-gray-500">Dúvidas? Fale diretamente pelo WhatsApp: <strong>(62) 99632-3618</strong></p>
             </div>
         </div>
     </div>
 
-    <!-- ESTRUTURA PRINCIPAL DO SISTEMA -->
+    <!-- ESTRUTURA PRINCIPAL -->
     <div id="app-container" class="hidden flex-1 flex flex-col">
-        <!-- TOPBAR -->
         <header class="bg-slate-900 text-white shadow-md flex items-center justify-between px-6 py-3 border-b border-slate-800">
             <div class="flex items-center space-x-3">
                 <div class="bg-blue-600 p-2 rounded-lg"><i class="fa-solid fa-chart-line text-lg"></i></div>
@@ -159,7 +156,6 @@
         </header>
 
         <div class="flex flex-1 overflow-hidden">
-            <!-- SIDEBAR -->
             <aside class="w-64 bg-slate-800 text-slate-300 flex flex-col border-r border-slate-700">
                 <nav class="flex-1 p-4 space-y-1">
                     <button onclick="switchTab('vendas')" id="nav-vendas" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium hover:bg-slate-700 transition">
@@ -196,8 +192,9 @@
                 </nav>
             </aside>
 
-            <!-- CONTEÚDO PRINCIPAL -->
             <main class="flex-1 bg-gray-50 p-6 overflow-y-auto">
+                
+                <!-- VIEW: VENDAS (KANBAN) -->
                 <section id="view-vendas" class="tab-content hidden">
                     <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6 bg-white p-4 rounded-xl border shadow-sm">
                         <div class="flex flex-wrap items-center gap-4">
@@ -223,19 +220,457 @@
                     </div>
                     <div id="kanban-board" class="flex space-x-4 overflow-x-auto pb-4"></div>
                 </section>
-                
-                <!-- OUTRAS VIEWS FICAM INALTERADAS -->
+
+                <!-- VIEW: ANALYTICS -->
+                <section id="view-analytics" class="tab-content hidden">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 bg-white p-5 rounded-xl shadow-sm border">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800">Painel Geral de Analytics</h2>
+                            <p class="text-xs text-gray-500">Visão consolidada de conversão e desempenho comercial.</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-3">
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500 block">Vendedor/BDR</label>
+                                <select id="analytics-seller-filter" onchange="renderAnalytics()" class="p-2 border rounded-lg text-xs font-semibold bg-gray-50">
+                                    <option value="all">Todos os Vendedores</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500 block">Data Início</label>
+                                <input type="date" id="analytics-date-start" onchange="renderAnalytics()" class="p-2 border rounded-lg text-xs bg-gray-50">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500 block">Data Fim</label>
+                                <input type="date" id="analytics-date-end" onchange="renderAnalytics()" class="p-2 border rounded-lg text-xs bg-gray-50">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-blue-600 text-white p-5 rounded-xl shadow">
+                            <div class="text-xs font-bold uppercase opacity-80">Taxa de Conversão</div>
+                            <div id="analytics-conversion-rate" class="text-3xl font-black mt-1">0%</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl shadow border">
+                            <div class="text-xs font-bold uppercase text-gray-500">Oportunidades Abertas</div>
+                            <div id="analytics-open-count" class="text-3xl font-black text-gray-800 mt-1">0</div>
+                            <div id="analytics-open-value" class="text-xs text-blue-600 font-bold mt-2">R$ 0,00</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl shadow border">
+                            <div class="text-xs font-bold uppercase text-gray-500">Oportunidades Ganhas</div>
+                            <div id="analytics-won-count" class="text-3xl font-black text-emerald-600 mt-1">0</div>
+                            <div id="analytics-won-value" class="text-xs text-emerald-600 font-bold mt-2">R$ 0,00</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl shadow border">
+                            <div class="text-xs font-bold uppercase text-gray-500">Oportunidades Perdidas</div>
+                            <div id="analytics-lost-count" class="text-3xl font-black text-rose-600 mt-1">0</div>
+                            <div id="analytics-lost-value" class="text-xs text-rose-600 font-bold mt-2">R$ 0,00</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: GESTÃO DE FUNIS -->
+                <section id="view-funis" class="tab-content hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800">Gestão de Funis de Vendas</h2>
+                        </div>
+                        <button onclick="openFunnelModal()" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold shadow flex items-center">
+                            <i class="fa-solid fa-plus mr-1"></i> Criar Novo Funil
+                        </button>
+                    </div>
+                    <div id="funnels-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+                </section>
+
+                <!-- VIEW: TAREFAS -->
+                <section id="view-tarefas" class="tab-content hidden">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Tarefas & Follow-up Agendados</h2>
+                    <div class="bg-white rounded-xl shadow p-6 max-w-4xl">
+                        <div id="tasks-container" class="space-y-3"></div>
+                    </div>
+                </section>
+
+                <!-- VIEW: PARAMETROS ADMIN -->
+                <section id="view-cadastros-admin" class="tab-content hidden">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Parâmetros Gerais do CRM</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="bg-white p-5 rounded-xl shadow border">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-bold text-sm text-gray-800">Perguntas Qualificação</h3>
+                                <button onclick="openQualModal()" class="px-2 py-1 bg-purple-600 text-white rounded text-xs font-bold">+ Criar</button>
+                            </div>
+                            <div id="list-qualifications" class="space-y-2 text-xs"></div>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl shadow border">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-bold text-sm text-gray-800">Produtos & Preços</h3>
+                                <button onclick="openProductModal()" class="px-2 py-1 bg-amber-600 text-white rounded text-xs font-bold">+ Criar</button>
+                            </div>
+                            <div id="list-products" class="space-y-2 text-xs"></div>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl shadow border">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-bold text-sm text-gray-800">Motivos de Perda</h3>
+                                <button onclick="openLossReasonModal()" class="px-2 py-1 bg-amber-600 text-white rounded text-xs font-bold">+ Criar</button>
+                            </div>
+                            <div id="list-loss-reasons" class="space-y-2 text-xs"></div>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl shadow border">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-bold text-sm text-gray-800">Origens de Lead</h3>
+                                <button onclick="openOriginModal()" class="px-2 py-1 bg-amber-600 text-white rounded text-xs font-bold">+ Criar</button>
+                            </div>
+                            <div id="list-origins" class="space-y-2 text-xs"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: CONTAS -->
+                <section id="view-contas" class="tab-content hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">Contas (Empresas)</h2>
+                        <button onclick="openAccountModal()" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-bold shadow">+ Nova Conta</button>
+                    </div>
+                    <div class="bg-white rounded-xl shadow overflow-hidden">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-gray-100 text-xs font-bold text-gray-600 uppercase">
+                                <tr>
+                                    <th class="p-4">Nome Fantasia / Web</th>
+                                    <th class="p-4">Razão / CNPJ</th>
+                                    <th class="p-4">Telefones</th>
+                                    <th class="p-4">E-mails</th>
+                                    <th class="p-4">Redes Sociais</th>
+                                    <th class="p-4">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-contas-body" class="divide-y"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- VIEW: CONTATOS -->
+                <section id="view-contatos" class="tab-content hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">Contatos (Pessoas)</h2>
+                        <button onclick="openContactModal()" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-bold shadow">+ Novo Contato</button>
+                    </div>
+                    <div class="bg-white rounded-xl shadow overflow-hidden">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-gray-100 text-xs font-bold text-gray-600 uppercase">
+                                <tr>
+                                    <th class="p-4">Nome / Cargo</th>
+                                    <th class="p-4">Empresa / Depto</th>
+                                    <th class="p-4">Telefones</th>
+                                    <th class="p-4">E-mails</th>
+                                    <th class="p-4">Redes Sociais</th>
+                                    <th class="p-4">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-contatos-body" class="divide-y"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- VIEW: VENDEDORES -->
+                <section id="view-vendedores" class="tab-content hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">Gestão de Vendedores</h2>
+                        <button onclick="openUserModal()" class="px-4 py-2 bg-amber-600 text-white rounded-lg text-xs font-bold shadow">+ Novo Vendedor</button>
+                    </div>
+                    <div class="bg-white rounded-xl shadow overflow-hidden">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-gray-100 text-xs font-bold text-gray-600 uppercase">
+                                <tr>
+                                    <th class="p-4">Nome</th><th class="p-4">E-mail</th><th class="p-4">Cargo</th><th class="p-4">Status</th><th class="p-4">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-vendedores-body" class="divide-y"></tbody>
+                        </table>
+                    </div>
+                </section>
+
             </main>
+        </div>
+
+        <footer class="bg-slate-900 text-slate-400 text-xs py-3 px-6 border-t border-slate-800 flex justify-between items-center">
+            <div>IA-CRM V.1.0.5</div>
+            <div>Desenvolvido por <span class="text-slate-200 font-bold">Rafael Nascimento</span></div>
+        </footer>
+    </div>
+
+    <!-- MODAL: PERGUNTAS DE QUALIFICAÇÃO -->
+    <div id="modal-admin-qual" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
+            <h3 class="text-base font-bold text-gray-800 mb-3">Nova Pergunta de Qualificação</h3>
+            <form onsubmit="saveAdminQualification(event)" class="space-y-3">
+                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Pergunta *</label><input type="text" id="qual-question" required placeholder="Ex: Possui E-commerce ativo?" class="w-full p-2 border rounded-lg text-sm"></div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Tipo de Resposta *</label>
+                    <select id="qual-type" required class="w-full p-2 border rounded-lg text-sm" onchange="toggleQualOptions()">
+                        <option value="boolean">Sim / Não</option>
+                        <option value="text">Texto Aberto</option>
+                        <option value="choice">Múltipla Escolha</option>
+                    </select>
+                </div>
+                <div id="qual-options-div" class="hidden">
+                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Opções (separadas por vírgula)</label>
+                    <input type="text" id="qual-options" placeholder="Opção 1, Opção 2" class="w-full p-2 border rounded-lg text-sm">
+                </div>
+                <div class="flex justify-end space-x-2 pt-3">
+                    <button type="button" onclick="closeModal('modal-admin-qual')" class="px-3 py-1.5 border rounded text-xs">Cancelar</button>
+                    <button type="submit" class="px-3 py-1.5 bg-purple-600 text-white rounded text-xs font-bold">Salvar Pergunta</button>
+                </div>
+            </form>
         </div>
     </div>
 
+    <!-- MODAL: FUNIL DE VENDAS -->
+    <div id="modal-funnel" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
+            <h3 id="modal-funnel-title" class="text-lg font-bold text-gray-800 mb-4">Funil de Vendas</h3>
+            <form id="form-funnel" onsubmit="saveFunnel(event)" class="space-y-4">
+                <input type="hidden" id="funnel-id">
+                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nome do Funil *</label><input type="text" id="funnel-nome" required class="w-full p-2 border rounded-lg text-sm"></div>
+                <div class="flex items-center space-x-2"><input type="checkbox" id="funnel-ativo" checked class="rounded border-gray-300"><label for="funnel-ativo" class="text-xs font-bold text-gray-700">Funil Ativo</label></div>
+                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Usuários Permitidos *</label><div id="funnel-users-checkboxes" class="space-y-1.5 max-h-32 overflow-y-auto border p-2 rounded-lg bg-gray-50 text-xs"></div></div>
+                <div><div class="flex justify-between items-center mb-1"><label class="text-xs font-bold text-gray-600 uppercase">Etapas do Funil *</label><button type="button" onclick="addStageInputRow()" class="text-blue-600 font-bold text-xs">+ Etapa</button></div><div id="funnel-stages-container" class="space-y-2"></div></div>
+                <div class="flex justify-end space-x-2 pt-4 border-t"><button type="button" onclick="closeModal('modal-funnel')" class="px-4 py-2 border rounded-lg text-sm">Cancelar</button><button type="submit" class="px-4 py-2 bg-amber-600 text-white rounded-lg text-sm font-bold">Salvar Funil</button></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: DETALHES DA OPORTUNIDADE -->
+    <div id="modal-deal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4 border-b pb-2">
+                <h3 id="modal-deal-title" class="text-lg font-bold text-gray-800">Oportunidade</h3>
+                <button onclick="closeModal('modal-deal')" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            
+            <form id="form-deal" onsubmit="saveDeal(event)" class="space-y-4">
+                <input type="hidden" id="deal-id">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Título do Negócio *</label><input type="text" id="deal-titulo" required class="w-full p-2 border rounded-lg text-sm"></div>
+                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Origem do Lead *</label><select id="deal-origem" required class="w-full p-2 border rounded-lg text-sm bg-amber-50 border-amber-300"></select></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Produto / Serviço *</label><select id="deal-produto" onchange="autoFillProductValues()" required class="w-full p-2 border rounded-lg text-sm"></select></div>
+                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Valor Setup (R$)</label><input type="number" id="deal-setup" step="0.01" class="w-full p-2 border rounded-lg text-sm"></div>
+                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Valor MRR (R$)</label><input type="number" id="deal-mrr" step="0.01" class="w-full p-2 border rounded-lg text-sm"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Conta (Empresa)</label><select id="deal-conta" class="w-full p-2 border rounded-lg text-sm"></select></div>
+                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Contato Principal</label><select id="deal-contato" class="w-full p-2 border rounded-lg text-sm"></select></div>
+                </div>
+
+                <div class="p-4 bg-purple-50 border border-purple-200 rounded-xl space-y-3">
+                    <div class="flex items-center justify-between border-b border-purple-200 pb-2">
+                        <span class="text-xs font-bold uppercase text-purple-900"><i class="fa-solid fa-clipboard-check mr-2 text-purple-600"></i> Qualificação do Lead</span>
+                    </div>
+                    <div id="deal-qualification-fields" class="space-y-3"></div>
+                </div>
+
+                <div id="deal-details-tabs" class="hidden pt-2 border-t mt-4">
+                    <div class="flex border-b space-x-4 mb-3">
+                        <button type="button" onclick="switchCardTab('notes')" id="btn-tab-notes" class="pb-2 border-b-2 border-blue-600 font-bold text-xs text-blue-600"><i class="fa-solid fa-note-sticky mr-1"></i> Anotações</button>
+                        <button type="button" onclick="switchCardTab('history')" id="btn-tab-history" class="pb-2 border-b-2 border-transparent font-bold text-xs text-gray-500"><i class="fa-solid fa-clock-rotate-left mr-1"></i> Histórico</button>
+                    </div>
+                    <div id="card-tab-notes" class="space-y-3">
+                        <div id="deal-notes-list" class="space-y-2 max-h-40 overflow-y-auto bg-gray-50 p-3 rounded-lg border text-xs"></div>
+                        <div class="flex space-x-2">
+                            <textarea id="deal-note-input" placeholder="Digite uma anotação..." class="flex-1 p-2 border rounded-lg text-xs h-16"></textarea>
+                            <button type="button" onclick="addNoteToDeal()" class="px-4 bg-blue-600 text-white rounded-lg text-xs font-bold">Salvar</button>
+                        </div>
+                    </div>
+                    <div id="card-tab-history" class="hidden space-y-2 max-h-48 overflow-y-auto bg-slate-50 p-3 rounded-lg border text-xs">
+                        <div id="deal-history-list" class="space-y-2"></div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-2 pt-4 border-t">
+                    <button type="button" onclick="closeModal('modal-deal')" class="px-4 py-2 border rounded-lg text-sm">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold">Salvar Oportunidade</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODALS CONTA & CONTATO -->
+    <div id="modal-conta" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
+            <h3 id="modal-conta-title" class="text-lg font-bold text-gray-800 mb-4">Nova Conta (Empresa)</h3>
+            <form id="form-conta" onsubmit="saveAccount(event)" class="space-y-3">
+                <input type="hidden" id="conta-id">
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nome Fantasia *</label><input type="text" id="conta-nome" required class="w-full p-2 border rounded-lg text-sm"></div>
+                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Razão Social</label><input type="text" id="conta-razao" class="w-full p-2 border rounded-lg text-sm"></div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">CNPJ</label><input type="text" id="conta-cnpj" class="w-full p-2 border rounded-lg text-sm"></div>
+                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Setor</label><input type="text" id="conta-setor" class="w-full p-2 border rounded-lg text-sm"></div>
+                </div>
+                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Website / Domínio</label><input type="text" id="conta-website" placeholder="https://www.empresa.com.br" class="w-full p-2 border rounded-lg text-sm"></div>
+                <div class="border-t pt-2 grid grid-cols-3 gap-2">
+                    <div><label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">LinkedIn</label><input type="text" id="conta-linkedin" class="w-full p-1.5 border rounded text-xs"></div>
+                    <div><label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Instagram</label><input type="text" id="conta-instagram" class="w-full p-1.5 border rounded text-xs"></div>
+                    <div><label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Facebook</label><input type="text" id="conta-facebook" class="w-full p-1.5 border rounded text-xs"></div>
+                </div>
+                <div class="border-t pt-3 space-y-3">
+                    <div><div class="flex justify-between items-center mb-1"><label class="text-xs font-bold text-gray-700 uppercase">Telefones</label><button type="button" onclick="addPhoneRow('conta-phones-list')" class="text-xs text-blue-600 font-bold">+ Telefone</button></div><div id="conta-phones-list" class="space-y-2"></div></div>
+                    <div><div class="flex justify-between items-center mb-1"><label class="text-xs font-bold text-gray-700 uppercase">E-mails</label><button type="button" onclick="addEmailRow('conta-emails-list')" class="text-xs text-blue-600 font-bold">+ E-mail</button></div><div id="conta-emails-list" class="space-y-2"></div></div>
+                </div>
+                <div class="flex justify-end space-x-2 pt-4 border-t"><button type="button" onclick="closeModal('modal-conta')" class="px-4 py-2 border rounded-lg text-sm">Cancelar</button><button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold">Salvar</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-contato" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
+            <h3 id="modal-contato-title" class="text-lg font-bold text-gray-800 mb-4">Novo Contato</h3>
+            <form id="form-contato" onsubmit="saveContact(event)" class="space-y-3">
+                <input type="hidden" id="contato-id">
+                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nome Completo *</label><input type="text" id="contato-nome" required class="w-full p-2 border rounded-lg text-sm"></div>
+                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Conta (Empresa)</label><select id="contato-conta-id" class="w-full p-2 border rounded-lg text-sm"></select></div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Cargo</label><input type="text" id="contato-cargo" class="w-full p-2 border rounded-lg text-sm"></div>
+                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Departamento</label><input type="text" id="contato-departamento" class="w-full p-2 border rounded-lg text-sm"></div>
+                </div>
+                <div class="border-t pt-2 grid grid-cols-3 gap-2">
+                    <div><label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">LinkedIn</label><input type="text" id="contato-linkedin" class="w-full p-1.5 border rounded text-xs"></div>
+                    <div><label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Instagram</label><input type="text" id="contato-instagram" class="w-full p-1.5 border rounded text-xs"></div>
+                    <div><label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Facebook</label><input type="text" id="contato-facebook" class="w-full p-1.5 border rounded text-xs"></div>
+                </div>
+                <div class="border-t pt-3 space-y-3">
+                    <div><div class="flex justify-between items-center mb-1"><label class="text-xs font-bold text-gray-700 uppercase">Telefones</label><button type="button" onclick="addPhoneRow('contato-phones-list')" class="text-xs text-blue-600 font-bold">+ Telefone</button></div><div id="contato-phones-list" class="space-y-2"></div></div>
+                    <div><div class="flex justify-between items-center mb-1"><label class="text-xs font-bold text-gray-700 uppercase">E-mails</label><button type="button" onclick="addEmailRow('contato-emails-list')" class="text-xs text-blue-600 font-bold">+ E-mail</button></div><div id="contato-emails-list" class="space-y-2"></div></div>
+                </div>
+                <div class="flex justify-end space-x-2 pt-4 border-t"><button type="button" onclick="closeModal('modal-contato')" class="px-4 py-2 border rounded-lg text-sm">Cancelar</button><button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold">Salvar</button></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPT COMPLETO DO SISTEMA COM CONEXÃO SUPABASE -->
     <script>
-        function openPlansModal() {
-            document.getElementById('modal-plans').classList.remove('hidden');
+        const SUPABASE_URL = 'https://swphiblxorwigoywzyiu.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_6rNK9nsaERw5uC8MR0eHvg_gnFE_2zA';
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let state = {
+            currentUser: null, users: [], funnels: [], products: [], origins: [], lossReasons: [], qualifications: [], accounts: [], contacts: [], deals: [], tasks: []
+        };
+
+        function isManagerRole(role) {
+            return ['Gerente', 'Diretor', 'Coordenador', 'Supervisor'].includes(role) || state.currentUser?.is_admin;
         }
 
-        function closeModal(id) {
-            document.getElementById(id).classList.add('hidden');
+        async function fetchAllDataFromSupabase() {
+            try {
+                const [u, f, p, o, l, q, a, c, d, t] = await Promise.all([
+                    _supabase.from('users').select('*'),
+                    _supabase.from('funnels').select('*'),
+                    _supabase.from('products').select('*'),
+                    _supabase.from('origins').select('*'),
+                    _supabase.from('loss_reasons').select('*'),
+                    _supabase.from('lead_qualifications').select('*'),
+                    _supabase.from('accounts').select('*'),
+                    _supabase.from('contacts').select('*'),
+                    _supabase.from('deals').select('*'),
+                    _supabase.from('tasks').select('*')
+                ]);
+
+                state.users = u.data || [];
+                if (state.users.length === 0) {
+                    const defaultAdmin = { id: '1', name: 'Rafael Admin', email: 'rafaelroberto@gmail.com', pass: 'lifeapps123', role: 'Diretor', is_admin: true, active: true };
+                    await _supabase.from('users').insert(defaultAdmin);
+                    state.users = [defaultAdmin];
+                }
+
+                state.funnels = (f.data || []).map(item => ({ ...item, userIds: item.user_ids || [] }));
+                if (state.funnels.length === 0) {
+                    const defaultFunnel = { id: 'f1', name: 'Funil Geral', active: true, user_ids: ['1'], stages: [{ id: '1', name: 'Lead' }, { id: '2', name: 'Prospect' }, { id: '3', name: 'Oportunidade' }, { id: '4', name: 'Proposta' }, { id: '5', name: 'Ganho' }, { id: '6', name: 'Perdido' }] };
+                    await _supabase.from('funnels').insert(defaultFunnel);
+                    state.funnels = [{ ...defaultFunnel, userIds: defaultFunnel.user_ids }];
+                }
+
+                state.products = p.data || [];
+                state.origins = o.data || [];
+                state.lossReasons = l.data || [];
+                state.qualifications = q.data || [];
+                state.accounts = a.data || [];
+                state.contacts = (c.data || []).map(item => ({ ...item, contaId: item.conta_id }));
+                state.deals = (d.data || []).map(item => ({ ...item, originId: item.origin_id, productId: item.product_id, setupValue: item.setup_value, mrrValue: item.mrr_value, funnelId: item.funnel_id, stageId: item.stage_id, accountId: item.account_id, contactId: item.contact_id, sellerId: item.seller_id, qualifications: item.qualifications || {} }));
+                state.tasks = (t.data || []).map(item => ({ ...item, dealId: item.deal_id, dueDate: item.due_date }));
+            } catch (err) { console.error("Erro Supabase:", err); }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            await fetchAllDataFromSupabase();
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-password').value;
+            const user = state.users.find(u => u.email === email && u.pass === pass && u.active);
+            if (user) {
+                state.currentUser = user;
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('app-container').classList.remove('hidden');
+                initApp();
+            } else {
+                document.getElementById('login-error').textContent = 'Credenciais inválidas ou usuário inativo.';
+                document.getElementById('login-error').classList.remove('hidden');
+            }
+        }
+
+        function handleLogout() { state.currentUser = null; document.getElementById('app-container').classList.add('hidden'); document.getElementById('login-screen').classList.remove('hidden'); }
+
+        function initApp() {
+            document.getElementById('user-display-name').textContent = state.currentUser.name;
+            document.getElementById('user-display-role').textContent = `${state.currentUser.role} ${isManagerRole(state.currentUser.role) ? '(Gestor)' : ''}`;
+            if (isManagerRole(state.currentUser.role)) { document.getElementById('admin-menu').classList.remove('hidden'); switchTab('analytics'); }
+            else { document.getElementById('admin-menu').classList.add('hidden'); switchTab('vendas'); }
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`view-${tab}`).classList.remove('hidden');
+            if (tab === 'vendas') { setupPipelineFilters(); renderKanban(); }
+            if (tab === 'contas') renderAccounts();
+            if (tab === 'contatos') renderContacts();
+            if (tab === 'cadastros-admin') renderCadastrosAdmin();
+        }
+
+        function openPlansModal() { document.getElementById('modal-plans').classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        // OUTRAS IMPLEMENTAÇÕES MANTIDAS
+        function setupPipelineFilters() {
+            const funnelSelect = document.getElementById('pipeline-funnel-filter');
+            funnelSelect.innerHTML = state.funnels.map(f => `<option value="${f.id}">${f.name}</option>`).join('');
+        }
+
+        function renderKanban() {
+            const currentFunnel = state.funnels[0];
+            const board = document.getElementById('kanban-board');
+            if(!board) return;
+            board.innerHTML = '';
+            (currentFunnel?.stages || []).forEach(stage => {
+                const deals = state.deals.filter(d => d.stageId === stage.id);
+                const col = document.createElement('div');
+                col.className = 'w-72 bg-gray-200/50 rounded-xl p-3 flex flex-col kanban-column flex-shrink-0';
+                col.innerHTML = `<div class="font-bold text-sm mb-2">${stage.name} (${deals.length})</div>`;
+                board.appendChild(col);
+            });
+        }
+
+        function renderAccounts() {
+            document.getElementById('table-contas-body').innerHTML = state.accounts.map(a => `<tr class="hover:bg-gray-50"><td class="p-4 font-semibold">${a.nome}</td><td class="p-4">${a.razao || '-'}</td><td class="p-4">${(a.phones || []).map(p=>p.number).join(', ')}</td><td class="p-4">${(a.emails || []).map(e=>e.email).join(', ')}</td><td class="p-4">-</td><td class="p-4"></td></tr>`).join('');
+        }
+
+        function renderContacts() {
+            document.getElementById('table-contatos-body').innerHTML = state.contacts.map(c => `<tr class="hover:bg-gray-50"><td class="p-4 font-semibold">${c.nome}</td><td class="p-4">${c.cargo || '-'}</td><td class="p-4">${(c.phones || []).map(p=>p.number).join(', ')}</td><td class="p-4">${(c.emails || []).map(e=>e.email).join(', ')}</td><td class="p-4">-</td><td class="p-4"></td></tr>`).join('');
+        }
+
+        function renderCadastrosAdmin() {
+            document.getElementById('list-qualifications').innerHTML = state.qualifications.map(q => `<div class="p-2 bg-purple-50 border rounded text-xs">${q.question}</div>`).join('');
         }
     </script>
 </body>
