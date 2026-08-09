@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IA-CRM V.1.0.5 - Supabase Edition</title>
+    <title>IA-CRM V.1.0.6 - Supabase Edition</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -218,6 +218,15 @@
                             </button>
                         </div>
                     </div>
+
+                    <div class="bg-white p-3 rounded-lg shadow-sm border mb-4 flex flex-wrap items-center gap-4 text-xs font-medium text-gray-600">
+                        <span class="font-bold text-gray-800 uppercase">Status do Card:</span>
+                        <span class="flex items-center gap-1 text-amber-500 font-bold"><i class="fa-solid fa-triangle-exclamation"></i> Sem tarefa agendada</span>
+                        <span class="flex items-center gap-1 text-rose-600 font-bold"><i class="fa-solid fa-circle-exclamation"></i> Tarefa Atrasada</span>
+                        <span class="flex items-center gap-1 text-blue-600 font-bold"><i class="fa-solid fa-clock"></i> Tarefa Hoje</span>
+                        <span class="flex items-center gap-1 text-emerald-600 font-bold"><i class="fa-solid fa-circle-check"></i> Tarefa Futura</span>
+                    </div>
+
                     <div id="kanban-board" class="flex space-x-4 overflow-x-auto pb-4"></div>
                 </section>
 
@@ -274,11 +283,13 @@
                     <div class="flex justify-between items-center mb-6">
                         <div>
                             <h2 class="text-2xl font-bold text-gray-800">Gestão de Funis de Vendas</h2>
+                            <p class="text-xs text-gray-500">Crie, ative ou customize funis específicos para diferentes equipes.</p>
                         </div>
                         <button onclick="openFunnelModal()" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold shadow flex items-center">
                             <i class="fa-solid fa-plus mr-1"></i> Criar Novo Funil
                         </button>
                     </div>
+
                     <div id="funnels-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
                 </section>
 
@@ -393,9 +404,24 @@
         </div>
 
         <footer class="bg-slate-900 text-slate-400 text-xs py-3 px-6 border-t border-slate-800 flex justify-between items-center">
-            <div>IA-CRM V.1.0.5</div>
+            <div>IA-CRM V.1.0.6</div>
             <div>Desenvolvido por <span class="text-slate-200 font-bold">Rafael Nascimento</span></div>
         </footer>
+    </div>
+
+    <!-- MODAL: FUNIL DE VENDAS -->
+    <div id="modal-funnel" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
+            <h3 id="modal-funnel-title" class="text-lg font-bold text-gray-800 mb-4">Funil de Vendas</h3>
+            <form id="form-funnel" onsubmit="saveFunnel(event)" class="space-y-4">
+                <input type="hidden" id="funnel-id">
+                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nome do Funil *</label><input type="text" id="funnel-nome" required class="w-full p-2 border rounded-lg text-sm"></div>
+                <div class="flex items-center space-x-2"><input type="checkbox" id="funnel-ativo" checked class="rounded border-gray-300"><label for="funnel-ativo" class="text-xs font-bold text-gray-700">Funil Ativo</label></div>
+                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Usuários Permitidos *</label><div id="funnel-users-checkboxes" class="space-y-1.5 max-h-32 overflow-y-auto border p-2 rounded-lg bg-gray-50 text-xs"></div></div>
+                <div><div class="flex justify-between items-center mb-1"><label class="text-xs font-bold text-gray-600 uppercase">Etapas do Funil *</label><button type="button" onclick="addStageInputRow()" class="text-blue-600 font-bold text-xs">+ Etapa</button></div><div id="funnel-stages-container" class="space-y-2"></div></div>
+                <div class="flex justify-end space-x-2 pt-4 border-t"><button type="button" onclick="closeModal('modal-funnel')" class="px-4 py-2 border rounded-lg text-sm">Cancelar</button><button type="submit" class="px-4 py-2 bg-amber-600 text-white rounded-lg text-sm font-bold">Salvar Funil</button></div>
+            </form>
+        </div>
     </div>
 
     <!-- MODAL: PERGUNTAS DE QUALIFICAÇÃO -->
@@ -420,21 +446,6 @@
                     <button type="button" onclick="closeModal('modal-admin-qual')" class="px-3 py-1.5 border rounded text-xs">Cancelar</button>
                     <button type="submit" class="px-3 py-1.5 bg-purple-600 text-white rounded text-xs font-bold">Salvar Pergunta</button>
                 </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL: FUNIL DE VENDAS -->
-    <div id="modal-funnel" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
-            <h3 id="modal-funnel-title" class="text-lg font-bold text-gray-800 mb-4">Funil de Vendas</h3>
-            <form id="form-funnel" onsubmit="saveFunnel(event)" class="space-y-4">
-                <input type="hidden" id="funnel-id">
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nome do Funil *</label><input type="text" id="funnel-nome" required class="w-full p-2 border rounded-lg text-sm"></div>
-                <div class="flex items-center space-x-2"><input type="checkbox" id="funnel-ativo" checked class="rounded border-gray-300"><label for="funnel-ativo" class="text-xs font-bold text-gray-700">Funil Ativo</label></div>
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Usuários Permitidos *</label><div id="funnel-users-checkboxes" class="space-y-1.5 max-h-32 overflow-y-auto border p-2 rounded-lg bg-gray-50 text-xs"></div></div>
-                <div><div class="flex justify-between items-center mb-1"><label class="text-xs font-bold text-gray-600 uppercase">Etapas do Funil *</label><button type="button" onclick="addStageInputRow()" class="text-blue-600 font-bold text-xs">+ Etapa</button></div><div id="funnel-stages-container" class="space-y-2"></div></div>
-                <div class="flex justify-end space-x-2 pt-4 border-t"><button type="button" onclick="closeModal('modal-funnel')" class="px-4 py-2 border rounded-lg text-sm">Cancelar</button><button type="submit" class="px-4 py-2 bg-amber-600 text-white rounded-lg text-sm font-bold">Salvar Funil</button></div>
             </form>
         </div>
     </div>
@@ -495,6 +506,59 @@
         </div>
     </div>
 
+    <!-- MODAL TRANSICAO DE ETAPA -->
+    <div id="modal-stage-transition" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6">
+            <div class="flex items-center space-x-2 mb-3 text-blue-600">
+                <i class="fa-solid fa-list-check text-xl"></i>
+                <h3 class="text-base font-bold text-gray-800">Avançar Etapa do Funil</h3>
+            </div>
+            
+            <form onsubmit="confirmStageTransition(event)" class="space-y-4">
+                <div class="p-3 bg-amber-50 border border-amber-200 rounded-lg space-y-2">
+                    <label class="block text-xs font-bold text-amber-900 uppercase">1. Conclusão da Atividade Atual *</label>
+                    <div id="trans-previous-task-info" class="text-xs text-amber-800 font-semibold mb-1"></div>
+                    <textarea id="trans-current-comment" required placeholder="Edite ou adicione seu comentário final sobre esta atividade..." class="w-full p-2 border rounded-lg text-xs h-16 bg-white"></textarea>
+                </div>
+
+                <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg space-y-2">
+                    <label class="block text-xs font-bold text-blue-900 uppercase">2. Agendar Próximo Passo (Obrigatório) *</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="trans-next-title" required placeholder="O quê fará? Ex: Ligar para alinhar" class="p-2 border rounded-lg text-xs bg-white">
+                        <input type="date" id="trans-next-date" required class="p-2 border rounded-lg text-xs bg-white">
+                    </div>
+                    <textarea id="trans-next-comment" required placeholder="Comentários/Instruções para a próxima tarefa..." class="w-full p-2 border rounded-lg text-xs h-16 bg-white"></textarea>
+                </div>
+
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button type="button" onclick="closeModal('modal-stage-transition')" class="px-4 py-2 border rounded-lg text-sm">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold">Concluir & Mover Etapa</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL REGISTRO DE PERDA -->
+    <div id="modal-record-loss" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
+            <h3 class="text-base font-bold text-rose-700 mb-2">Registrar Perda da Oportunidade</h3>
+            <form onsubmit="confirmLossTransition(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Motivo da Perda *</label>
+                    <select id="loss-reason-select" required class="w-full p-2 border rounded-lg text-sm bg-rose-50 border-rose-200"></select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Detalhamento / Descrição *</label>
+                    <textarea id="loss-description-input" required class="w-full p-2 border rounded-lg text-xs h-20" placeholder="Descreva os motivos citados pelo cliente..."></textarea>
+                </div>
+                <div class="flex justify-end space-x-2 pt-4">
+                    <button type="button" onclick="closeModal('modal-record-loss')" class="px-4 py-2 border rounded-lg text-sm">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-rose-600 text-white rounded-lg text-sm font-bold">Confirmar Perda</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- MODALS CONTA & CONTATO -->
     <div id="modal-conta" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
@@ -549,7 +613,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT COMPLETO DO SISTEMA COM CONEXÃO SUPABASE -->
+    <!-- SCRIPT COMPLETO E CORRIGIDO -->
     <script>
         const SUPABASE_URL = 'https://swphiblxorwigoywzyiu.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_6rNK9nsaERw5uC8MR0eHvg_gnFE_2zA';
@@ -585,12 +649,8 @@
                     state.users = [defaultAdmin];
                 }
 
+                // REMOVIDA A CRIAÇÃO AUTOMÁTICA DE FUNIL PADRÃO. O BANCO FICA LIMPO ESPERANDO O GESTOR CRIAR.
                 state.funnels = (f.data || []).map(item => ({ ...item, userIds: item.user_ids || [] }));
-                if (state.funnels.length === 0) {
-                    const defaultFunnel = { id: 'f1', name: 'Funil Geral', active: true, user_ids: ['1'], stages: [{ id: '1', name: 'Lead' }, { id: '2', name: 'Prospect' }, { id: '3', name: 'Oportunidade' }, { id: '4', name: 'Proposta' }, { id: '5', name: 'Ganho' }, { id: '6', name: 'Perdido' }] };
-                    await _supabase.from('funnels').insert(defaultFunnel);
-                    state.funnels = [{ ...defaultFunnel, userIds: defaultFunnel.user_ids }];
-                }
 
                 state.products = p.data || [];
                 state.origins = o.data || [];
@@ -600,6 +660,8 @@
                 state.contacts = (c.data || []).map(item => ({ ...item, contaId: item.conta_id }));
                 state.deals = (d.data || []).map(item => ({ ...item, originId: item.origin_id, productId: item.product_id, setupValue: item.setup_value, mrrValue: item.mrr_value, funnelId: item.funnel_id, stageId: item.stage_id, accountId: item.account_id, contactId: item.contact_id, sellerId: item.seller_id, qualifications: item.qualifications || {} }));
                 state.tasks = (t.data || []).map(item => ({ ...item, dealId: item.deal_id, dueDate: item.due_date }));
+
+                checkOverdueTasksAlert();
             } catch (err) { console.error("Erro Supabase:", err); }
         }
 
@@ -633,44 +695,349 @@
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.getElementById(`view-${tab}`).classList.remove('hidden');
             if (tab === 'vendas') { setupPipelineFilters(); renderKanban(); }
+            if (tab === 'funis') renderFunnels();
             if (tab === 'contas') renderAccounts();
             if (tab === 'contatos') renderContacts();
             if (tab === 'cadastros-admin') renderCadastrosAdmin();
+            if (tab === 'tarefas') renderTasks();
+            if (tab === 'analytics') renderAnalytics();
+            if (tab === 'vendedores') renderUsers();
         }
 
-        function openPlansModal() { document.getElementById('modal-plans').classList.remove('hidden'); }
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-
-        // OUTRAS IMPLEMENTAÇÕES MANTIDAS
         function setupPipelineFilters() {
             const funnelSelect = document.getElementById('pipeline-funnel-filter');
-            funnelSelect.innerHTML = state.funnels.map(f => `<option value="${f.id}">${f.name}</option>`).join('');
+            const sellerSelect = document.getElementById('pipeline-seller-filter');
+
+            const availableFunnels = state.funnels.filter(f => f.active && (isManagerRole(state.currentUser.role) || f.userIds.includes(state.currentUser.id)));
+            
+            if (availableFunnels.length === 0) {
+                funnelSelect.innerHTML = '<option value="">Nenhum Funil Criado</option>';
+            } else {
+                funnelSelect.innerHTML = availableFunnels.map(f => `<option value="${f.id}">${f.name}</option>`).join('');
+            }
+
+            sellerSelect.innerHTML = '<option value="all">Todos os Vendedores</option>' + state.users.map(u => `<option value="${u.id}">${u.name}</option>`).join('');
         }
 
         function renderKanban() {
-            const currentFunnel = state.funnels[0];
+            const funnelId = document.getElementById('pipeline-funnel-filter').value;
+            const sellerFilter = document.getElementById('pipeline-seller-filter').value;
+            const currentFunnel = state.funnels.find(f => f.id === funnelId) || state.funnels[0];
+
             const board = document.getElementById('kanban-board');
-            if(!board) return;
+            if (!currentFunnel) {
+                board.innerHTML = '<div class="p-8 text-center text-gray-500 font-bold bg-white rounded-xl shadow border w-full">Nenhum funil disponível. Acesse "Gestão de Funis" no painel admin para criar seu primeiro funil.</div>';
+                return;
+            }
+
             board.innerHTML = '';
-            (currentFunnel?.stages || []).forEach(stage => {
-                const deals = state.deals.filter(d => d.stageId === stage.id);
+
+            (currentFunnel.stages || []).forEach(stage => {
+                const dealsInStage = state.deals.filter(d => {
+                    if (d.active === false) return false;
+                    if (d.funnelId && d.funnelId !== currentFunnel.id) return false;
+                    if (d.stageId !== stage.id) return false;
+                    if (sellerFilter !== 'all' && d.sellerId !== sellerFilter) return false;
+                    return true;
+                });
+
+                const isGanho = stage.name.toLowerCase() === 'ganho';
+                const isPerdido = stage.name.toLowerCase() === 'perdido';
+
+                let headerStyle = 'bg-gray-200 text-gray-700';
+                if (isGanho) headerStyle = 'bg-emerald-600 text-white font-bold';
+                if (isPerdido) headerStyle = 'bg-rose-600 text-white font-bold';
+
                 const col = document.createElement('div');
                 col.className = 'w-72 bg-gray-200/50 rounded-xl p-3 flex flex-col kanban-column flex-shrink-0';
-                col.innerHTML = `<div class="font-bold text-sm mb-2">${stage.name} (${deals.length})</div>`;
+                col.ondragover = (e) => handleDragOver(e);
+                col.ondragleave = (e) => handleDragLeave(e);
+                col.ondrop = (e) => handleDrop(e, stage.id, currentFunnel.id);
+
+                col.innerHTML = `
+                    <div class="flex items-center justify-between p-2 rounded-lg mb-3 ${headerStyle} text-sm">
+                        <span>${stage.name}</span>
+                        <span class="bg-white/30 text-current px-2 py-0.5 rounded-full text-xs font-black">${dealsInStage.length}</span>
+                    </div>
+                    <div class="space-y-3 flex-1 overflow-y-auto">
+                        ${dealsInStage.map(deal => createDealCard(deal)).join('')}
+                    </div>
+                `;
                 board.appendChild(col);
             });
         }
 
+        function createDealCard(deal) {
+            const conta = state.accounts.find(a => a.id === deal.accountId)?.nome || 'Sem conta';
+            const prod = state.products.find(p => p.id === deal.productId)?.name || 'Produto N/A';
+            const setup = deal.setupValue ? `Setup: R$ ${parseFloat(deal.setupValue).toLocaleString('pt-BR')}` : '';
+            const mrr = deal.mrrValue ? `MRR: R$ ${parseFloat(deal.mrrValue).toLocaleString('pt-BR')}` : '';
+            const statusIcon = getCardStatusIcon(deal.id);
+
+            return `
+                <div id="deal-${deal.id}" draggable="true" ondragstart="handleDragStart(event, '${deal.id}')" onclick="openDealModal('${deal.id}')"
+                    class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md cursor-pointer transition relative">
+                    <div class="flex justify-between items-start mb-1">
+                        <div class="font-bold text-gray-800 text-sm pr-2">${deal.title}</div>
+                        <div>${statusIcon}</div>
+                    </div>
+                    <div class="text-xs font-semibold text-blue-600 mb-2">${prod}</div>
+                    <div class="text-[11px] text-gray-600 space-y-0.5 mb-2">
+                        <div><strong>${setup}</strong></div>
+                        <div><strong>${mrr}</strong></div>
+                    </div>
+                    <div class="text-xs text-gray-500">
+                        <i class="fa-solid fa-building mr-1"></i> ${conta}
+                    </div>
+                </div>
+            `;
+        }
+
+        function getCardStatusIcon(dealId) {
+            const today = new Date().toISOString().split('T')[0];
+            const dealTasks = state.tasks.filter(t => t.dealId === dealId);
+            if (dealTasks.length === 0) return `<span title="Sem tarefas agendadas!" class="text-amber-500 font-bold"><i class="fa-solid fa-triangle-exclamation"></i></span>`;
+            const openTasks = dealTasks.filter(t => !t.completed);
+            if (openTasks.length === 0) return `<span title="Atividades concluídas!" class="text-emerald-500 font-bold"><i class="fa-solid fa-circle-check"></i></span>`;
+            if (openTasks.some(t => t.dueDate < today)) return `<span title="Atividade Atrasada!" class="text-rose-600 font-bold"><i class="fa-solid fa-circle-exclamation"></i></span>`;
+            if (openTasks.some(t => t.dueDate === today)) return `<span title="Atividade para HOJE!" class="text-blue-600 font-bold"><i class="fa-solid fa-clock"></i></span>`;
+            return `<span title="Tarefa futura agendada" class="text-emerald-600 font-bold"><i class="fa-solid fa-circle-check"></i></span>`;
+        }
+
+        let pendingMove = null;
+        function handleDragStart(e, id) { e.dataTransfer.setData('text/plain', id); }
+        function handleDragOver(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+        function handleDragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+
+        function handleDrop(e, targetStageId, funnelId) {
+            e.preventDefault(); e.currentTarget.classList.remove('drag-over');
+            const dealId = e.dataTransfer.getData('text/plain');
+            const deal = state.deals.find(d => d.id === dealId);
+            const currentFunnel = state.funnels.find(f => f.id === funnelId);
+            const targetStage = currentFunnel.stages.find(s => s.id === targetStageId);
+            if (!deal || deal.stageId === targetStageId) return;
+
+            const openTask = state.tasks.find(t => t.dealId === deal.id && !t.completed);
+            const prevTaskInfoDiv = document.getElementById('trans-previous-task-info');
+            if (openTask) {
+                prevTaskInfoDiv.innerHTML = `<strong>Tarefa:</strong> ${openTask.title} (Vencimento: ${openTask.dueDate})`;
+                document.getElementById('trans-current-comment').value = openTask.comment || '';
+            } else {
+                prevTaskInfoDiv.innerHTML = `<em>Nenhuma tarefa em aberto.</em>`;
+                document.getElementById('trans-current-comment').value = '';
+            }
+
+            pendingMove = { dealId, targetStageId, targetStageName: targetStage.name.toLowerCase(), openTaskId: openTask?.id };
+            if (pendingMove.targetStageName === 'perdido') {
+                populateLossReasonsSelect(); document.getElementById('modal-record-loss').classList.remove('hidden');
+            } else {
+                document.getElementById('trans-next-title').value = ''; document.getElementById('trans-next-date').value = '';
+                document.getElementById('trans-next-comment').value = ''; document.getElementById('modal-stage-transition').classList.remove('hidden');
+            }
+        }
+
+        async function confirmStageTransition(e) {
+            e.preventDefault();
+            const deal = state.deals.find(d => d.id === pendingMove.dealId);
+            const currentComment = document.getElementById('trans-current-comment').value;
+            const nextTitle = document.getElementById('trans-next-title').value;
+            const nextDate = document.getElementById('trans-next-date').value;
+            const nextComment = document.getElementById('trans-next-comment').value;
+
+            if (pendingMove.openTaskId) {
+                await _supabase.from('tasks').update({ completed: true, comment: currentComment }).eq('id', pendingMove.openTaskId);
+            }
+            await _supabase.from('tasks').insert({
+                id: Date.now().toString(), deal_id: deal.id, title: nextTitle, due_date: nextDate, comment: nextComment, completed: false, created_at: new Date().toISOString()
+            });
+
+            const newNote = { date: new Date().toLocaleString(), author: state.currentUser.name, text: `[AVANÇO DE ETAPA] Concluído: ${currentComment} | Próximo Passo: ${nextTitle} (${nextDate})` };
+            const updatedNotes = [...(deal.notes || []), newNote];
+            closeModal('modal-stage-transition');
+            
+            // ANIMAÇÃO DE CONFETI PARA A ETAPA GANHO
+            if (pendingMove.targetStageName === 'ganho') {
+                confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
+            }
+
+            await executeDealMove({ notes: updatedNotes });
+        }
+
+        async function confirmLossTransition(e) {
+            e.preventDefault();
+            closeModal('modal-record-loss');
+            await executeDealMove({ loss_reason_id: document.getElementById('loss-reason-select').value, loss_description: document.getElementById('loss-description-input').value });
+        }
+
+        async function executeDealMove(extraData = {}) {
+            if (!pendingMove) return;
+            const deal = state.deals.find(d => d.id === pendingMove.dealId);
+            const currentFunnel = state.funnels.find(f => f.id === deal.funnelId) || state.funnels[0];
+            const oldStageName = currentFunnel.stages.find(s => s.id === deal.stageId)?.name || 'Lead';
+            const newStageName = currentFunnel.stages.find(s => s.id === pendingMove.targetStageId)?.name || 'Nova Etapa';
+
+            const newHistoryItem = { date: new Date().toLocaleString(), from: oldStageName, to: newStageName, author: state.currentUser.name };
+            const updatedHistory = [...(deal.history || []), newHistoryItem];
+
+            await _supabase.from('deals').update({ stage_id: pendingMove.targetStageId, updated_at: new Date().toISOString(), history: updatedHistory, ...extraData }).eq('id', deal.id);
+            await fetchAllDataFromSupabase(); renderKanban(); pendingMove = null;
+        }
+
+        // GESTÃO DE FUNIS
+        function renderFunnels() {
+            const grid = document.getElementById('funnels-grid');
+            if (state.funnels.length === 0) {
+                grid.innerHTML = '<div class="col-span-2 p-8 text-center text-gray-500 font-bold bg-white rounded-xl shadow border">Nenhum funil cadastrado. Clique no botão acima para criar o seu primeiro funil.</div>';
+                return;
+            }
+
+            grid.innerHTML = state.funnels.map(f => `
+                <div class="bg-white p-5 rounded-xl shadow border ${!f.active ? 'opacity-60' : ''}">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <h3 class="font-bold text-gray-800 text-base">${f.name}</h3>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${f.active ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+                                ${f.active ? 'ATIVO' : 'INATIVO'}
+                            </span>
+                        </div>
+                        <div class="space-x-2">
+                            <button onclick="openFunnelModal('${f.id}')" class="text-blue-600"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteFunnel('${f.id}')" class="text-red-600"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="text-xs text-gray-600 mb-3">
+                        <strong>Usuários:</strong> ${f.userIds.map(uid => state.users.find(u => u.id === uid)?.name || 'N/A').join(', ')}
+                    </div>
+                    <div class="text-xs font-bold text-gray-700 uppercase mb-1">Etapas:</div>
+                    <div class="flex flex-wrap gap-1">
+                        ${(f.stages || []).map(s => `
+                            <span class="px-2 py-1 rounded text-[10px] font-bold border ${s.name.toLowerCase() === 'ganho' ? 'bg-emerald-100 text-emerald-800 border-emerald-300' : s.name.toLowerCase() === 'perdido' ? 'bg-rose-100 text-rose-800 border-rose-300' : 'bg-gray-100 text-gray-700'}">
+                                ${s.name}
+                            </span>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openFunnelModal(id = null) {
+            document.getElementById('funnel-id').value = id || '';
+            document.getElementById('funnel-nome').value = '';
+            document.getElementById('funnel-ativo').checked = true;
+
+            const usersDiv = document.getElementById('funnel-users-checkboxes');
+            usersDiv.innerHTML = state.users.map(u => `
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" name="funnel-user-cb" value="${u.id}" class="rounded">
+                    <span>${u.name} (${u.role})</span>
+                </label>
+            `).join('');
+
+            const stagesContainer = document.getElementById('funnel-stages-container');
+            stagesContainer.innerHTML = '';
+
+            if (id) {
+                const f = state.funnels.find(x => x.id === id);
+                if (f) {
+                    document.getElementById('funnel-nome').value = f.name;
+                    document.getElementById('funnel-ativo').checked = f.active;
+                    document.querySelectorAll('input[name="funnel-user-cb"]').forEach(cb => { cb.checked = f.userIds.includes(cb.value); });
+                    (f.stages || []).forEach(s => addStageInputRow(s.name));
+                }
+            } else {
+                ['Lead', 'Prospect', 'Oportunidade', 'Proposta', 'Ganho', 'Perdido'].forEach(sName => addStageInputRow(sName));
+            }
+            document.getElementById('modal-funnel').classList.remove('hidden');
+        }
+
+        function addStageInputRow(name = '') {
+            const container = document.getElementById('funnel-stages-container');
+            const row = document.createElement('div');
+            row.className = 'flex items-center space-x-2 stage-input-row';
+            row.innerHTML = `
+                <input type="text" value="${name}" required class="flex-1 p-2 border rounded-lg text-xs" placeholder="Nome da etapa">
+                <button type="button" onclick="this.parentElement.remove()" class="text-red-500 font-bold text-xs"><i class="fa-solid fa-xmark"></i></button>
+            `;
+            container.appendChild(row);
+        }
+
+        async function saveFunnel(e) {
+            e.preventDefault();
+            const id = document.getElementById('funnel-id').value || Date.now().toString();
+            const name = document.getElementById('funnel-nome').value;
+            const active = document.getElementById('funnel-ativo').checked;
+            const userIds = Array.from(document.querySelectorAll('input[name="funnel-user-cb"]:checked')).map(cb => cb.value);
+            const stages = Array.from(document.querySelectorAll('.stage-input-row input')).map((inp, idx) => ({ id: (idx + 1).toString(), name: inp.value.trim() }));
+
+            await _supabase.from('funnels').upsert({ id, name, active, user_ids: userIds, stages });
+            await fetchAllDataFromSupabase();
+            closeModal('modal-funnel');
+            renderFunnels();
+            setupPipelineFilters();
+        }
+
+        async function deleteFunnel(id) {
+            if (confirm('Deseja excluir este funil?')) {
+                await _supabase.from('funnels').delete().eq('id', id);
+                await fetchAllDataFromSupabase();
+                renderFunnels();
+                setupPipelineFilters();
+            }
+        }
+
+        // AUXILIARES DIVERSOS
+        function addPhoneRow(containerId, number = '', type = 'Celular') {
+            const container = document.getElementById(containerId);
+            const row = document.createElement('div');
+            row.className = 'flex items-center space-x-2 phone-row';
+            row.innerHTML = `<select class="p-1.5 border rounded text-xs bg-gray-50 phone-type"><option value="Celular" ${type === 'Celular' ? 'selected' : ''}>Celular</option><option value="Fixo" ${type === 'Fixo' ? 'selected' : ''}>Fixo</option><option value="WhatsApp" ${type === 'WhatsApp' ? 'selected' : ''}>WhatsApp</option></select><input type="text" value="${number}" placeholder="(00) 00000-0000" class="flex-1 p-1.5 border rounded text-xs phone-number"><button type="button" onclick="this.parentElement.remove()" class="text-red-500 font-bold text-xs"><i class="fa-solid fa-xmark"></i></button>`;
+            container.appendChild(row);
+        }
+
+        function addEmailRow(containerId, email = '', type = 'Comercial') {
+            const container = document.getElementById(containerId);
+            const row = document.createElement('div');
+            row.className = 'flex items-center space-x-2 email-row';
+            row.innerHTML = `<select class="p-1.5 border rounded text-xs bg-gray-50 email-type"><option value="Comercial" ${type === 'Comercial' ? 'selected' : ''}>Comercial</option><option value="Pessoal" ${type === 'Pessoal' ? 'selected' : ''}>Pessoal</option><option value="Financeiro" ${type === 'Financeiro' ? 'selected' : ''}>Financeiro</option></select><input type="email" value="${email}" placeholder="email@dominio.com" class="flex-1 p-1.5 border rounded text-xs email-value"><button type="button" onclick="this.parentElement.remove()" class="text-red-500 font-bold text-xs"><i class="fa-solid fa-xmark"></i></button>`;
+            container.appendChild(row);
+        }
+
+        function openPlansModal() { document.getElementById('modal-plans').classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        function checkOverdueTasksAlert() {
+            const today = new Date().toISOString().split('T')[0];
+            const count = state.tasks.filter(t => t.dueDate <= today && !t.completed).length;
+            const badge = document.getElementById('badge-overdue-tasks');
+            if (count > 0) { badge.textContent = count; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); }
+        }
+
         function renderAccounts() {
-            document.getElementById('table-contas-body').innerHTML = state.accounts.map(a => `<tr class="hover:bg-gray-50"><td class="p-4 font-semibold">${a.nome}</td><td class="p-4">${a.razao || '-'}</td><td class="p-4">${(a.phones || []).map(p=>p.number).join(', ')}</td><td class="p-4">${(a.emails || []).map(e=>e.email).join(', ')}</td><td class="p-4">-</td><td class="p-4"></td></tr>`).join('');
+            document.getElementById('table-contas-body').innerHTML = state.accounts.map(a => `<tr class="hover:bg-gray-50"><td class="p-4 font-semibold">${a.nome}</td><td class="p-4">${a.razao || '-'}</td><td class="p-4 text-xs">${(a.phones || []).map(p=>p.number).join(', ')}</td><td class="p-4 text-xs">${(a.emails || []).map(e=>e.email).join(', ')}</td><td class="p-4 text-xs">-</td><td class="p-4"></td></tr>`).join('');
         }
 
         function renderContacts() {
-            document.getElementById('table-contatos-body').innerHTML = state.contacts.map(c => `<tr class="hover:bg-gray-50"><td class="p-4 font-semibold">${c.nome}</td><td class="p-4">${c.cargo || '-'}</td><td class="p-4">${(c.phones || []).map(p=>p.number).join(', ')}</td><td class="p-4">${(c.emails || []).map(e=>e.email).join(', ')}</td><td class="p-4">-</td><td class="p-4"></td></tr>`).join('');
+            document.getElementById('table-contatos-body').innerHTML = state.contacts.map(c => `<tr class="hover:bg-gray-50"><td class="p-4 font-semibold">${c.nome}</td><td class="p-4 text-xs">${c.cargo || '-'}</td><td class="p-4 text-xs">${(c.phones || []).map(p=>p.number).join(', ')}</td><td class="p-4 text-xs">${(c.emails || []).map(e=>e.email).join(', ')}</td><td class="p-4 text-xs">-</td><td class="p-4"></td></tr>`).join('');
         }
 
         function renderCadastrosAdmin() {
             document.getElementById('list-qualifications').innerHTML = state.qualifications.map(q => `<div class="p-2 bg-purple-50 border rounded text-xs">${q.question}</div>`).join('');
+            document.getElementById('list-products').innerHTML = state.products.map(p => `<div class="p-2 bg-gray-50 border rounded text-xs">${p.name}</div>`).join('');
+            document.getElementById('list-loss-reasons').innerHTML = state.lossReasons.map(r => `<div class="p-2 bg-gray-50 border rounded text-xs">${r.name}</div>`).join('');
+            document.getElementById('list-origins').innerHTML = state.origins.map(o => `<div class="p-2 bg-gray-50 border rounded text-xs">${o.name}</div>`).join('');
+        }
+
+        function renderTasks() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('tasks-container').innerHTML = state.tasks.length === 0 ? '<p class="text-gray-500 text-sm">Nenhuma tarefa agendada.</p>' :
+                state.tasks.map(t => `<div class="p-3 border rounded-lg text-xs font-bold">${t.title} - Vencimento: ${t.dueDate}</div>`).join('');
+        }
+
+        function renderAnalytics() {
+            document.getElementById('analytics-conversion-rate').textContent = '0%';
+        }
+
+        function renderUsers() {
+            document.getElementById('table-vendedores-body').innerHTML = state.users.map(u => `<tr class="hover:bg-gray-50"><td class="p-4 font-semibold">${u.name}</td><td class="p-4 text-xs">${u.email}</td><td class="p-4 text-xs">${u.role}</td><td class="p-4 text-xs">${u.active ? 'Ativo' : 'Inativo'}</td><td class="p-4"></td></tr>`).join('');
         }
     </script>
 </body>
