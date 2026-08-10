@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IA-CRM V.1.3.1 - Multi-Tenant SaaS Edition</title>
+    <title>IA-CRM V.1.3.1 - SaaS Edition</title>
     <!-- Tailwind CSS CDN -->
-    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css)">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- SheetJS (XLSX/CSV Export & Import) -->
-    <script src="[https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js](https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js)"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <!-- Supabase JS Client v2 -->
-    <script src="[https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2](https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2)"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Chart.js para Gráficos -->
-    <script src="[https://cdn.jsdelivr.net/npm/chart.js](https://cdn.jsdelivr.net/npm/chart.js)"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         .kanban-column { min-height: 70vh; }
         .sidebar-collapsed { width: 5rem !important; }
@@ -24,7 +24,7 @@
 <body class="bg-gray-100 font-sans text-gray-800 flex flex-col min-h-screen">
 
     <!-- TELA DE LOGIN -->
-    <div id="login-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-between bg-cover bg-center p-6" style="background-image: linear-gradient(rgba(15, 23, 42, 0.88), rgba(15, 23, 42, 0.88)), url('[https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1920&q=80](https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1920&q=80)');">
+    <div id="login-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-between bg-cover bg-center p-6" style="background-image: linear-gradient(rgba(15, 23, 42, 0.88), rgba(15, 23, 42, 0.88)), url('https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1920&q=80');">
         <div></div>
 
         <div class="w-full max-w-md p-8 bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-white/20">
@@ -36,6 +36,7 @@
                 <p class="text-xs font-semibold text-blue-600 mt-1 uppercase tracking-wider">A Plataforma Comercial Inteligente</p>
             </div>
 
+            <!-- FORMULARIO DE LOGIN -->
             <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-gray-700 uppercase mb-1">E-mail</label>
@@ -62,7 +63,7 @@
         </div>
 
         <footer class="text-center text-slate-300 text-xs py-2">
-            Criado por <a href="[https://www.linkedin.com/in/rafaelrobertonascimento](https://www.linkedin.com/in/rafaelrobertonascimento)" target="_blank" class="text-blue-400 font-bold hover:underline inline-flex items-center gap-1">
+            Criado por <a href="https://www.linkedin.com/in/rafaelrobertonascimento" target="_blank" class="text-blue-400 font-bold hover:underline inline-flex items-center gap-1">
                 Rafael Roberto Nascimento <i class="fa-brands fa-linkedin text-sm"></i>
             </a>
         </footer>
@@ -151,7 +152,7 @@
                             <li class="flex items-center font-bold text-blue-700"><i class="fa-solid fa-wand-magic-sparkles text-purple-600 mr-2"></i> Recurso de IA Liberado</li>
                         </ul>
                     </div>
-                    <a href="[https://wa.me/5562996323618?text=Olá!%20Quero%20fazer%20upgrade%20para%20o%20Plano%20Professional](https://wa.me/5562996323618?text=Olá!%20Quero%20fazer%20upgrade%20para%20o%20Plano%20Professional)." target="_blank" class="w-full py-2.5 text-center bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-lg shadow transition">Fazer Upgrade</a>
+                    <a href="https://wa.me/5562996323618?text=Olá!%20Quero%20fazer%20upgrade%20para%20o%20Plano%20Professional." target="_blank" class="w-full py-2.5 text-center bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-lg shadow transition">Fazer Upgrade</a>
                 </div>
 
                 <div class="border rounded-xl p-5 flex flex-col justify-between hover:border-purple-500 transition shadow-sm">
@@ -163,7 +164,7 @@
                             <li class="flex items-center font-bold text-purple-700"><i class="fa-solid fa-wand-magic-sparkles text-purple-600 mr-2"></i> IA Sem Limites de Uso</li>
                         </ul>
                     </div>
-                    <a href="[https://wa.me/5562996323618?text=Olá!%20Tenho%20interesse%20no%20Plano%20Enterprise](https://wa.me/5562996323618?text=Olá!%20Tenho%20interesse%20no%20Plano%20Enterprise)." target="_blank" class="w-full py-2.5 text-center bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs rounded-lg transition">Falar com Consultor</a>
+                    <a href="https://wa.me/5562996323618?text=Olá!%20Tenho%20interesse%20no%20Plano%20Enterprise." target="_blank" class="w-full py-2.5 text-center bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs rounded-lg transition">Falar com Consultor</a>
                 </div>
             </div>
         </div>
@@ -183,7 +184,7 @@
             
             <div class="flex items-center space-x-4">
                 <div onclick="openProfileModal()" class="flex items-center space-x-3 cursor-pointer hover:bg-slate-800 p-1.5 rounded-lg transition">
-                    <img id="user-display-avatar" src="[https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff](https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff)" class="w-8 h-8 rounded-full border border-blue-400 object-cover">
+                    <img id="user-display-avatar" src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff" class="w-8 h-8 rounded-full border border-blue-400 object-cover">
                     <div class="text-right">
                         <div id="user-display-name" class="font-bold text-sm"></div>
                         <div id="user-display-role" class="text-xs text-blue-400 font-semibold"></div>
@@ -296,7 +297,7 @@
 
     <!-- SCRIPT PRINCIPAL E OPERACIONAL -->
     <script>
-        const SUPABASE_URL = '[https://swphiblxorwigoywzyiu.supabase.co](https://swphiblxorwigoywzyiu.supabase.co)';
+        const SUPABASE_URL = 'https://swphiblxorwigoywzyiu.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_6rNK9nsaERw5uC8MR0eHvg_gnFE_2zA';
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
