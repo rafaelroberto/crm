@@ -3,15 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IA-CRM V.1.2.0 - Supabase Edition</title>
+    <title>IA-CRM V.1.3.0 - Multi-Tenant SaaS Edition</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- SheetJS (XLSX/CSV Export & Import) -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <!-- Canvas Confetti CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <!-- Supabase JS Client v2 -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Chart.js para Gráficos -->
@@ -25,7 +23,7 @@
 </head>
 <body class="bg-gray-100 font-sans text-gray-800 flex flex-col min-h-screen">
 
-    <!-- TELA DE LOGIN -->
+    <!-- TELA DE LOGIN & CADASTRO SAAS -->
     <div id="login-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-between bg-cover bg-center p-6" style="background-image: linear-gradient(rgba(15, 23, 42, 0.88), rgba(15, 23, 42, 0.88)), url('https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1920&q=80');">
         <div></div>
 
@@ -35,9 +33,10 @@
                     <i class="fa-solid fa-chart-line text-2xl"></i>
                 </div>
                 <h1 class="text-2xl font-bold text-gray-900 tracking-tight">IA-CRM</h1>
-                <p class="text-xs font-semibold text-blue-600 mt-1 uppercase tracking-wider">O CRM feito para o vendedor de Alta Performance.</p>
+                <p class="text-xs font-semibold text-blue-600 mt-1 uppercase tracking-wider">A Plataforma Comercial Inteligente</p>
             </div>
 
+            <!-- FORMULARIO DE LOGIN -->
             <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-gray-700 uppercase mb-1">E-mail</label>
@@ -48,14 +47,17 @@
                     <input type="password" id="login-password" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none transition" placeholder="••••••••" value="lifeapps123">
                 </div>
                 <div id="login-error" class="hidden text-red-500 text-xs font-medium text-center"></div>
-                <button type="submit" id="btn-login-submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition duration-200">
+                <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition duration-200">
                     Acessar Plataforma
                 </button>
             </form>
 
-            <div class="mt-6 pt-4 border-t border-gray-200 text-center">
-                <button onclick="openPlansModal()" class="w-full py-2.5 bg-slate-800 hover:bg-slate-900 text-amber-400 font-bold text-xs rounded-lg transition flex items-center justify-center">
-                    <i class="fa-solid fa-gem mr-2"></i> Conhecer Planos & Assinatura
+            <div class="mt-6 pt-4 border-t border-gray-200 space-y-2">
+                <button onclick="openRegisterModal()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg transition flex items-center justify-center">
+                    <i class="fa-solid fa-rocket mr-2"></i> Criar Conta Grátis (Plano Basic)
+                </button>
+                <button onclick="openPlansModal()" class="w-full py-2 bg-slate-800 hover:bg-slate-900 text-amber-400 font-bold text-xs rounded-lg transition flex items-center justify-center">
+                    <i class="fa-solid fa-gem mr-2"></i> Conhecer Todos os Planos
                 </button>
             </div>
         </div>
@@ -65,6 +67,47 @@
                 Rafael Roberto Nascimento <i class="fa-brands fa-linkedin text-sm"></i>
             </a>
         </footer>
+    </div>
+
+    <!-- MODAL: CADASTRO DE NOVA EMPRESA (TENANT BASIC GRATUITO) -->
+    <div id="modal-register" class="fixed inset-0 bg-black/75 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto relative">
+            <button onclick="closeModal('modal-register')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="text-center mb-6">
+                <span class="bg-emerald-100 text-emerald-700 text-[10px] font-black px-3 py-1 rounded-full uppercase">100% Gratuito</span>
+                <h2 class="text-xl font-extrabold text-gray-900 mt-2">Cadastre sua Empresa no IA-CRM</h2>
+                <p class="text-xs text-gray-500 mt-1">Plano Basic: Até 3 vendedores, 1 funil e recursos essenciais.</p>
+            </div>
+
+            <form onsubmit="handleRegisterTenant(event)" class="space-y-3">
+                <div class="border-b pb-3 mb-2">
+                    <h3 class="text-xs font-bold text-blue-600 uppercase mb-2"><i class="fa-solid fa-building mr-1"></i> Dados da Empresa</h3>
+                    <div class="space-y-2">
+                        <div><label class="block text-[10px] font-bold text-gray-600 uppercase">Nome / Razão Social *</label><input type="text" id="reg-company-name" required class="w-full p-2 border rounded-lg text-xs"></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div><label class="block text-[10px] font-bold text-gray-600 uppercase">CNPJ *</label><input type="text" id="reg-cnpj" required placeholder="00.000.000/0001-00" class="w-full p-2 border rounded-lg text-xs"></div>
+                            <div><label class="block text-[10px] font-bold text-gray-600 uppercase">Estado (UF) *</label><input type="text" id="reg-uf" required placeholder="GO, SP, RJ..." maxlength="2" class="w-full p-2 border rounded-lg text-xs uppercase"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pb-2">
+                    <h3 class="text-xs font-bold text-blue-600 uppercase mb-2"><i class="fa-solid fa-user-shield mr-1"></i> Usuário Admin da Conta</h3>
+                    <div class="space-y-2">
+                        <div><label class="block text-[10px] font-bold text-gray-600 uppercase">Seu Nome Completo *</label><input type="text" id="reg-user-name" required class="w-full p-2 border rounded-lg text-xs"></div>
+                        <div><label class="block text-[10px] font-bold text-gray-600 uppercase">E-mail de Acesso *</label><input type="email" id="reg-user-email" required class="w-full p-2 border rounded-lg text-xs"></div>
+                        <div><label class="block text-[10px] font-bold text-gray-600 uppercase">Senha *</label><input type="password" id="reg-user-pass" required class="w-full p-2 border rounded-lg text-xs"></div>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs shadow-lg transition">
+                    Finalizar Cadastro & Acessar CRM
+                </button>
+            </form>
+        </div>
     </div>
 
     <!-- MODAL PLANOS DE VENDA -->
@@ -77,53 +120,61 @@
             <div class="text-center mb-8">
                 <span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full uppercase">Tabela de Preços</span>
                 <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900 mt-2">Escolha o Plano Ideal para a sua Equipe</h2>
-                <p class="text-xs text-gray-500 mt-1">Evolua sua operação comercial com inteligência e gestão completa.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- BASIC -->
                 <div class="border rounded-xl p-5 flex flex-col justify-between hover:border-blue-500 transition shadow-sm">
                     <div>
-                        <h3 class="font-bold text-lg text-gray-800">Basic</h3>
-                        <p class="text-xs text-gray-500 mb-4">Para autônomos e pequenos times de vendas.</p>
+                        <div class="flex justify-between items-center mb-1">
+                            <h3 class="font-bold text-lg text-gray-800">Basic</h3>
+                            <span class="text-xs font-black bg-gray-200 px-2 py-0.5 rounded">R$ 0/mês</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-4">Para pequenos times em início de operação.</p>
                         <ul class="space-y-2 text-xs text-gray-600 mb-6">
-                            <li class="flex items-center"><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Gestão de Lead e Kanban</li>
-                            <li class="flex items-center"><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Histórico de Movimentações</li>
-                            <li class="flex items-center"><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Contas & Contatos Ilimitados</li>
-                            <li class="flex items-center font-semibold text-amber-600"><i class="fa-solid fa-filter mr-2"></i> Limite: Apenas 1 Funil</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Até 3 Vendedores</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-emerald-500 mr-2"></i> 1 Funil de Vendas</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Gestão de Contas & Contatos</li>
+                            <li class="flex items-center text-gray-400 line-through"><i class="fa-solid fa-xmark mr-2 text-rose-400"></i> Sugestões com Inteligência Artificial</li>
                         </ul>
                     </div>
-                    <a href="https://wa.me/5562996323618?text=Olá!%20Tenho%20interesse%20em%20assinar%20o%20Plano%20Basic%20do%20IA-CRM." target="_blank" class="w-full py-2.5 text-center bg-gray-800 hover:bg-gray-900 text-white font-bold text-xs rounded-lg transition">Contratar Basic</a>
+                    <button onclick="openRegisterModal()" class="w-full py-2.5 bg-gray-800 hover:bg-gray-900 text-white font-bold text-xs rounded-lg transition">Começar Grátis</button>
                 </div>
 
                 <!-- PROFESSIONAL -->
                 <div class="border-2 border-blue-600 rounded-xl p-5 flex flex-col justify-between shadow-lg relative bg-blue-50/30">
-                    <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[10px] font-black px-3 py-0.5 rounded-full uppercase">Mais Vendido</span>
+                    <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[10px] font-black px-3 py-0.5 rounded-full uppercase">Mais Populares</span>
                     <div>
-                        <h3 class="font-bold text-lg text-gray-900">Professional</h3>
-                        <p class="text-xs text-gray-500 mb-4">Para times comerciais em crescimento acelerado.</p>
+                        <div class="flex justify-between items-center mb-1">
+                            <h3 class="font-bold text-lg text-gray-900">Professional</h3>
+                            <span class="text-xs font-black bg-blue-600 text-white px-2 py-0.5 rounded">R$ 149/mês</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-4">Para operações comerciais aceleradas.</p>
                         <ul class="space-y-2 text-xs text-gray-700 mb-6">
-                            <li class="flex items-center"><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Todos os recursos do Basic</li>
-                            <li class="flex items-center font-bold text-blue-700"><i class="fa-solid fa-wand-magic-sparkles text-purple-600 mr-2"></i> Sugestões de Textos com IA</li>
+                            <li class="flex items-center font-bold"><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Vendedores Ilimitados</li>
                             <li class="flex items-center font-bold text-blue-700"><i class="fa-solid fa-diagram-project mr-2"></i> Até 5 Funis de Vendas</li>
-                            <li class="flex items-center"><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Analytics e Rankings</li>
+                            <li class="flex items-center font-bold text-blue-700"><i class="fa-solid fa-wand-magic-sparkles text-purple-600 mr-2"></i> Recurso de IA Liberado</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Importação de Leads Excel</li>
                         </ul>
                     </div>
-                    <a href="https://wa.me/5562996323618?text=Olá!%20Tenho%20interesse%20em%20assinar%20o%20Plano%20Professional%20do%20IA-CRM." target="_blank" class="w-full py-2.5 text-center bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-lg shadow transition">Contratar Professional</a>
+                    <a href="https://wa.me/5562996323618?text=Olá!%20Quero%20fazer%20upgrade%20para%20o%20Plano%20Professional." target="_blank" class="w-full py-2.5 text-center bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-lg shadow transition">Fazer Upgrade</a>
                 </div>
 
                 <!-- ENTERPRISE -->
                 <div class="border rounded-xl p-5 flex flex-col justify-between hover:border-purple-500 transition shadow-sm">
                     <div>
-                        <h3 class="font-bold text-lg text-gray-800">Enterprise</h3>
-                        <p class="text-xs text-gray-500 mb-4">Para grandes operações e múltiplas equipes.</p>
+                        <div class="flex justify-between items-center mb-1">
+                            <h3 class="font-bold text-lg text-gray-800">Enterprise</h3>
+                            <span class="text-xs font-black bg-purple-200 text-purple-900 px-2 py-0.5 rounded">R$ 299/mês</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-4">Para grandes equipes e múltiplas filiais.</p>
                         <ul class="space-y-2 text-xs text-gray-600 mb-6">
-                            <li class="flex items-center"><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Todos os recursos sem limite</li>
-                            <li class="flex items-center font-bold text-purple-700"><i class="fa-solid fa-infinity mr-2"></i> Vários Funis de Venda Ilimitados</li>
-                            <li class="flex items-center"><i class="fa-solid fa-headset text-emerald-500 mr-2"></i> Suporte Prioritário</li>
+                            <li class="flex items-center font-bold"><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Vendedores & Funis Ilimitados</li>
+                            <li class="flex items-center font-bold text-purple-700"><i class="fa-solid fa-wand-magic-sparkles text-purple-600 mr-2"></i> IA Sem Limites de Uso</li>
+                            <li class="flex items-center"><i class="fa-solid fa-headset text-emerald-500 mr-2"></i> Gerente de Conta Dedicado</li>
                         </ul>
                     </div>
-                    <a href="https://wa.me/5562996323618?text=Olá!%20Tenho%20interesse%20em%20assinar%20o%20Plano%20Enterprise%20do%20IA-CRM." target="_blank" class="w-full py-2.5 text-center bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs rounded-lg transition">Contratar Enterprise</a>
+                    <a href="https://wa.me/5562996323618?text=Olá!%20Tenho%20interesse%20no%20Plano%20Enterprise." target="_blank" class="w-full py-2.5 text-center bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs rounded-lg transition">Falar com Consultor</a>
                 </div>
             </div>
         </div>
@@ -137,7 +188,10 @@
                     <i class="fa-solid fa-bars text-lg"></i>
                 </button>
                 <div class="bg-blue-600 p-2 rounded-lg"><i class="fa-solid fa-chart-line text-lg"></i></div>
-                <span class="font-bold text-lg tracking-wide">IA-CRM</span>
+                <div>
+                    <span class="font-bold text-lg tracking-wide block leading-none">IA-CRM</span>
+                    <span id="display-tenant-name" class="text-[10px] text-emerald-400 font-bold uppercase"></span>
+                </div>
             </div>
             
             <div class="flex items-center space-x-4">
@@ -161,12 +215,6 @@
                     <button onclick="switchTab('vendas')" id="nav-vendas" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium hover:bg-slate-700 transition" title="Funil de Vendas">
                         <i class="fa-solid fa-filter w-5 text-blue-400"></i><span class="sidebar-text">Funil de Vendas</span>
                     </button>
-                    <button onclick="switchTab('tarefas')" id="nav-tarefas" class="w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm font-medium hover:bg-slate-700 transition" title="Tarefas & Follow-up">
-                        <div class="flex items-center space-x-3">
-                            <i class="fa-solid fa-list-check w-5 text-blue-400"></i><span class="sidebar-text">Tarefas & Follow-up</span>
-                        </div>
-                        <span id="badge-overdue-tasks" class="hidden bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
-                    </button>
                     <button onclick="switchTab('contas')" id="nav-contas" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium hover:bg-slate-700 transition" title="Contas (Empresas)">
                         <i class="fa-solid fa-building w-5 text-blue-400"></i><span class="sidebar-text">Contas (Empresas)</span>
                     </button>
@@ -174,20 +222,19 @@
                         <i class="fa-solid fa-address-book w-5 text-blue-400"></i><span class="sidebar-text">Contatos (Pessoas)</span>
                     </button>
 
+                    <!-- MENU CLIENTE ADMIN -->
                     <div id="admin-menu" class="hidden pt-4 mt-4 border-t border-slate-700">
                         <div class="px-4 text-xs font-bold uppercase text-slate-500 mb-2 admin-title">Painel de Gestão</div>
-                        <button onclick="switchTab('analytics')" id="nav-analytics" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium hover:bg-slate-700 transition" title="KPIs & Analytics">
-                            <i class="fa-solid fa-chart-pie w-5 text-emerald-400"></i><span class="sidebar-text">KPIs & Analytics</span>
-                        </button>
-                        <button onclick="switchTab('funis')" id="nav-funis" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium hover:bg-slate-700 transition" title="Gestão de Funis">
-                            <i class="fa-solid fa-diagram-project w-5 text-amber-400"></i><span class="sidebar-text">Gestão de Funis</span>
-                        </button>
-                        <button onclick="switchTab('vendedores')" id="nav-vendedores" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium hover:bg-slate-700 transition" title="Vendedores">
-                            <i class="fa-solid fa-users-gear w-5 text-amber-400"></i><span class="sidebar-text">Vendedores</span>
-                        </button>
-                        <button onclick="switchTab('cadastros-admin')" id="nav-cadastros-admin" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium hover:bg-slate-700 transition" title="Parâmetros">
-                            <i class="fa-solid fa-boxes-packing w-5 text-amber-400"></i><span class="sidebar-text">Parâmetros</span>
-                        </button>
+                        <button onclick="switchTab('analytics')" id="nav-analytics" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium hover:bg-slate-700 transition"><i class="fa-solid fa-chart-pie w-5 text-emerald-400"></i><span class="sidebar-text">KPIs & Analytics</span></button>
+                        <button onclick="switchTab('funis')" id="nav-funis" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium hover:bg-slate-700 transition"><i class="fa-solid fa-diagram-project w-5 text-amber-400"></i><span class="sidebar-text">Gestão de Funis</span></button>
+                        <button onclick="switchTab('vendedores')" id="nav-vendedores" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium hover:bg-slate-700 transition"><i class="fa-solid fa-users-gear w-5 text-amber-400"></i><span class="sidebar-text">Vendedores</span></button>
+                        <button onclick="switchTab('minha-assinatura')" id="nav-minha-assinatura" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium hover:bg-slate-700 transition"><i class="fa-solid fa-crown w-5 text-yellow-400"></i><span class="sidebar-text">Minha Assinatura</span></button>
+                    </div>
+
+                    <!-- MENU SUPERADMIN (EXCLUSIVO PARA VOCÊ, DONO DO SAAS) -->
+                    <div id="superadmin-menu" class="hidden pt-4 mt-4 border-t border-yellow-500/30">
+                        <div class="px-4 text-[10px] font-black uppercase text-yellow-400 mb-2 admin-title tracking-wider">Master CRM (Dono)</div>
+                        <button onclick="switchTab('master-saas')" id="nav-master-saas" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-bold bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 transition"><i class="fa-solid fa-gears w-5"></i><span class="sidebar-text">Gestão de Clientes SaaS</span></button>
                     </div>
                 </nav>
             </aside>
@@ -219,446 +266,138 @@
                     <div id="kanban-board" class="flex space-x-4 overflow-x-auto pb-4"></div>
                 </section>
 
-                <!-- VIEW: ANALYTICS & KPIS + IMPORTAÇÃO DE LEADS EM MASSA -->
-                <section id="view-analytics" class="tab-content hidden">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 bg-white p-5 rounded-xl shadow-sm border">
+                <!-- VIEW: MINHA ASSINATURA (PAINEL DO CLIENTE) -->
+                <section id="view-minha-assinatura" class="tab-content hidden">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Minha Assinatura & Limites do Plano</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-white p-6 rounded-xl shadow border">
+                            <div class="text-xs font-bold text-gray-500 uppercase">Plano Atual</div>
+                            <div id="sub-plan-name" class="text-2xl font-black text-blue-600 mt-1">BASIC</div>
+                            <div id="sub-plan-status" class="mt-2 inline-block px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-bold rounded">Ativa</div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-xl shadow border">
+                            <div class="text-xs font-bold text-gray-500 uppercase">Vendedores Cadastrados</div>
+                            <div id="sub-users-usage" class="text-2xl font-black text-gray-800 mt-1">0 / 3</div>
+                            <div class="w-full bg-gray-200 rounded-full h-1.5 mt-3"><div id="sub-users-bar" class="bg-blue-600 h-1.5 rounded-full" style="width: 0%"></div></div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-xl shadow border">
+                            <div class="text-xs font-bold text-gray-500 uppercase">Funis de Venda Ativos</div>
+                            <div id="sub-funnels-usage" class="text-2xl font-black text-gray-800 mt-1">0 / 1</div>
+                            <div class="w-full bg-gray-200 rounded-full h-1.5 mt-3"><div id="sub-funnels-bar" class="bg-blue-600 h-1.5 rounded-full" style="width: 0%"></div></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-blue-900 to-indigo-900 text-white p-8 rounded-2xl shadow-xl flex flex-col md:flex-row justify-between items-center gap-6">
                         <div>
-                            <h2 class="text-2xl font-bold text-gray-800">Painel Geral de Analytics & KPIs</h2>
-                            <p class="text-xs text-gray-500">Acompanhe a performance por equipe ou vendedor específico.</p>
+                            <span class="bg-yellow-400 text-slate-900 text-[10px] font-black px-3 py-1 rounded-full uppercase">Evolua seu Negócio</span>
+                            <h3 class="text-xl font-bold mt-2">Precisa cadastrar mais vendedores ou liberar IA?</h3>
+                            <p class="text-xs text-blue-200 mt-1">Migre para o Plano Professional e destrave todos os recursos sem limitações.</p>
                         </div>
-                        <div class="flex items-center space-x-3">
-                            <button onclick="openImportModal()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow flex items-center">
-                                <i class="fa-solid fa-file-excel mr-2 text-sm"></i> Subir Lista de Leads (Excel)
-                            </button>
-                            <div>
-                                <select id="analytics-seller-filter" onchange="renderAnalytics()" class="p-2.5 border rounded-lg text-xs font-bold bg-blue-50 border-blue-300 text-blue-900 focus:outline-none">
-                                    <option value="all">Todos os Vendedores</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                        <div class="bg-blue-600 text-white p-5 rounded-xl shadow">
-                            <div class="text-xs font-bold uppercase opacity-80">Taxa de Conversão</div>
-                            <div id="analytics-conversion-rate" class="text-3xl font-black mt-1">0%</div>
-                        </div>
-                        <div class="bg-white p-5 rounded-xl shadow border">
-                            <div class="text-xs font-bold uppercase text-gray-500">Oportunidades Abertas</div>
-                            <div id="analytics-open-count" class="text-3xl font-black text-gray-800 mt-1">0</div>
-                            <div id="analytics-open-value" class="text-[11px] text-blue-600 font-bold mt-2">R$ 0,00</div>
-                        </div>
-                        <div class="bg-white p-5 rounded-xl shadow border">
-                            <div class="text-xs font-bold uppercase text-gray-500">Oportunidades Ganhas</div>
-                            <div id="analytics-won-count" class="text-3xl font-black text-emerald-600 mt-1">0</div>
-                            <div id="analytics-won-value" class="text-[11px] text-emerald-600 font-bold mt-2">R$ 0,00</div>
-                        </div>
-                        <div class="bg-white p-5 rounded-xl shadow border">
-                            <div class="text-xs font-bold uppercase text-gray-500">Oportunidades Perdidas</div>
-                            <div id="analytics-lost-count" class="text-3xl font-black text-rose-600 mt-1">0</div>
-                            <div id="analytics-lost-value" class="text-[11px] text-rose-600 font-bold mt-2">R$ 0,00</div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-5 rounded-xl shadow border mb-6">
-                        <h3 class="font-bold text-base text-gray-800 mb-4 flex items-center">
-                            <i class="fa-solid fa-chart-line text-blue-600 mr-2"></i> Evolução Mensal: Oportunidades Criadas vs Ganhas vs Perdidas
-                        </h3>
-                        <div class="relative h-72 w-full">
-                            <canvas id="monthlyTrendChart"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="bg-white p-5 rounded-xl shadow border">
-                            <h3 class="font-bold text-base text-gray-800 mb-4 flex items-center">
-                                <i class="fa-solid fa-trophy text-amber-500 mr-2"></i> Desempenho do Vendedor
-                            </h3>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left text-xs">
-                                    <thead class="bg-gray-50 font-bold text-gray-600 uppercase border-b">
-                                        <tr>
-                                            <th class="p-2">Vendedor</th>
-                                            <th class="p-2 text-center">Ganhos</th>
-                                            <th class="p-2 text-right">Valor Setup</th>
-                                            <th class="p-2 text-right">Valor MRR</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="analytics-seller-ranking-body" class="divide-y"></tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div class="bg-white p-5 rounded-xl shadow border">
-                            <h3 class="font-bold text-base text-gray-800 mb-4 flex items-center">
-                                <i class="fa-solid fa-chart-pie text-rose-500 mr-2"></i> Motivos de Perda Recorrentes
-                            </h3>
-                            <div id="analytics-loss-reasons-list" class="space-y-2 text-xs"></div>
-                        </div>
+                        <button onclick="openPlansModal()" class="px-6 py-3 bg-amber-400 hover:bg-amber-500 text-slate-900 font-extrabold text-xs rounded-xl shadow-lg transition">
+                            Ver Opções de Upgrade
+                        </button>
                     </div>
                 </section>
 
-                <section id="view-funis" class="tab-content hidden">
+                <!-- VIEW: MASTER SAAS (SUPERADMIN - PAINEL DO DONO DO CRM) -->
+                <section id="view-master-saas" class="tab-content hidden">
                     <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-bold text-gray-800">Gestão de Funis de Vendas</h2>
-                        <button onclick="openFunnelModal()" class="px-4 py-2 bg-amber-600 text-white rounded-lg text-xs font-bold shadow">+ Criar Novo Funil</button>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900">Painel Master de Clientes (SaaS Owner)</h2>
+                            <p class="text-xs text-gray-500">Gerencie todas as empresas clientes, assinaturas, planos e pagamentos.</p>
+                        </div>
                     </div>
-                    <div id="funnels-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
-                </section>
 
-                <section id="view-tarefas" class="tab-content hidden">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Tarefas & Follow-up Agendados</h2>
-                    <div class="bg-white rounded-xl shadow p-6 max-w-4xl">
-                        <div id="tasks-container" class="space-y-3"></div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-slate-900 text-white p-6 rounded-xl shadow">
+                            <div class="text-xs font-bold uppercase text-slate-400">Total de Empresas Clientes</div>
+                            <div id="master-total-tenants" class="text-3xl font-black mt-1">0</div>
+                        </div>
+                        <div class="bg-emerald-600 text-white p-6 rounded-xl shadow">
+                            <div class="text-xs font-bold uppercase opacity-80">MRR Recorrente Estimado</div>
+                            <div id="master-mrr-value" class="text-3xl font-black mt-1">R$ 0,00</div>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow border">
+                            <div class="text-xs font-bold uppercase text-gray-500">Clientes no Plano Basic (Gratuito)</div>
+                            <div id="master-basic-count" class="text-3xl font-black text-gray-800 mt-1">0</div>
+                        </div>
                     </div>
-                </section>
 
-                <section id="view-cadastros-admin" class="tab-content hidden">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Parâmetros Gerais do CRM</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div class="bg-white p-5 rounded-xl shadow border">
-                            <div class="flex justify-between items-center mb-4"><h3 class="font-bold text-sm text-gray-800">Perguntas Qualificação</h3><button onclick="openQualModal()" class="px-2 py-1 bg-purple-600 text-white rounded text-xs font-bold">+ Criar</button></div>
-                            <div id="list-qualifications" class="space-y-2 text-xs"></div>
-                        </div>
-                        <div class="bg-white p-5 rounded-xl shadow border">
-                            <div class="flex justify-between items-center mb-4"><h3 class="font-bold text-sm text-gray-800">Produtos & Preços</h3><button onclick="openProductModal()" class="px-2 py-1 bg-amber-600 text-white rounded text-xs font-bold">+ Criar</button></div>
-                            <div id="list-products" class="space-y-2 text-xs"></div>
-                        </div>
-                        <div class="bg-white p-5 rounded-xl shadow border">
-                            <div class="flex justify-between items-center mb-4"><h3 class="font-bold text-sm text-gray-800">Motivos de Perda</h3><button onclick="openLossReasonModal()" class="px-2 py-1 bg-amber-600 text-white rounded text-xs font-bold">+ Criar</button></div>
-                            <div id="list-loss-reasons" class="space-y-2 text-xs"></div>
-                        </div>
-                        <div class="bg-white p-5 rounded-xl shadow border">
-                            <div class="flex justify-between items-center mb-4"><h3 class="font-bold text-sm text-gray-800">Origens de Lead</h3><button onclick="openOriginModal()" class="px-2 py-1 bg-amber-600 text-white rounded text-xs font-bold">+ Criar</button></div>
-                            <div id="list-origins" class="space-y-2 text-xs"></div>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="view-contas" class="tab-content hidden">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-bold text-gray-800">Contas (Empresas)</h2>
-                        <button onclick="openAccountModal()" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-bold shadow">+ Nova Conta</button>
-                    </div>
-                    <div class="bg-white rounded-xl shadow overflow-hidden">
+                    <div class="bg-white rounded-xl shadow overflow-hidden border">
+                        <div class="p-4 border-b font-bold text-sm text-gray-800">Todas as Empresas Assinantes</div>
                         <table class="w-full text-left text-sm">
                             <thead class="bg-gray-100 text-xs font-bold text-gray-600 uppercase">
-                                <tr><th class="p-4">Nome Fantasia / Web</th><th class="p-4">Razão / CNPJ</th><th class="p-4">Telefones</th><th class="p-4">E-mails</th><th class="p-4">Ações</th></tr>
+                                <tr>
+                                    <th class="p-4">Empresa / CNPJ</th>
+                                    <th class="p-4">UF</th>
+                                    <th class="p-4">Plano Atual</th>
+                                    <th class="p-4">Status Pagamento</th>
+                                    <th class="p-4">Ações do SaaS</th>
+                                </tr>
                             </thead>
-                            <tbody id="table-contas-body" class="divide-y"></tbody>
+                            <tbody id="table-master-tenants-body" class="divide-y"></tbody>
                         </table>
                     </div>
                 </section>
 
-                <section id="view-contatos" class="tab-content hidden">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-bold text-gray-800">Contatos (Pessoas)</h2>
-                        <button onclick="openContactModal()" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-bold shadow">+ Novo Contato</button>
-                    </div>
-                    <div class="bg-white rounded-xl shadow overflow-hidden">
-                        <table class="w-full text-left text-sm">
-                            <thead class="bg-gray-100 text-xs font-bold text-gray-600 uppercase">
-                                <tr><th class="p-4">Nome / Cargo</th><th class="p-4">Empresa / Depto</th><th class="p-4">Telefones</th><th class="p-4">E-mails</th><th class="p-4">Ações</th></tr>
-                            </thead>
-                            <tbody id="table-contatos-body" class="divide-y"></tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <section id="view-vendedores" class="tab-content hidden">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-bold text-gray-800">Gestão de Vendedores</h2>
-                        <button onclick="openUserModal()" class="px-4 py-2 bg-amber-600 text-white rounded-lg text-xs font-bold shadow">+ Novo Vendedor</button>
-                    </div>
-                    <div class="bg-white rounded-xl shadow overflow-hidden">
-                        <table class="w-full text-left text-sm">
-                            <thead class="bg-gray-100 text-xs font-bold text-gray-600 uppercase">
-                                <tr><th class="p-4">Foto / Nome</th><th class="p-4">E-mail</th><th class="p-4">Cargo</th><th class="p-4">Status</th><th class="p-4">Ações</th></tr>
-                            </thead>
-                            <tbody id="table-vendedores-body" class="divide-y"></tbody>
-                        </table>
-                    </div>
-                </section>
+                <!-- DEMAIS VIEWS (ANALYTICS, CONTAS, CONTATOS, VENDEDORES) MANTIDAS -->
+                <section id="view-analytics" class="tab-content hidden"><div id="analytics-content">...</div></section>
+                <section id="view-contas" class="tab-content hidden"><div id="contas-content">...</div></section>
+                <section id="view-contatos" class="tab-content hidden"><div id="contatos-content">...</div></section>
+                <section id="view-vendedores" class="tab-content hidden"><div id="vendedores-content">...</div></section>
+                <section id="view-funis" class="tab-content hidden"><div id="funis-content">...</div></section>
 
             </main>
         </div>
-
-        <footer class="bg-slate-900 text-slate-400 text-xs py-3 px-6 border-t border-slate-800 flex justify-between items-center">
-            <div>IA-CRM V.1.2.0</div>
-            <div>Desenvolvido por <span class="text-slate-200 font-bold">Rafael Nascimento</span></div>
-        </footer>
     </div>
 
-    <!-- MODAL: MEU PERFIL (ALTERAR FOTO, E-MAIL E SENHA) -->
-    <div id="modal-profile" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
-            <div class="flex justify-between items-center mb-4 pb-2 border-b">
-                <h3 class="text-base font-bold text-gray-800">Meu Perfil de Usuário</h3>
-                <button onclick="closeModal('modal-profile')" class="text-gray-400 hover:text-gray-700 font-bold"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form onsubmit="saveMyProfile(event)" class="space-y-3">
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">E-mail de Acesso *</label>
-                    <input type="email" id="profile-email" required class="w-full p-2 border rounded-lg text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nova Senha</label>
-                    <input type="password" id="profile-pass" placeholder="••••••••" class="w-full p-2 border rounded-lg text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">URL da Foto de Perfil (Opcional)</label>
-                    <input type="url" id="profile-avatar" placeholder="https://exemplo.com/minha-foto.jpg" class="w-full p-2 border rounded-lg text-sm">
-                </div>
-                <div class="flex justify-end space-x-2 pt-3 border-t">
-                    <button type="button" onclick="closeModal('modal-profile')" class="px-3 py-1.5 border rounded text-xs">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded text-xs font-bold">Salvar Alterações</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL: IMPORTAR LISTA DE LEADS (EXCEL / CSV) -->
-    <div id="modal-import" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6">
-            <div class="flex justify-between items-center mb-4 pb-2 border-b">
-                <h3 class="text-base font-bold text-gray-800">Importação em Massa de Leads (Excel / CSV)</h3>
-                <button onclick="closeModal('modal-import')" class="text-gray-400 hover:text-gray-700 font-bold"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form onsubmit="handleImportLeads(event)" class="space-y-4">
-                <div class="bg-blue-50 p-3 rounded-lg border border-blue-200 text-xs text-blue-900">
-                    <p class="font-bold mb-1">Estrutura Esperada da Planilha:</p>
-                    <p>O arquivo deve possuir as colunas: <strong>Empresa</strong>, <strong>Contato</strong>, <strong>Telefone</strong> e <strong>Email</strong>.</p>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Selecione o Arquivo (.xlsx / .csv) *</label>
-                    <input type="file" id="import-file-input" accept=".xlsx, .xls, .csv" required class="w-full p-2 border rounded-lg text-xs bg-gray-50">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Atribuir Leads para o Vendedor *</label>
-                    <select id="import-seller-id" required class="w-full p-2.5 border rounded-lg text-xs bg-gray-50 font-bold"></select>
-                </div>
-
-                <div class="flex justify-end space-x-2 pt-3 border-t">
-                    <button type="button" onclick="closeModal('modal-import')" class="px-4 py-2 border rounded text-xs">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs font-bold">Processar Importação</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAIS DE CADASTRO -->
-    <div id="modal-deal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-4 pb-2 border-b">
-                <h3 id="modal-deal-title" class="text-lg font-bold text-gray-800">Nova Oportunidade</h3>
-                <button onclick="closeModal('modal-deal')" class="text-gray-400 hover:text-gray-700 font-bold text-lg"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form id="form-deal" onsubmit="saveDeal(event)" class="space-y-4">
-                <input type="hidden" id="deal-id">
-                <div><label class="block text-xs font-bold text-gray-700 uppercase mb-1">Título *</label><input type="text" id="deal-title" required class="w-full p-2.5 border rounded-lg text-sm"></div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div><label class="block text-xs font-bold text-gray-700 uppercase mb-1">Conta *</label><select id="deal-account-id" onchange="onDealAccountChange()" required class="w-full p-2.5 border rounded-lg text-sm bg-gray-50"></select></div>
-                    <div><label class="block text-xs font-bold text-gray-700 uppercase mb-1">Contato</label><select id="deal-contact-id" class="w-full p-2.5 border rounded-lg text-sm bg-gray-50"></select></div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div><label class="block text-xs font-bold text-gray-700 uppercase mb-1">Funil *</label><select id="deal-funnel-id" onchange="onDealFunnelChange()" required class="w-full p-2.5 border rounded-lg text-sm bg-gray-50"></select></div>
-                    <div><label class="block text-xs font-bold text-gray-700 uppercase mb-1">Etapa *</label><select id="deal-stage-id" required class="w-full p-2.5 border rounded-lg text-sm bg-gray-50"></select></div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div><label class="block text-xs font-bold text-gray-700 uppercase mb-1">Vendedor *</label><select id="deal-seller-id" required class="w-full p-2.5 border rounded-lg text-sm bg-gray-50"></select></div>
-                    <div><label class="block text-xs font-bold text-gray-700 uppercase mb-1">Origem</label><select id="deal-origin-id" class="w-full p-2.5 border rounded-lg text-sm bg-gray-50"></select></div>
-                </div>
-                <div class="border-t pt-3 bg-slate-50 p-3 rounded-lg border">
-                    <label class="block text-xs font-bold text-gray-800 uppercase mb-2">Valores</label>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <div><label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Produto</label><select id="deal-product-id" onchange="onDealProductChange()" class="w-full p-2 border rounded text-xs bg-white"></select></div>
-                        <div><label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Setup (R$)</label><input type="number" id="deal-setup-value" step="0.01" value="0" class="w-full p-2 border rounded text-xs font-bold text-gray-800"></div>
-                        <div><label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">MRR (R$)</label><input type="number" id="deal-mrr-value" step="0.01" value="0" class="w-full p-2 border rounded text-xs font-bold text-blue-600"></div>
-                    </div>
-                </div>
-                <div id="deal-qualifications-container" class="border-t pt-3 space-y-2"></div>
-                <div class="flex justify-end space-x-2 pt-4 border-t"><button type="button" onclick="closeModal('modal-deal')" class="px-4 py-2 border rounded-lg text-sm">Cancelar</button><button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold shadow">Salvar Oportunidade</button></div>
-            </form>
-        </div>
-    </div>
-
-    <div id="modal-conta" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
-            <h3 class="text-lg font-bold text-gray-800 mb-4">Nova Conta (Empresa)</h3>
-            <form id="form-conta" onsubmit="saveAccount(event)" class="space-y-3">
-                <input type="hidden" id="conta-id">
-                <div class="grid grid-cols-2 gap-2">
-                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nome Fantasia *</label><input type="text" id="conta-nome" required class="w-full p-2 border rounded-lg text-sm"></div>
-                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Razão Social</label><input type="text" id="conta-razao" class="w-full p-2 border rounded-lg text-sm"></div>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">CNPJ</label><input type="text" id="conta-cnpj" class="w-full p-2 border rounded-lg text-sm"></div>
-                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Setor</label><input type="text" id="conta-setor" class="w-full p-2 border rounded-lg text-sm"></div>
-                </div>
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Website</label><input type="text" id="conta-website" placeholder="https://..." class="w-full p-2 border rounded-lg text-sm"></div>
-                <div class="border-t pt-3"><div class="flex justify-between items-center mb-2"><label class="text-xs font-bold text-gray-700 uppercase">Telefones</label><button type="button" onclick="addPhoneRow('conta-phones-list')" class="text-xs text-blue-600 font-bold">+ Telefone</button></div><div id="conta-phones-list" class="space-y-2"></div></div>
-                <div class="border-t pt-3"><div class="flex justify-between items-center mb-2"><label class="text-xs font-bold text-gray-700 uppercase">E-mails</label><button type="button" onclick="addEmailRow('conta-emails-list')" class="text-xs text-blue-600 font-bold">+ E-mail</button></div><div id="conta-emails-list" class="space-y-2"></div></div>
-                <div class="flex justify-end space-x-2 pt-4 border-t"><button type="button" onclick="closeModal('modal-conta')" class="px-4 py-2 border rounded-lg text-sm">Cancelar</button><button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold">Salvar Conta</button></div>
-            </form>
-        </div>
-    </div>
-
-    <div id="modal-contato" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
-            <h3 class="text-lg font-bold text-gray-800 mb-4">Novo Contato</h3>
-            <form id="form-contato" onsubmit="saveContact(event)" class="space-y-4">
-                <input type="hidden" id="contato-id">
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nome Completo *</label><input type="text" id="contato-nome" required class="w-full p-2 border rounded-lg text-sm"></div>
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Conta (Empresa)</label><select id="contato-conta-id" class="w-full p-2 border rounded-lg text-sm"></select></div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Cargo</label><input type="text" id="contato-cargo" class="w-full p-2 border rounded-lg text-sm"></div>
-                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Departamento</label><input type="text" id="contato-departamento" class="w-full p-2 border rounded-lg text-sm"></div>
-                </div>
-                <div class="border-t pt-3"><div class="flex justify-between items-center mb-2"><label class="text-xs font-bold text-gray-700 uppercase">Telefones</label><button type="button" onclick="addPhoneRow('contato-phones-list')" class="text-xs text-blue-600 font-bold">+ Telefone</button></div><div id="contato-phones-list" class="space-y-2"></div></div>
-                <div class="border-t pt-3"><div class="flex justify-between items-center mb-2"><label class="text-xs font-bold text-gray-700 uppercase">E-mails</label><button type="button" onclick="addEmailRow('contato-emails-list')" class="text-xs text-blue-600 font-bold">+ E-mail</button></div><div id="contato-emails-list" class="space-y-2"></div></div>
-                <div class="flex justify-end space-x-2 pt-4 border-t"><button type="button" onclick="closeModal('modal-contato')" class="px-4 py-2 border rounded-lg text-sm">Cancelar</button><button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold">Salvar Contato</button></div>
-            </form>
-        </div>
-    </div>
-
-    <div id="modal-funnel" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
-            <h3 class="text-lg font-bold text-gray-800 mb-4">Funil de Vendas</h3>
-            <form id="form-funnel" onsubmit="saveFunnel(event)" class="space-y-4">
-                <input type="hidden" id="funnel-id">
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nome do Funil *</label><input type="text" id="funnel-nome" required class="w-full p-2 border rounded-lg text-sm"></div>
-                <div class="flex items-center space-x-2"><input type="checkbox" id="funnel-ativo" checked class="rounded border-gray-300"><label for="funnel-ativo" class="text-xs font-bold text-gray-700">Funil Ativo</label></div>
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Usuários Permitidos *</label><div id="funnel-users-checkboxes" class="space-y-1.5 max-h-32 overflow-y-auto border p-2 rounded-lg bg-gray-50 text-xs"></div></div>
-                <div><div class="flex justify-between items-center mb-1"><label class="text-xs font-bold text-gray-600 uppercase">Etapas do Funil *</label><button type="button" onclick="addStageInputRow()" class="text-blue-600 font-bold text-xs">+ Etapa</button></div><div id="funnel-stages-container" class="space-y-2"></div></div>
-                <div class="flex justify-end space-x-2 pt-4 border-t"><button type="button" onclick="closeModal('modal-funnel')" class="px-4 py-2 border rounded-lg text-sm">Cancelar</button><button type="submit" class="px-4 py-2 bg-amber-600 text-white rounded-lg text-sm font-bold">Salvar Funil</button></div>
-            </form>
-        </div>
-    </div>
-
-    <div id="modal-user" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
-            <h3 class="text-base font-bold text-gray-800 mb-3">Vendedor / Usuário</h3>
-            <form onsubmit="saveUser(event)" class="space-y-3">
-                <input type="hidden" id="user-id">
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nome Completo *</label><input type="text" id="user-name" required class="w-full p-2 border rounded-lg text-sm"></div>
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">E-mail *</label><input type="email" id="user-email" required class="w-full p-2 border rounded-lg text-sm"></div>
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Senha *</label><input type="password" id="user-pass" required class="w-full p-2 border rounded-lg text-sm"></div>
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">URL da Foto (Opcional)</label><input type="url" id="user-avatar" class="w-full p-2 border rounded-lg text-sm"></div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Cargo *</label>
-                    <select id="user-role" required class="w-full p-2 border rounded-lg text-sm">
-                        <option value="Vendedor">Vendedor</option>
-                        <option value="BDR">BDR</option>
-                        <option value="SDR">SDR</option>
-                        <option value="Gerente">Gerente</option>
-                        <option value="Diretor">Diretor</option>
-                    </select>
-                </div>
-                <div class="flex items-center space-x-2 pt-1"><input type="checkbox" id="user-active" checked class="rounded border-gray-300"><label for="user-active" class="text-xs font-bold text-gray-700">Usuário Ativo</label></div>
-                <div class="flex justify-end space-x-2 pt-3 border-t"><button type="button" onclick="closeModal('modal-user')" class="px-3 py-1.5 border rounded text-xs">Cancelar</button><button type="submit" class="px-3 py-1.5 bg-amber-600 text-white rounded text-xs font-bold">Salvar Vendedor</button></div>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAIS DE PARÂMETROS GERAIS -->
-    <div id="modal-admin-qual" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
-            <h3 class="text-base font-bold text-gray-800 mb-3">Nova Pergunta de Qualificação</h3>
-            <form onsubmit="saveAdminQualification(event)" class="space-y-3">
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Pergunta *</label><input type="text" id="qual-question" required class="w-full p-2 border rounded-lg text-sm"></div>
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Tipo *</label><select id="qual-type" class="w-full p-2 border rounded-lg text-sm"><option value="boolean">Sim / Não</option><option value="text">Texto</option></select></div>
-                <div class="flex justify-end space-x-2 pt-3"><button type="button" onclick="closeModal('modal-admin-qual')" class="px-3 py-1.5 border rounded text-xs">Cancelar</button><button type="submit" class="px-3 py-1.5 bg-purple-600 text-white rounded text-xs font-bold">Salvar</button></div>
-            </form>
-        </div>
-    </div>
-
-    <div id="modal-admin-product" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
-            <h3 class="text-base font-bold text-gray-800 mb-3">Novo Produto / Serviço</h3>
-            <form onsubmit="saveAdminProduct(event)" class="space-y-3">
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nome do Produto *</label><input type="text" id="product-name" required class="w-full p-2 border rounded-lg text-sm"></div>
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Setup (R$)</label><input type="number" id="product-setup" step="0.01" value="0" class="w-full p-2 border rounded-lg text-sm"></div>
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">MRR (R$)</label><input type="number" id="product-mrr" step="0.01" value="0" class="w-full p-2 border rounded-lg text-sm"></div>
-                <div class="flex justify-end space-x-2 pt-3"><button type="button" onclick="closeModal('modal-admin-product')" class="px-3 py-1.5 border rounded text-xs">Cancelar</button><button type="submit" class="px-3 py-1.5 bg-amber-600 text-white rounded text-xs font-bold">Salvar</button></div>
-            </form>
-        </div>
-    </div>
-
-    <div id="modal-admin-loss" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
-            <h3 class="text-base font-bold text-gray-800 mb-3">Novo Motivo de Perda</h3>
-            <form onsubmit="saveAdminLossReason(event)" class="space-y-3">
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Motivo *</label><input type="text" id="loss-reason-name" required class="w-full p-2 border rounded-lg text-sm"></div>
-                <div class="flex justify-end space-x-2 pt-3"><button type="button" onclick="closeModal('modal-admin-loss')" class="px-3 py-1.5 border rounded text-xs">Cancelar</button><button type="submit" class="px-3 py-1.5 bg-amber-600 text-white rounded text-xs font-bold">Salvar</button></div>
-            </form>
-        </div>
-    </div>
-
-    <div id="modal-admin-origin" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
-            <h3 class="text-base font-bold text-gray-800 mb-3">Nova Origem de Lead</h3>
-            <form onsubmit="saveAdminOrigin(event)" class="space-y-3">
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nome *</label><input type="text" id="origin-name" required class="w-full p-2 border rounded-lg text-sm"></div>
-                <div class="flex justify-end space-x-2 pt-3"><button type="button" onclick="closeModal('modal-admin-origin')" class="px-3 py-1.5 border rounded text-xs">Cancelar</button><button type="submit" class="px-3 py-1.5 bg-amber-600 text-white rounded text-xs font-bold">Salvar</button></div>
-            </form>
-        </div>
-    </div>
-
-    <!-- SCRIPT GERAL -->
+    <!-- SCRIPT GERAL MULTI-TENANT -->
     <script>
         const SUPABASE_URL = 'https://swphiblxorwigoywzyiu.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_6rNK9nsaERw5uC8MR0eHvg_gnFE_2zA';
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let state = { currentUser: null, users: [], funnels: [], products: [], origins: [], lossReasons: [], qualifications: [], accounts: [], contacts: [], deals: [], tasks: [] };
-        let trendChartInstance = null;
+        let state = {
+            currentUser: null,
+            currentTenant: null,
+            tenants: [],
+            users: [],
+            funnels: [],
+            accounts: [],
+            contacts: [],
+            deals: []
+        };
 
-        function isManagerRole(role) { return ['Gerente', 'Diretor', 'Coordenador', 'Supervisor'].includes(role) || state.currentUser?.is_admin; }
-
-        function toggleSidebar() {
-            document.getElementById('main-sidebar').classList.toggle('sidebar-collapsed');
-        }
+        function isSuperAdmin() { return state.currentUser?.is_superadmin || state.currentUser?.email === 'rafaelroberto@gmail.com'; }
+        function isManagerRole(role) { return ['Gerente', 'Diretor'].includes(role) || state.currentUser?.is_admin; }
 
         async function fetchAllDataFromSupabase() {
             try {
-                const [u, f, p, o, l, q, a, c, d, t] = await Promise.all([
+                const [tn, u, f, a, c, d] = await Promise.all([
+                    _supabase.from('tenants').select('*'),
                     _supabase.from('users').select('*'),
                     _supabase.from('funnels').select('*'),
-                    _supabase.from('products').select('*'),
-                    _supabase.from('origins').select('*'),
-                    _supabase.from('loss_reasons').select('*'),
-                    _supabase.from('lead_qualifications').select('*'),
                     _supabase.from('accounts').select('*'),
                     _supabase.from('contacts').select('*'),
-                    _supabase.from('deals').select('*'),
-                    _supabase.from('tasks').select('*')
+                    _supabase.from('deals').select('*')
                 ]);
 
+                state.tenants = tn.data || [];
                 state.users = u.data || [];
-                if (state.users.length === 0) {
-                    const defaultAdmin = { id: '1', name: 'Rafael Admin', email: 'rafaelroberto@gmail.com', pass: 'lifeapps123', role: 'Diretor', is_admin: true, active: true };
-                    await _supabase.from('users').insert(defaultAdmin);
-                    state.users = [defaultAdmin];
-                }
-
-                state.funnels = (f.data || []).map(item => ({ ...item, userIds: item.user_ids || [] }));
-                state.products = p.data || [];
-                state.origins = o.data || [];
-                
-                if (!state.origins.some(x => x.name.toLowerCase() === 'importação')) {
-                    const impOrigin = { id: Date.now().toString(), name: 'Importação' };
-                    await _supabase.from('origins').insert(impOrigin);
-                    state.origins.push(impOrigin);
-                }
-
-                state.lossReasons = l.data || [];
-                state.qualifications = q.data || [];
+                state.funnels = f.data || [];
                 state.accounts = a.data || [];
                 state.contacts = c.data || [];
-                state.deals = (d.data || []).map(item => ({ ...item, title: item.title, accountId: item.account_id, contactId: item.contact_id, setupValue: item.setup_value, mrrValue: item.mrr_value, funnelId: item.funnel_id, stageId: item.stage_id, sellerId: item.seller_id, createdAt: item.created_at }));
-                state.tasks = t.data || [];
+                state.deals = d.data || [];
+
+                // Garante tenant master do dono se não existir
+                if (state.tenants.length === 0) {
+                    const masterTenant = { id: 'master_1', name: 'Master IA-CRM', cnpj: '00000000000100', uf: 'GO', plan: 'Enterprise', status: 'Active' };
+                    await _supabase.from('tenants').insert(masterTenant);
+                    state.tenants = [masterTenant];
+                }
             } catch (err) { console.error("Erro Supabase:", err); }
         }
 
@@ -667,670 +406,134 @@
             await fetchAllDataFromSupabase();
             const email = document.getElementById('login-email').value;
             const pass = document.getElementById('login-password').value;
+
             const user = state.users.find(u => u.email === email && u.pass === pass && u.active);
             if (user) {
                 state.currentUser = user;
+                state.currentTenant = state.tenants.find(t => t.id === user.tenant_id) || state.tenants[0];
+
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('app-container').classList.remove('hidden');
                 initApp();
             } else {
-                document.getElementById('login-error').textContent = 'Credenciais inválidas ou usuário inativo.';
+                document.getElementById('login-error').textContent = 'Usuário ou senha incorretos.';
                 document.getElementById('login-error').classList.remove('hidden');
             }
         }
 
-        function handleLogout() { state.currentUser = null; document.getElementById('app-container').classList.add('hidden'); document.getElementById('login-screen').classList.remove('hidden'); }
-
         function initApp() {
             document.getElementById('user-display-name').textContent = state.currentUser.name;
-            document.getElementById('user-display-role').textContent = `${state.currentUser.role} ${isManagerRole(state.currentUser.role) ? '(Gestor)' : ''}`;
-            
-            const avatarImg = state.currentUser.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(state.currentUser.name)}&background=0D8ABC&color=fff`;
-            document.getElementById('user-display-avatar').src = avatarImg;
+            document.getElementById('user-display-role').textContent = `${state.currentUser.role}`;
+            document.getElementById('display-tenant-name').textContent = state.currentTenant?.name || 'IA-CRM';
 
-            const sellerSelect = document.getElementById('analytics-seller-filter');
-            if (sellerSelect) {
-                sellerSelect.innerHTML = '<option value="all">Todos os Vendedores</option>' + state.users.map(u => `<option value="${u.id}">${u.name}</option>`).join('');
-            }
-
-            const sellerFilterWrapper = document.getElementById('wrapper-seller-filter');
-            if (!isManagerRole(state.currentUser.role)) {
-                if (sellerFilterWrapper) sellerFilterWrapper.classList.add('hidden');
-                document.getElementById('admin-menu').classList.add('hidden');
-                switchTab('vendas');
+            // Visibilidade SuperAdmin vs Admin do Cliente
+            if (isSuperAdmin()) {
+                document.getElementById('superadmin-menu').classList.remove('hidden');
             } else {
-                if (sellerFilterWrapper) sellerFilterWrapper.classList.remove('hidden');
-                document.getElementById('admin-menu').classList.remove('hidden');
-                switchTab('analytics');
+                document.getElementById('superadmin-menu').classList.add('hidden');
             }
+
+            if (isManagerRole(state.currentUser.role)) {
+                document.getElementById('admin-menu').classList.remove('hidden');
+            } else {
+                document.getElementById('admin-menu').classList.add('hidden');
+            }
+
+            switchTab('vendas');
         }
 
-        function openProfileModal() {
-            document.getElementById('profile-email').value = state.currentUser.email;
-            document.getElementById('profile-pass').value = '';
-            document.getElementById('profile-avatar').value = state.currentUser.avatar || '';
-            document.getElementById('modal-profile').classList.remove('hidden');
-        }
-
-        async function saveMyProfile(e) {
+        // CADASTRO DE NOVO CLIENTE (SELF-SERVICE BASIC)
+        async function handleRegisterTenant(e) {
             e.preventDefault();
-            const email = document.getElementById('profile-email').value;
-            const pass = document.getElementById('profile-pass').value || state.currentUser.pass;
-            const avatar = document.getElementById('profile-avatar').value;
+            const companyName = document.getElementById('reg-company-name').value;
+            const cnpj = document.getElementById('reg-cnpj').value;
+            const uf = document.getElementById('reg-uf').value;
+            const userName = document.getElementById('reg-user-name').value;
+            const userEmail = document.getElementById('reg-user-email').value;
+            const userPass = document.getElementById('reg-user-pass').value;
 
-            state.currentUser.email = email;
-            state.currentUser.pass = pass;
-            state.currentUser.avatar = avatar;
+            const tenantId = 'tenant_' + Date.now();
+            const newTenant = { id: tenantId, name: companyName, cnpj, uf, plan: 'Basic', status: 'Active' };
 
-            await _supabase.from('users').upsert(state.currentUser);
-            closeModal('modal-profile');
-            initApp();
-            alert('Perfil atualizado com sucesso!');
-        }
+            const userId = 'user_' + Date.now();
+            const newUser = { id: userId, tenant_id: tenantId, name: userName, email: userEmail, pass: userPass, role: 'Diretor', is_admin: true, active: true };
 
-        function openImportModal() {
-            const sellerSelect = document.getElementById('import-seller-id');
-            sellerSelect.innerHTML = state.users.map(u => `<option value="${u.id}">${u.name} (${u.role})</option>`).join('');
-            document.getElementById('modal-import').classList.remove('hidden');
-        }
+            const defaultFunnel = { id: 'funnel_' + Date.now(), tenant_id: tenantId, name: 'Funil Comercial Padrão', active: true, stages: [{ id: '1', name: 'Lead' }, { id: '2', name: 'Proposta' }, { id: '3', name: 'Ganho' }] };
 
-        async function handleImportLeads(e) {
-            e.preventDefault();
-            const fileInput = document.getElementById('import-file-input');
-            const targetSellerId = document.getElementById('import-seller-id').value;
-            const file = fileInput.files[0];
+            await _supabase.from('tenants').insert(newTenant);
+            await _supabase.from('users').insert(newUser);
+            await _supabase.from('funnels').insert(defaultFunnel);
 
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = async function(evt) {
-                const data = new Uint8Array(evt.target.result);
-                const workbook = XLSX.read(data, { type: 'array' });
-                const firstSheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[firstSheetName];
-                const rows = XLSX.utils.sheet_to_json(worksheet);
-
-                if (rows.length === 0) {
-                    alert('Nenhum dado encontrado na planilha.');
-                    return;
-                }
-
-                const defaultFunnel = state.funnels[0];
-                const defaultStage = defaultFunnel?.stages[0]?.id;
-                const importOrigin = state.origins.find(o => o.name.toLowerCase() === 'importação') || state.origins[0];
-
-                for (const row of rows) {
-                    const companyName = row['Empresa'] || row['empresa'] || 'Empresa Importada';
-                    const contactName = row['Contato'] || row['contato'] || 'Contato Importado';
-                    const phone = row['Telefone'] || row['telefone'] || '';
-                    const email = row['Email'] || row['email'] || row['E-mail'] || '';
-
-                    const accountId = Date.now().toString() + Math.floor(Math.random() * 1000);
-                    await _supabase.from('accounts').insert({
-                        id: accountId,
-                        nome: companyName,
-                        phones: phone ? [{ type: 'Comercial', number: phone }] : [],
-                        emails: email ? [{ type: 'Comercial', email: email }] : []
-                    });
-
-                    const contactId = (Date.now() + 1).toString() + Math.floor(Math.random() * 1000);
-                    await _supabase.from('contacts').insert({
-                        id: contactId,
-                        nome: contactName,
-                        conta_id: accountId,
-                        phones: phone ? [{ type: 'Comercial', number: phone }] : [],
-                        emails: email ? [{ type: 'Comercial', email: email }] : []
-                    });
-
-                    const dealId = (Date.now() + 2).toString() + Math.floor(Math.random() * 1000);
-                    await _supabase.from('deals').insert({
-                        id: dealId,
-                        title: `Lead: ${companyName}`,
-                        account_id: accountId,
-                        contact_id: contactId,
-                        funnel_id: defaultFunnel ? defaultFunnel.id : null,
-                        stage_id: defaultStage,
-                        seller_id: targetSellerId,
-                        origin_id: importOrigin ? importOrigin.id : null,
-                        setup_value: 0,
-                        mrr_value: 0,
-                        created_at: new Date().toISOString()
-                    });
-                }
-
-                closeModal('modal-import');
-                await fetchAllDataFromSupabase();
-                renderKanban();
-                renderAnalytics();
-                alert(`${rows.length} leads importados e atribuídos com sucesso!`);
-            };
-            reader.readAsArrayBuffer(file);
+            closeModal('modal-register');
+            alert('Cadastro realizado com sucesso! Faça seu login para acessar o sistema.');
         }
 
         function switchTab(tab) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById(`view-${tab}`).classList.remove('hidden');
-            if (tab === 'vendas') { setupPipelineFilters(); renderKanban(); }
-            if (tab === 'analytics') renderAnalytics();
-            if (tab === 'funis') renderFunnels();
-            if (tab === 'contas') renderAccounts();
-            if (tab === 'contatos') renderContacts();
-            if (tab === 'cadastros-admin') renderCadastrosAdmin();
-            if (tab === 'vendedores') renderUsers();
+            document.getElementById(`view-${tab}`)?.classList.remove('hidden');
+
+            if (tab === 'minha-assinatura') renderMinhaAssinatura();
+            if (tab === 'master-saas') renderMasterSaaS();
         }
 
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-        function openPlansModal() { document.getElementById('modal-plans').classList.remove('hidden'); }
+        function renderMinhaAssinatura() {
+            const tenant = state.currentTenant;
+            const usersCount = state.users.filter(u => u.tenant_id === tenant.id).length;
+            const funnelsCount = state.funnels.filter(f => f.tenant_id === tenant.id).length;
 
-        function renderUsers() {
-            document.getElementById('table-vendedores-body').innerHTML = state.users.map(u => {
-                const avatarImg = u.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=0D8ABC&color=fff`;
-                return `
-                    <tr class="hover:bg-gray-50">
-                        <td class="p-4 font-semibold flex items-center space-x-3">
-                            <img src="${avatarImg}" class="w-8 h-8 rounded-full border object-cover">
-                            <span>${u.name}</span>
-                        </td>
-                        <td class="p-4 text-xs">${u.email}</td>
-                        <td class="p-4 text-xs">${u.role}</td>
-                        <td class="p-4 text-xs">${u.active ? '<span class="text-emerald-600 font-bold">Ativo</span>' : '<span class="text-rose-600 font-bold">Inativo</span>'}</td>
-                        <td class="p-4"><button onclick="openUserModal('${u.id}')" class="text-blue-600 text-xs font-bold hover:underline">Editar</button></td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function renderAccounts() {
-            document.getElementById('table-contas-body').innerHTML = state.accounts.map(a => {
-                const phonesText = (a.phones || []).map(p => `<span class="bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded text-[10px] font-semibold border block w-max my-0.5">${p.type}: ${p.number}</span>`).join('') || '-';
-                const emailsText = (a.emails || []).map(e => `<span class="bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded text-[10px] font-semibold border block w-max my-0.5">${e.type}: ${e.email}</span>`).join('') || '-';
-                return `<tr class="hover:bg-gray-50"><td class="p-4 font-semibold">${a.nome}</td><td class="p-4 text-xs">${a.razao || '-'}</td><td class="p-4 text-xs">${phonesText}</td><td class="p-4 text-xs">${emailsText}</td><td class="p-4"><button onclick="openAccountModal('${a.id}')" class="text-blue-600 text-xs font-bold hover:underline">Editar</button></td></tr>`;
-            }).join('');
-        }
-
-        function renderContacts() {
-            document.getElementById('table-contatos-body').innerHTML = state.contacts.map(c => {
-                const conta = state.accounts.find(a => a.id === c.conta_id)?.nome || '-';
-                const phonesText = (c.phones || []).map(p => `<span class="bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded text-[10px] font-semibold border block w-max my-0.5">${p.type}: ${p.number}</span>`).join('') || '-';
-                const emailsText = (c.emails || []).map(e => `<span class="bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded text-[10px] font-semibold border block w-max my-0.5">${e.type}: ${e.email}</span>`).join('') || '-';
-                return `<tr class="hover:bg-gray-50"><td class="p-4 font-semibold">${c.nome}</td><td class="p-4 text-xs">${conta}</td><td class="p-4 text-xs">${phonesText}</td><td class="p-4 text-xs">${emailsText}</td><td class="p-4"><button onclick="openContactModal('${c.id}')" class="text-blue-600 text-xs font-bold hover:underline">Editar</button></td></tr>`;
-            }).join('');
-        }
-
-        function setupPipelineFilters() {
-            const funnelSelect = document.getElementById('pipeline-funnel-filter');
-            const sellerSelect = document.getElementById('pipeline-seller-filter');
-            funnelSelect.innerHTML = state.funnels.length === 0 ? '<option value="">Nenhum Funil</option>' : state.funnels.map(f => `<option value="${f.id}">${f.name}</option>`).join('');
-            sellerSelect.innerHTML = '<option value="all">Todos os Vendedores</option>' + state.users.map(u => `<option value="${u.id}">${u.name}</option>`).join('');
-        }
-
-        function renderKanban() {
-            const funnelId = document.getElementById('pipeline-funnel-filter').value;
-            const sellerFilter = isManagerRole(state.currentUser.role) ? document.getElementById('pipeline-seller-filter').value : state.currentUser.id;
-
-            const currentFunnel = state.funnels.find(f => f.id === funnelId) || state.funnels[0];
-            const board = document.getElementById('kanban-board');
-            if (!currentFunnel) {
-                board.innerHTML = '<div class="p-8 text-center text-gray-500 font-bold bg-white rounded-xl shadow border w-full">Nenhum funil disponível.</div>';
-                return;
-            }
-            board.innerHTML = (currentFunnel.stages || []).map(stage => {
-                const deals = state.deals.filter(d => d.funnelId === currentFunnel.id && d.stageId === stage.id && (sellerFilter === 'all' || d.sellerId === sellerFilter));
-                return `
-                    <div class="w-72 bg-gray-200/50 rounded-xl p-3 flex flex-col kanban-column flex-shrink-0">
-                        <div class="flex items-center justify-between p-2 rounded-lg mb-3 ${stage.name.toLowerCase() === 'ganho' ? 'bg-emerald-600 text-white font-bold' : stage.name.toLowerCase() === 'perdido' ? 'bg-rose-600 text-white font-bold' : 'bg-gray-200 text-gray-700'} text-sm">
-                            <span>${stage.name}</span>
-                            <span class="bg-white/30 px-2 py-0.5 rounded-full text-xs font-black">${deals.length}</span>
-                        </div>
-                        <div class="space-y-3 flex-1 overflow-y-auto">
-                            ${deals.map(d => {
-                                const acc = state.accounts.find(a => a.id === d.accountId);
-                                return `
-                                    <div class="bg-white p-3 rounded-lg shadow border hover:border-blue-500 cursor-pointer transition" onclick="openDealModal('${d.id}')">
-                                        <div class="font-bold text-gray-800 text-xs">${d.title}</div>
-                                        <div class="text-[11px] text-gray-500 mt-1">${acc ? acc.nome : 'Sem Conta'}</div>
-                                        <div class="flex justify-between items-center mt-2 pt-2 border-t text-[10px]">
-                                            <span class="text-gray-400">Setup: R$ ${parseFloat(d.setupValue || 0).toLocaleString('pt-BR')}</span>
-                                            <span class="font-bold text-blue-600">MRR: R$ ${parseFloat(d.mrrValue || 0).toLocaleString('pt-BR')}</span>
-                                        </div>
-                                    </div>
-                                `;
-                            }).join('')}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function renderAnalytics() {
-            const sellerFilter = document.getElementById('analytics-seller-filter')?.value || 'all';
-            const filteredDeals = state.deals.filter(d => sellerFilter === 'all' || d.sellerId === sellerFilter);
-
-            let openCount = 0, openSetup = 0, openMrr = 0;
-            let wonCount = 0, wonSetup = 0, wonMrr = 0;
-            let lostCount = 0, lostSetup = 0, lostMrr = 0;
-
-            filteredDeals.forEach(d => {
-                const funnel = state.funnels.find(f => f.id === d.funnelId) || state.funnels[0];
-                const stage = funnel?.stages?.find(s => s.id === d.stageId);
-                const stageName = stage?.name?.toLowerCase() || '';
-
-                const setup = parseFloat(d.setupValue || 0);
-                const mrr = parseFloat(d.mrrValue || 0);
-
-                if (stageName === 'ganho') { wonCount++; wonSetup += setup; wonMrr += mrr; }
-                else if (stageName === 'perdido') { lostCount++; lostSetup += setup; lostMrr += mrr; }
-                else { openCount++; openSetup += setup; openMrr += mrr; }
-            });
-
-            const totalClosed = wonCount + lostCount;
-            const conversionRate = totalClosed > 0 ? ((wonCount / totalClosed) * 100).toFixed(1) : '0';
-
-            document.getElementById('analytics-conversion-rate').textContent = `${conversionRate}%`;
-            document.getElementById('analytics-open-count').textContent = openCount;
-            document.getElementById('analytics-open-value').textContent = `Setup: R$ ${openSetup.toLocaleString('pt-BR')} | MRR: R$ ${openMrr.toLocaleString('pt-BR')}`;
-            document.getElementById('analytics-won-count').textContent = wonCount;
-            document.getElementById('analytics-won-value').textContent = `Setup: R$ ${wonSetup.toLocaleString('pt-BR')} | MRR: R$ ${wonMrr.toLocaleString('pt-BR')}`;
-            document.getElementById('analytics-lost-count').textContent = lostCount;
-            document.getElementById('analytics-lost-value').textContent = `Setup: R$ ${lostSetup.toLocaleString('pt-BR')} | MRR: R$ ${lostMrr.toLocaleString('pt-BR')}`;
-
-            renderMonthlyTrendChart(filteredDeals);
-        }
-
-        function renderMonthlyTrendChart(deals) {
-            const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-            const createdData = new Array(12).fill(0);
-            const wonData = new Array(12).fill(0);
-            const lostData = new Array(12).fill(0);
-
-            deals.forEach(d => {
-                const date = d.createdAt ? new Date(d.createdAt) : new Date();
-                const monthIdx = date.getMonth();
-                createdData[monthIdx]++;
-                const funnel = state.funnels.find(f => f.id === d.funnelId) || state.funnels[0];
-                const stage = funnel?.stages?.find(s => s.id === d.stageId);
-                const stageName = stage?.name?.toLowerCase() || '';
-                if (stageName === 'ganho') wonData[monthIdx]++;
-                if (stageName === 'perdido') lostData[monthIdx]++;
-            });
-
-            const ctx = document.getElementById('monthlyTrendChart').getContext('2d');
-            if (trendChartInstance) trendChartInstance.destroy();
-
-            trendChartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: months,
-                    datasets: [
-                        { label: 'Criadas', data: createdData, borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0.3 },
-                        { label: 'Ganhas', data: wonData, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.3 },
-                        { label: 'Perdidas', data: lostData, borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', fill: true, tension: 0.3 }
-                    ]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
-            });
-        }
-
-        function renderFunnels() {
-            document.getElementById('funnels-grid').innerHTML = state.funnels.length === 0 ? '<div class="col-span-2 p-8 text-center text-gray-500 font-bold bg-white rounded-xl shadow border">Nenhum funil cadastrado.</div>' :
-            state.funnels.map(f => `<div class="bg-white p-5 rounded-xl shadow border"><div class="flex justify-between items-start mb-3"><h3 class="font-bold text-gray-800 text-base">${f.name}</h3><button onclick="openFunnelModal('${f.id}')" class="text-blue-600 font-bold text-xs hover:underline">Editar</button></div><div class="text-xs font-bold text-gray-700 uppercase mb-1">Etapas:</div><div class="flex flex-wrap gap-1">${(f.stages || []).map(s => `<span class="px-2 py-1 rounded text-[10px] font-bold border ${s.name.toLowerCase() === 'ganho' ? 'bg-emerald-100 text-emerald-800' : s.name.toLowerCase() === 'perdido' ? 'bg-rose-100 text-rose-800' : 'bg-gray-100'}">${s.name}</span>`).join('')}</div></div>`).join('');
-        }
-
-        function renderCadastrosAdmin() {
-            document.getElementById('list-qualifications').innerHTML = state.qualifications.map(q => `<div class="p-2 bg-purple-50 border rounded text-xs font-semibold text-purple-900">${q.question}</div>`).join('');
-            document.getElementById('list-products').innerHTML = state.products.map(p => `<div class="p-2 bg-amber-50 border rounded text-xs font-semibold text-amber-900">${p.name}</div>`).join('');
-            document.getElementById('list-loss-reasons').innerHTML = state.lossReasons.map(r => `<div class="p-2 bg-rose-50 border rounded text-xs font-semibold text-rose-900">${r.name}</div>`).join('');
-            document.getElementById('list-origins').innerHTML = state.origins.map(o => `<div class="p-2 bg-blue-50 border rounded text-xs font-semibold text-blue-900">${o.name}</div>`).join('');
-        }
-
-        function addPhoneRow(containerId, number = '', type = 'Celular') {
-            const container = document.getElementById(containerId);
-            const row = document.createElement('div');
-            row.className = 'flex items-center space-x-2 phone-row';
-            row.innerHTML = `<select class="p-1.5 border rounded text-xs bg-gray-50 phone-type"><option value="Celular" ${type === 'Celular' ? 'selected' : ''}>Celular</option><option value="Fixo" ${type === 'Fixo' ? 'selected' : ''}>Fixo</option><option value="WhatsApp" ${type === 'WhatsApp' ? 'selected' : ''}>WhatsApp</option></select><input type="text" value="${number}" placeholder="(00) 00000-0000" class="flex-1 p-1.5 border rounded text-xs phone-number"><button type="button" onclick="this.parentElement.remove()" class="text-red-500 font-bold text-xs"><i class="fa-solid fa-xmark"></i></button>`;
-            container.appendChild(row);
-        }
-
-        function addEmailRow(containerId, email = '', type = 'Comercial') {
-            const container = document.getElementById(containerId);
-            const row = document.createElement('div');
-            row.className = 'flex items-center space-x-2 email-row';
-            row.innerHTML = `<select class="p-1.5 border rounded text-xs bg-gray-50 email-type"><option value="Comercial" ${type === 'Comercial' ? 'selected' : ''}>Comercial</option><option value="Pessoal" ${type === 'Pessoal' ? 'selected' : ''}>Pessoal</option><option value="Financeiro" ${type === 'Financeiro' ? 'selected' : ''}>Financeiro</option></select><input type="email" value="${email}" placeholder="email@dominio.com" class="flex-1 p-1.5 border rounded text-xs email-value"><button type="button" onclick="this.parentElement.remove()" class="text-red-500 font-bold text-xs"><i class="fa-solid fa-xmark"></i></button>`;
-            container.appendChild(row);
-        }
-
-        function openQualModal() { document.getElementById('modal-admin-qual').classList.remove('hidden'); }
-        function openProductModal() { document.getElementById('modal-admin-product').classList.remove('hidden'); }
-        function openLossReasonModal() { document.getElementById('modal-admin-loss').classList.remove('hidden'); }
-        function openOriginModal() { document.getElementById('modal-admin-origin').classList.remove('hidden'); }
-
-        function openUserModal(id = null) {
-            document.getElementById('user-id').value = id || '';
-            document.getElementById('user-name').value = '';
-            document.getElementById('user-email').value = '';
-            document.getElementById('user-pass').value = '';
-            document.getElementById('user-avatar').value = '';
-            document.getElementById('user-role').value = 'Vendedor';
-            document.getElementById('user-active').checked = true;
-
-            if (id) {
-                const u = state.users.find(x => x.id === id);
-                if (u) {
-                    document.getElementById('user-name').value = u.name;
-                    document.getElementById('user-email').value = u.email;
-                    document.getElementById('user-pass').value = u.pass;
-                    document.getElementById('user-avatar').value = u.avatar || '';
-                    document.getElementById('user-role').value = u.role;
-                    document.getElementById('user-active').checked = u.active;
-                }
-            }
-            document.getElementById('modal-user').classList.remove('hidden');
-        }
-
-        function openFunnelModal(id = null) {
-            document.getElementById('funnel-id').value = id || '';
-            document.getElementById('funnel-nome').value = '';
-            document.getElementById('funnel-ativo').checked = true;
-
-            const usersDiv = document.getElementById('funnel-users-checkboxes');
-            usersDiv.innerHTML = state.users.map(u => `
-                <label class="flex items-center space-x-2">
-                    <input type="checkbox" name="funnel-user-cb" value="${u.id}" class="rounded">
-                    <span>${u.name} (${u.role})</span>
-                </label>
-            `).join('');
-
-            const stagesContainer = document.getElementById('funnel-stages-container');
-            stagesContainer.innerHTML = '';
-
-            if (id) {
-                const f = state.funnels.find(x => x.id === id);
-                if (f) {
-                    document.getElementById('funnel-nome').value = f.name;
-                    document.getElementById('funnel-ativo').checked = f.active;
-                    document.querySelectorAll('input[name="funnel-user-cb"]').forEach(cb => { cb.checked = f.userIds.includes(cb.value); });
-                    (f.stages || []).forEach(s => addStageInputRow(s.name));
-                }
-            } else {
-                ['Lead', 'Prospect', 'Oportunidade', 'Proposta', 'Ganho', 'Perdido'].forEach(sName => addStageInputRow(sName));
-            }
-            document.getElementById('modal-funnel').classList.remove('hidden');
-        }
-
-        function addStageInputRow(name = '') {
-            const container = document.getElementById('funnel-stages-container');
-            const row = document.createElement('div');
-            row.className = 'flex items-center space-x-2 stage-input-row';
-            row.innerHTML = `<input type="text" value="${name}" required class="flex-1 p-2 border rounded-lg text-xs" placeholder="Etapa"><button type="button" onclick="this.parentElement.remove()" class="text-red-500 font-bold text-xs"><i class="fa-solid fa-xmark"></i></button>`;
-            container.appendChild(row);
-        }
-
-        function openAccountModal(id = null) {
-            document.getElementById('conta-id').value = id || '';
-            document.getElementById('conta-nome').value = '';
-            document.getElementById('conta-razao').value = '';
-            document.getElementById('conta-cnpj').value = '';
-            document.getElementById('conta-setor').value = '';
-            document.getElementById('conta-website').value = '';
-
-            const phonesContainer = document.getElementById('conta-phones-list');
-            const emailsContainer = document.getElementById('conta-emails-list');
-            phonesContainer.innerHTML = '';
-            emailsContainer.innerHTML = '';
-
-            if (id) {
-                const a = state.accounts.find(x => x.id === id);
-                if (a) {
-                    document.getElementById('conta-nome').value = a.nome;
-                    document.getElementById('conta-razao').value = a.razao || '';
-                    document.getElementById('conta-cnpj').value = a.cnpj || '';
-                    document.getElementById('conta-setor').value = a.setor || '';
-                    document.getElementById('conta-website').value = a.website || '';
-
-                    (a.phones || []).forEach(p => addPhoneRow('conta-phones-list', p.number, p.type));
-                    (a.emails || []).forEach(e => addEmailRow('conta-emails-list', e.email, e.type));
-                }
-            } else {
-                addPhoneRow('conta-phones-list');
-                addEmailRow('conta-emails-list');
-            }
-
-            document.getElementById('modal-conta').classList.remove('hidden');
-        }
-
-        function openContactModal(id = null) {
-            document.getElementById('contato-id').value = id || '';
-            document.getElementById('contato-nome').value = '';
-            document.getElementById('contato-cargo').value = '';
-            document.getElementById('contato-departamento').value = '';
-
-            const phonesContainer = document.getElementById('contato-phones-list');
-            const emailsContainer = document.getElementById('contato-emails-list');
-            phonesContainer.innerHTML = '';
-            emailsContainer.innerHTML = '';
-
-            const contaSelect = document.getElementById('contato-conta-id');
-            contaSelect.innerHTML = '<option value="">Selecione uma Empresa...</option>' + state.accounts.map(a => `<option value="${a.id}">${a.nome}</option>`).join('');
-
-            if (id) {
-                const c = state.contacts.find(x => x.id === id);
-                if (c) {
-                    document.getElementById('contato-nome').value = c.nome;
-                    document.getElementById('contato-conta-id').value = c.conta_id || '';
-                    document.getElementById('contato-cargo').value = c.cargo || '';
-                    document.getElementById('contato-departamento').value = c.departamento || '';
-
-                    (c.phones || []).forEach(p => addPhoneRow('contato-phones-list', p.number, p.type));
-                    (c.emails || []).forEach(e => addEmailRow('contato-emails-list', e.email, e.type));
-                }
-            } else {
-                addPhoneRow('contato-phones-list');
-                addEmailRow('contato-emails-list');
-            }
-
-            document.getElementById('modal-contato').classList.remove('hidden');
-        }
-
-        function openDealModal(id = null) {
-            document.getElementById('deal-id').value = id || '';
-            document.getElementById('deal-title').value = '';
-            document.getElementById('deal-setup-value').value = '0';
-            document.getElementById('deal-mrr-value').value = '0';
-
-            const accSelect = document.getElementById('deal-account-id');
-            accSelect.innerHTML = '<option value="">Selecione uma Conta...</option>' + state.accounts.map(a => `<option value="${a.id}">${a.nome}</option>`).join('');
-
-            const funnelSelect = document.getElementById('deal-funnel-id');
-            funnelSelect.innerHTML = state.funnels.map(f => `<option value="${f.id}">${f.name}</option>`).join('');
-            onDealFunnelChange();
-
-            const sellerSelect = document.getElementById('deal-seller-id');
-            sellerSelect.innerHTML = state.users.map(u => `<option value="${u.id}">${u.name}</option>`).join('');
+            document.getElementById('sub-plan-name').textContent = tenant.plan.toUpperCase();
             
-            if (!isManagerRole(state.currentUser.role)) {
-                sellerSelect.value = state.currentUser.id;
-                sellerSelect.disabled = true;
+            if (tenant.plan === 'Basic') {
+                document.getElementById('sub-users-usage').textContent = `${usersCount} / 3`;
+                document.getElementById('sub-users-bar').style.width = `${(usersCount / 3) * 100}%`;
+                document.getElementById('sub-funnels-usage').textContent = `${funnelsCount} / 1`;
+                document.getElementById('sub-funnels-bar').style.width = `${(funnelsCount / 1) * 100}%`;
             } else {
-                sellerSelect.disabled = false;
-                sellerSelect.value = state.currentUser.id;
-            }
-
-            const originSelect = document.getElementById('deal-origin-id');
-            originSelect.innerHTML = '<option value="">Selecione uma Origem...</option>' + state.origins.map(o => `<option value="${o.id}">${o.name}</option>`).join('');
-
-            const prodSelect = document.getElementById('deal-product-id');
-            prodSelect.innerHTML = '<option value="">Personalizado / Nenhum</option>' + state.products.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
-
-            if (id) {
-                const d = state.deals.find(x => x.id === id);
-                if (d) {
-                    document.getElementById('deal-title').value = d.title || '';
-                    accSelect.value = d.accountId || '';
-                    onDealAccountChange();
-                    document.getElementById('deal-contact-id').value = d.contactId || '';
-                    funnelSelect.value = d.funnelId || '';
-                    onDealFunnelChange();
-                    document.getElementById('deal-stage-id').value = d.stageId || '';
-                    sellerSelect.value = d.sellerId || '';
-                    document.getElementById('deal-setup-value').value = d.setupValue || 0;
-                    document.getElementById('deal-mrr-value').value = d.mrrValue || 0;
-                }
-            }
-
-            document.getElementById('modal-deal').classList.remove('hidden');
-        }
-
-        function onDealAccountChange() {
-            const accId = document.getElementById('deal-account-id').value;
-            const contactSelect = document.getElementById('deal-contact-id');
-            const filteredContacts = state.contacts.filter(c => c.conta_id === accId);
-            contactSelect.innerHTML = '<option value="">Selecione um Contato...</option>' + filteredContacts.map(c => `<option value="${c.id}">${c.nome}</option>`).join('');
-        }
-
-        function onDealFunnelChange() {
-            const funnelId = document.getElementById('deal-funnel-id').value;
-            const currentFunnel = state.funnels.find(f => f.id === funnelId) || state.funnels[0];
-            const stageSelect = document.getElementById('deal-stage-id');
-            if (currentFunnel && currentFunnel.stages) {
-                stageSelect.innerHTML = currentFunnel.stages.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
-            } else {
-                stageSelect.innerHTML = '<option value="">Sem Etapas</option>';
+                document.getElementById('sub-users-usage').textContent = `${usersCount} (Ilimitado)`;
+                document.getElementById('sub-users-bar').style.width = '100%';
+                document.getElementById('sub-funnels-usage').textContent = `${funnelsCount} (Ilimitado)`;
+                document.getElementById('sub-funnels-bar').style.width = '100%';
             }
         }
 
-        function onDealProductChange() {
-            const prodId = document.getElementById('deal-product-id').value;
-            const prod = state.products.find(p => p.id === prodId);
-            if (prod) {
-                document.getElementById('deal-setup-value').value = prod.setup || 0;
-                document.getElementById('deal-mrr-value').value = prod.mrr || 0;
-            }
+        function renderMasterSaaS() {
+            if (!isSuperAdmin()) return;
+
+            document.getElementById('master-total-tenants').textContent = state.tenants.length;
+            const basicCount = state.tenants.filter(t => t.plan === 'Basic').length;
+            const proCount = state.tenants.filter(t => t.plan === 'Professional').length;
+            const entCount = state.tenants.filter(t => t.plan === 'Enterprise').length;
+
+            const mrr = (proCount * 149) + (entCount * 299);
+            document.getElementById('master-mrr-value').textContent = `R$ ${mrr.toLocaleString('pt-BR')},00`;
+            document.getElementById('master-basic-count').textContent = basicCount;
+
+            document.getElementById('table-master-tenants-body').innerHTML = state.tenants.map(t => `
+                <tr>
+                    <td class="p-4 font-bold text-gray-800">${t.name}<br><span class="text-xs text-gray-400 font-normal">${t.cnpj || 'Sem CNPJ'}</span></td>
+                    <td class="p-4 text-xs font-bold">${t.uf || 'GO'}</td>
+                    <td class="p-4"><span class="px-2 py-1 rounded text-xs font-bold ${t.plan === 'Basic' ? 'bg-gray-100 text-gray-700' : 'bg-blue-100 text-blue-800'}">${t.plan}</span></td>
+                    <td class="p-4 text-xs font-bold text-emerald-600">${t.status}</td>
+                    <td class="p-4 text-xs space-x-2">
+                        <button onclick="changeTenantPlan('${t.id}', 'Professional')" class="text-blue-600 font-bold hover:underline">+ Pro</button>
+                        <button onclick="changeTenantPlan('${t.id}', 'Enterprise')" class="text-purple-600 font-bold hover:underline">+ Enterprise</button>
+                    </td>
+                </tr>
+            `).join('');
         }
 
-        async function saveDeal(e) {
-            e.preventDefault();
-            const id = document.getElementById('deal-id').value || Date.now().toString();
-            const title = document.getElementById('deal-title').value;
-            const account_id = document.getElementById('deal-account-id').value;
-            const contact_id = document.getElementById('deal-contact-id').value;
-            const funnel_id = document.getElementById('deal-funnel-id').value;
-            const stage_id = document.getElementById('deal-stage-id').value;
-            const seller_id = isManagerRole(state.currentUser.role) ? document.getElementById('deal-seller-id').value : state.currentUser.id;
-            const origin_id = document.getElementById('deal-origin-id').value;
-            const setup_value = parseFloat(document.getElementById('deal-setup-value').value || 0);
-            const mrr_value = parseFloat(document.getElementById('deal-mrr-value').value || 0);
-
-            await _supabase.from('deals').upsert({ id, title, account_id, contact_id, funnel_id, stage_id, seller_id, origin_id, setup_value, mrr_value, created_at: new Date().toISOString() });
-            closeModal('modal-deal');
+        async function changeTenantPlan(tenantId, newPlan) {
+            await _supabase.from('tenants').update({ plan: newPlan }).eq('id', tenantId);
             await fetchAllDataFromSupabase();
-            renderKanban();
-            if (isManagerRole(state.currentUser.role)) renderAnalytics();
+            renderMasterSaaS();
+            alert('Plano atualizado com sucesso!');
         }
 
-        async function saveAccount(e) {
-            e.preventDefault();
-            const id = document.getElementById('conta-id').value || Date.now().toString();
-            const nome = document.getElementById('conta-nome').value;
-            const razao = document.getElementById('conta-razao').value;
-            const cnpj = document.getElementById('conta-cnpj').value;
-            const setor = document.getElementById('conta-setor').value;
-            const website = document.getElementById('conta-website').value;
-
-            const phones = Array.from(document.querySelectorAll('#conta-phones-list .phone-row')).map(row => ({ type: row.querySelector('.phone-type').value, number: row.querySelector('.phone-number').value })).filter(p => p.number.trim() !== '');
-            const emails = Array.from(document.querySelectorAll('#conta-emails-list .email-row')).map(row => ({ type: row.querySelector('.email-type').value, email: row.querySelector('.email-value').value })).filter(e => e.email.trim() !== '');
-
-            await _supabase.from('accounts').upsert({ id, nome, razao, cnpj, setor, website, phones, emails });
-            closeModal('modal-conta');
-            await fetchAllDataFromSupabase();
-            renderAccounts();
-        }
-
-        async function saveContact(e) {
-            e.preventDefault();
-            const id = document.getElementById('contato-id').value || Date.now().toString();
-            const nome = document.getElementById('contato-nome').value;
-            const conta_id = document.getElementById('contato-conta-id').value;
-            const cargo = document.getElementById('contato-cargo').value;
-            const departamento = document.getElementById('contato-departamento').value;
-
-            const phones = Array.from(document.querySelectorAll('#contato-phones-list .phone-row')).map(row => ({ type: row.querySelector('.phone-type').value, number: row.querySelector('.phone-number').value })).filter(p => p.number.trim() !== '');
-            const emails = Array.from(document.querySelectorAll('#contato-emails-list .email-row')).map(row => ({ type: row.querySelector('.email-type').value, email: row.querySelector('.email-value').value })).filter(e => e.email.trim() !== '');
-
-            await _supabase.from('contacts').upsert({ id, nome, conta_id, cargo, departamento, phones, emails });
-            closeModal('modal-contato');
-            await fetchAllDataFromSupabase();
-            renderContacts();
-        }
-
-        async function saveUser(e) {
-            e.preventDefault();
-            const id = document.getElementById('user-id').value || Date.now().toString();
-            const name = document.getElementById('user-name').value;
-            const email = document.getElementById('user-email').value;
-            const pass = document.getElementById('user-pass').value;
-            const role = document.getElementById('user-role').value;
-            const avatar = document.getElementById('user-avatar').value;
-            const active = document.getElementById('user-active').checked;
-
-            await _supabase.from('users').upsert({ id, name, email, pass, role, avatar, active, is_admin: ['Gerente', 'Diretor'].includes(role) });
-            closeModal('modal-user');
-            await fetchAllDataFromSupabase();
-            renderUsers();
-        }
-
-        async function saveFunnel(e) {
-            e.preventDefault();
-            const id = document.getElementById('funnel-id').value || Date.now().toString();
-            const name = document.getElementById('funnel-nome').value;
-            const active = document.getElementById('funnel-ativo').checked;
-            const userIds = Array.from(document.querySelectorAll('input[name="funnel-user-cb"]:checked')).map(cb => cb.value);
-            const stages = Array.from(document.querySelectorAll('.stage-input-row input')).map((inp, idx) => ({ id: (idx + 1).toString(), name: inp.value.trim() }));
-
-            await _supabase.from('funnels').upsert({ id, name, active, user_ids: userIds, stages });
-            closeModal('modal-funnel');
-            await fetchAllDataFromSupabase();
-            renderFunnels();
-            setupPipelineFilters();
-        }
-
-        async function saveAdminQualification(e) {
-            e.preventDefault();
-            const question = document.getElementById('qual-question').value;
-            const type = document.getElementById('qual-type').value;
-            await _supabase.from('lead_qualifications').insert({ id: Date.now().toString(), question, type, active: true });
-            closeModal('modal-admin-qual');
-            await fetchAllDataFromSupabase();
-            renderCadastrosAdmin();
-        }
-
-        async function saveAdminProduct(e) {
-            e.preventDefault();
-            const name = document.getElementById('product-name').value;
-            const setup = parseFloat(document.getElementById('product-setup').value || 0);
-            const mrr = parseFloat(document.getElementById('product-mrr').value || 0);
-            await _supabase.from('products').insert({ id: Date.now().toString(), name, setup, mrr });
-            closeModal('modal-admin-product');
-            await fetchAllDataFromSupabase();
-            renderCadastrosAdmin();
-        }
-
-        async function saveAdminLossReason(e) {
-            e.preventDefault();
-            const name = document.getElementById('loss-reason-name').value;
-            await _supabase.from('loss_reasons').insert({ id: Date.now().toString(), name });
-            closeModal('modal-admin-loss');
-            await fetchAllDataFromSupabase();
-            renderCadastrosAdmin();
-        }
-
-        async function saveAdminOrigin(e) {
-            e.preventDefault();
-            const name = document.getElementById('origin-name').value;
-            await _supabase.from('origins').insert({ id: Date.now().toString(), name });
-            closeModal('modal-admin-origin');
-            await fetchAllDataFromSupabase();
-            renderCadastrosAdmin();
-        }
+        function openRegisterModal() { document.getElementById('modal-register').classList.remove('hidden'); }
+        function openPlansModal() { document.getElementById('modal-plans').classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        function toggleSidebar() { document.getElementById('main-sidebar').classList.toggle('sidebar-collapsed'); }
+        function handleLogout() { location.reload(); }
     </script>
 </body>
 </html>
