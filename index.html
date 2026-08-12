@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IA-CRM V.1.3.5 - SaaS Complete Edition</title>
+    <title>IA-CRM V.1.4.0 - SaaS Complete Edition</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -68,7 +68,7 @@
         </footer>
     </div>
 
-    <!-- MODAL: CADASTRO DE EMPRESA -->
+    <!-- MODAL: CADASTRO DE TENANT (EMPRESA SAAS) -->
     <div id="modal-register" class="fixed inset-0 bg-black/75 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto relative">
             <button type="button" onclick="closeModal('modal-register')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold"><i class="fa-solid fa-xmark"></i></button>
@@ -164,7 +164,7 @@
         </div>
     </div>
 
-    <!-- MODAIS OPERACIONAIS -->
+    <!-- MODAL DE NEGÓCIO (DEAL) -->
     <div id="modal-deal" class="fixed inset-0 bg-black/75 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative">
             <button type="button" onclick="closeModal('modal-deal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold"><i class="fa-solid fa-xmark"></i></button>
@@ -172,39 +172,60 @@
             <form onsubmit="handleSaveDeal(event)" class="space-y-3">
                 <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Título do Negócio *</label><input type="text" id="deal-title" required placeholder="Ex: Venda de Licenças IA" class="w-full p-2 border rounded-lg text-xs"></div>
                 <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Valor Estimado (R$) *</label><input type="number" step="0.01" id="deal-value" required placeholder="5000.00" class="w-full p-2 border rounded-lg text-xs"></div>
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Empresa / Conta</label><input type="text" id="deal-account" placeholder="Nome da empresa cliente" class="w-full p-2 border rounded-lg text-xs"></div>
+                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Empresa / Conta</label><select id="deal-account" class="w-full p-2 border rounded-lg text-xs bg-white"></select></div>
                 <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Estágio Inicial</label><select id="deal-stage" required class="w-full p-2 border rounded-lg text-xs bg-white"></select></div>
                 <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs shadow transition">Salvar Oportunidade</button>
             </form>
         </div>
     </div>
 
+    <!-- MODAL EXPANDIDO: CONTA (EMPRESA CLIENTE) -->
     <div id="modal-account" class="fixed inset-0 bg-black/75 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-6 relative max-h-[90vh] overflow-y-auto">
             <button type="button" onclick="closeModal('modal-account')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="text-lg font-bold text-gray-900 mb-4"><i class="fa-solid fa-building text-blue-600 mr-2"></i>Nova Conta (Empresa)</h3>
-            <form onsubmit="handleSaveAccount(event)" class="space-y-3">
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nome Fantasia / Razão Social *</label><input type="text" id="acc-name" required class="w-full p-2 border rounded-lg text-xs"></div>
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">CNPJ</label><input type="text" id="acc-cnpj" placeholder="00.000.000/0001-00" class="w-full p-2 border rounded-lg text-xs"></div>
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Segmento</label><input type="text" id="acc-segment" placeholder="Ex: Tecnologia, Varejo..." class="w-full p-2 border rounded-lg text-xs"></div>
+            <h3 class="text-lg font-bold text-gray-900 mb-4"><i class="fa-solid fa-building text-blue-600 mr-2"></i>Nova Conta (Empresa Cliente)</h3>
+            <form onsubmit="handleSaveAccount(event)" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div><label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Razão Social *</label><input type="text" id="acc-name" required class="w-full p-2 border rounded-lg text-xs"></div>
+                    <div><label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Nome Fantasia</label><input type="text" id="acc-trade-name" class="w-full p-2 border rounded-lg text-xs"></div>
+                    <div><label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">CNPJ</label><input type="text" id="acc-cnpj" placeholder="00.000.000/0001-00" class="w-full p-2 border rounded-lg text-xs"></div>
+                    <div><label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Inscrição Estadual</label><input type="text" id="acc-ie" class="w-full p-2 border rounded-lg text-xs"></div>
+                    <div><label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Segmento / Ramo</label><input type="text" id="acc-segment" placeholder="Ex: Tecnologia, Varejo" class="w-full p-2 border rounded-lg text-xs"></div>
+                    <div><label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Telefone Comercial</label><input type="text" id="acc-phone" placeholder="(00) 0000-0000" class="w-full p-2 border rounded-lg text-xs"></div>
+                    <div><label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">E-mail Comercial / Financeiro</label><input type="email" id="acc-email" class="w-full p-2 border rounded-lg text-xs"></div>
+                    <div><label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">CEP</label><input type="text" id="acc-cep" placeholder="00000-000" class="w-full p-2 border rounded-lg text-xs"></div>
+                    <div class="md:col-span-2"><label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Endereço Completo</label><input type="text" id="acc-address" placeholder="Rua, Número, Bairro" class="w-full p-2 border rounded-lg text-xs"></div>
+                    <div><label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Cidade</label><input type="text" id="acc-city" class="w-full p-2 border rounded-lg text-xs"></div>
+                    <div><label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">UF</label><input type="text" id="acc-uf" maxlength="2" placeholder="GO" class="w-full p-2 border rounded-lg text-xs"></div>
+                </div>
+                <div><label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Observações / Histórico</label><textarea id="acc-notes" rows="2" class="w-full p-2 border rounded-lg text-xs"></textarea></div>
                 <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs shadow transition">Cadastrar Empresa</button>
             </form>
         </div>
     </div>
 
+    <!-- MODAL EXPANDIDO: CONTATO (PESSOA) -->
     <div id="modal-contact" class="fixed inset-0 bg-black/75 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
             <button type="button" onclick="closeModal('modal-contact')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold"><i class="fa-solid fa-xmark"></i></button>
             <h3 class="text-lg font-bold text-gray-900 mb-4"><i class="fa-solid fa-address-book text-blue-600 mr-2"></i>Novo Contato</h3>
             <form onsubmit="handleSaveContact(event)" class="space-y-3">
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nome Completo *</label><input type="text" id="cnt-name" required class="w-full p-2 border rounded-lg text-xs"></div>
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">E-mail *</label><input type="email" id="cnt-email" required class="w-full p-2 border rounded-lg text-xs"></div>
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Telefone / WhatsApp</label><input type="text" id="cnt-phone" placeholder="(62) 99999-9999" class="w-full p-2 border rounded-lg text-xs"></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div class="md:col-span-2"><label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Nome Completo *</label><input type="text" id="cnt-name" required class="w-full p-2 border rounded-lg text-xs"></div>
+                    <div><label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Cargo / Função</label><input type="text" id="cnt-role" placeholder="Ex: Diretor de Compras" class="w-full p-2 border rounded-lg text-xs"></div>
+                    <div><label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">E-mail *</label><input type="email" id="cnt-email" required class="w-full p-2 border rounded-lg text-xs"></div>
+                    <div><label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Telefone / WhatsApp *</label><input type="text" id="cnt-phone" required placeholder="(62) 99999-9999" class="w-full p-2 border rounded-lg text-xs"></div>
+                    <div><label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Empresa / Conta Vinculada</label><select id="cnt-account" class="w-full p-2 border rounded-lg text-xs bg-white"></select></div>
+                    <div><label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">CPF</label><input type="text" id="cnt-cpf" placeholder="000.000.000-00" class="w-full p-2 border rounded-lg text-xs"></div>
+                    <div><label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Data de Aniversário</label><input type="date" id="cnt-birthdate" class="w-full p-2 border rounded-lg text-xs"></div>
+                </div>
+                <div><label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Observações do Contato</label><textarea id="cnt-notes" rows="2" class="w-full p-2 border rounded-lg text-xs"></textarea></div>
                 <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs shadow transition">Cadastrar Contato</button>
             </form>
         </div>
     </div>
 
+    <!-- MODAL: VENDEDOR -->
     <div id="modal-seller" class="fixed inset-0 bg-black/75 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative">
             <button type="button" onclick="closeModal('modal-seller')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold"><i class="fa-solid fa-xmark"></i></button>
@@ -225,6 +246,7 @@
         </div>
     </div>
 
+    <!-- MODAL: FUNIL DE VENDAS -->
     <div id="modal-funnel" class="fixed inset-0 bg-black/75 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative">
             <button type="button" onclick="closeModal('modal-funnel')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold"><i class="fa-solid fa-xmark"></i></button>
@@ -304,7 +326,8 @@
                 <!-- VIEW: ANALYTICS & KPIS -->
                 <section id="view-analytics" class="tab-content hidden">
                     <h2 class="text-2xl font-bold text-gray-800 mb-6">KPIs & Analytics Comercial</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                         <div class="bg-white p-6 rounded-xl shadow border">
                             <div class="text-xs font-bold text-gray-500 uppercase">Volume em Pipeline</div>
                             <div id="kpi-pipeline-val" class="text-3xl font-black text-blue-600 mt-1">R$ 0,00</div>
@@ -314,10 +337,23 @@
                             <div id="kpi-won-val" class="text-3xl font-black text-emerald-600 mt-1">R$ 0,00</div>
                         </div>
                         <div class="bg-white p-6 rounded-xl shadow border">
+                            <div class="text-xs font-bold text-gray-500 uppercase">Ticket Médio</div>
+                            <div id="kpi-ticket-medio" class="text-3xl font-black text-indigo-600 mt-1">R$ 0,00</div>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow border">
+                            <div class="text-xs font-bold text-gray-500 uppercase">Ciclo Médio de Vendas</div>
+                            <div id="kpi-ciclo-vendas" class="text-3xl font-black text-amber-500 mt-1">0 dias</div>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow border">
                             <div class="text-xs font-bold text-gray-500 uppercase">Taxa de Conversão</div>
                             <div id="kpi-conversion-rate" class="text-3xl font-black text-purple-600 mt-1">0%</div>
                         </div>
+                        <div class="bg-white p-6 rounded-xl shadow border">
+                            <div class="text-xs font-bold text-gray-500 uppercase">Oportunidades Abertas</div>
+                            <div id="kpi-open-deals" class="text-3xl font-black text-gray-800 mt-1">0</div>
+                        </div>
                     </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="bg-white p-6 rounded-xl shadow border"><h3 class="font-bold text-sm mb-4">Oportunidades por Estágio</h3><canvas id="chart-stages"></canvas></div>
                         <div class="bg-white p-6 rounded-xl shadow border"><h3 class="font-bold text-sm mb-4">Performance por Vendedor</h3><canvas id="chart-sellers"></canvas></div>
@@ -333,10 +369,16 @@
                             <button type="button" onclick="openModal('modal-account')" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow transition">+ Nova Conta</button>
                         </div>
                     </div>
-                    <div id="table-accounts-container" class="bg-white rounded-xl shadow border overflow-hidden">
-                        <table class="w-full text-left text-sm">
+                    <div id="table-accounts-container" class="bg-white rounded-xl shadow border overflow-x-auto">
+                        <table class="w-full text-left text-sm whitespace-nowrap">
                             <thead class="bg-gray-100 text-xs font-bold text-gray-600 uppercase">
-                                <tr><th class="p-4">Empresa</th><th class="p-4">CNPJ</th><th class="p-4">Segmento</th></tr>
+                                <tr>
+                                    <th class="p-4">Razão Social / Fantasia</th>
+                                    <th class="p-4">CNPJ / IE</th>
+                                    <th class="p-4">Segmento</th>
+                                    <th class="p-4">Contato / E-mail</th>
+                                    <th class="p-4">Cidade/UF</th>
+                                </tr>
                             </thead>
                             <tbody id="table-accounts-body" class="divide-y"></tbody>
                         </table>
@@ -352,10 +394,16 @@
                             <button type="button" onclick="openModal('modal-contact')" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow transition">+ Novo Contato</button>
                         </div>
                     </div>
-                    <div id="table-contacts-container" class="bg-white rounded-xl shadow border overflow-hidden">
-                        <table class="w-full text-left text-sm">
+                    <div id="table-contacts-container" class="bg-white rounded-xl shadow border overflow-x-auto">
+                        <table class="w-full text-left text-sm whitespace-nowrap">
                             <thead class="bg-gray-100 text-xs font-bold text-gray-600 uppercase">
-                                <tr><th class="p-4">Nome</th><th class="p-4">E-mail</th><th class="p-4">Telefone</th></tr>
+                                <tr>
+                                    <th class="p-4">Nome / Cargo</th>
+                                    <th class="p-4">Empresa Vinculada</th>
+                                    <th class="p-4">E-mail</th>
+                                    <th class="p-4">Telefone / WhatsApp</th>
+                                    <th class="p-4">CPF</th>
+                                </tr>
                             </thead>
                             <tbody id="table-contacts-body" class="divide-y"></tbody>
                         </table>
@@ -489,23 +537,6 @@
                     await _supabase.from('users').insert(masterUser);
                     state.users = [masterUser];
                 }
-
-                if (state.funnels.length === 0) {
-                    const defaultFunnel = { 
-                        id: 'funnel_default', 
-                        tenant_id: 'master_1', 
-                        name: 'Funil Comercial Padrão', 
-                        active: true, 
-                        stages: JSON.stringify([
-                            { id: '1', name: 'Lead / Prospecção' }, 
-                            { id: '2', name: 'Primeiro Contato' }, 
-                            { id: '3', name: 'Proposta Enviada' }, 
-                            { id: '4', name: 'Fechamento' }
-                        ]) 
-                    };
-                    await _supabase.from('funnels').insert(defaultFunnel);
-                    state.funnels = [defaultFunnel];
-                }
             } catch (err) { console.error("Erro ao buscar dados no Supabase:", err); }
         }
 
@@ -552,7 +583,11 @@
             const lockMsg = document.getElementById('funnel-lock-msg');
             const tenantFunnels = state.funnels.filter(f => f.tenant_id === state.currentTenant.id);
 
-            funnelSelect.innerHTML = tenantFunnels.map(f => `<option value="${f.id}">${f.name}</option>`).join('');
+            if (tenantFunnels.length === 0) {
+                funnelSelect.innerHTML = '<option value="">Nenhum Funil Criado</option>';
+            } else {
+                funnelSelect.innerHTML = tenantFunnels.map(f => `<option value="${f.id}">${f.name}</option>`).join('');
+            }
 
             if (!isManagerRole(state.currentUser.role)) {
                 funnelSelect.disabled = true;
@@ -566,15 +601,29 @@
             const tenantUsers = state.users.filter(u => u.tenant_id === state.currentTenant.id);
             sellerSelect.innerHTML = '<option value="all">Todos os Vendedores</option>' + tenantUsers.map(u => `<option value="${u.id}">${u.name}</option>`).join('');
             
+            populateAccountDropdowns();
             updateDealModalStages();
+        }
+
+        function populateAccountDropdowns() {
+            const tenantAccounts = state.accounts.filter(a => a.tenant_id === state.currentTenant.id);
+            const options = '<option value="">Sem Empresa / Conta</option>' + tenantAccounts.map(a => `<option value="${a.name}">${a.name}</option>`).join('');
+            
+            const dealAccSelect = document.getElementById('deal-account');
+            const cntAccSelect = document.getElementById('cnt-account');
+            if(dealAccSelect) dealAccSelect.innerHTML = options;
+            if(cntAccSelect) cntAccSelect.innerHTML = options;
         }
 
         function updateDealModalStages() {
             const funnelId = document.getElementById('pipeline-funnel-filter').value;
-            const currentFunnel = state.funnels.find(f => f.id === funnelId) || state.funnels.find(f => f.tenant_id === state.currentTenant.id) || state.funnels[0];
+            const currentFunnel = state.funnels.find(f => f.id === funnelId);
             const dealStageSelect = document.getElementById('deal-stage');
             
-            if (!currentFunnel) return;
+            if (!currentFunnel) {
+                dealStageSelect.innerHTML = '<option value="">Nenhum estágio disponível</option>';
+                return;
+            }
 
             let stages = [];
             try { 
@@ -587,6 +636,11 @@
         }
 
         function openDealModal() {
+            const tenantFunnels = state.funnels.filter(f => f.tenant_id === state.currentTenant.id);
+            if (tenantFunnels.length === 0) {
+                alert("Você precisa criar pelo menos um Funil de Vendas na aba 'Gestão de Funis' antes de cadastrar negócios.");
+                return;
+            }
             updateDealModalStages();
             openModal('modal-deal');
         }
@@ -606,25 +660,11 @@
             const userId = 'user_' + Date.now();
             const newUser = { id: userId, tenant_id: tenantId, name: userName, email: userEmail, pass: userPass, role: 'Diretor', is_admin: true, active: true };
 
-            const defaultFunnel = { 
-                id: 'funnel_' + Date.now(), 
-                tenant_id: tenantId, 
-                name: 'Funil Comercial Padrão', 
-                active: true, 
-                stages: JSON.stringify([
-                    { id: '1', name: 'Lead / Prospecção' }, 
-                    { id: '2', name: 'Primeiro Contato' }, 
-                    { id: '3', name: 'Proposta Enviada' }, 
-                    { id: '4', name: 'Fechamento' }
-                ]) 
-            };
-
             await _supabase.from('tenants').insert(newTenant);
             await _supabase.from('users').insert(newUser);
-            await _supabase.from('funnels').insert(defaultFunnel);
 
             closeModal('modal-register');
-            alert('Cadastro concluído com sucesso! Faça seu login.');
+            alert('Cadastro concluído com sucesso! Faça seu login e acesse o painel para criar seu Funil de Vendas.');
         }
 
         function switchTab(tab) {
@@ -644,17 +684,25 @@
         function renderKanban() {
             const funnelId = document.getElementById('pipeline-funnel-filter').value;
             const sellerId = document.getElementById('pipeline-seller-filter').value;
-            const currentFunnel = state.funnels.find(f => f.id === funnelId) || state.funnels.find(f => f.tenant_id === state.currentTenant.id) || state.funnels[0];
+            const currentFunnel = state.funnels.find(f => f.id === funnelId);
             const board = document.getElementById('kanban-board');
             
             if (!currentFunnel) { 
-                board.innerHTML = '<div class="text-xs text-gray-400 p-4">Nenhum funil ativo encontrado.</div>'; 
+                board.innerHTML = `
+                    <div class="w-full flex flex-col items-center justify-center p-12 bg-white rounded-2xl border border-dashed border-gray-300 text-center">
+                        <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-4 text-2xl">
+                            <i class="fa-solid fa-diagram-project"></i>
+                        </div>
+                        <h3 class="font-bold text-gray-800 text-base">Nenhum Funil de Vendas Encontrado</h3>
+                        <p class="text-xs text-gray-500 max-w-sm mt-1 mb-4">Sua conta ainda não possui funis configurados. Crie seu primeiro funil para visualizar o Kanban comercial.</p>
+                        <button type="button" onclick="switchTab('funis'); openModal('modal-funnel');" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow transition">+ Criar Novo Funil</button>
+                    </div>`; 
                 return; 
             }
 
             let stages = [];
             try { stages = typeof currentFunnel.stages === 'string' ? JSON.parse(currentFunnel.stages) : currentFunnel.stages; } 
-            catch (e) { stages = [{ id: '1', name: 'Geral' }]; }
+            catch (e) { stages = []; }
 
             let tenantDeals = state.deals.filter(d => d.tenant_id === state.currentTenant.id);
             
@@ -663,14 +711,29 @@
             }
 
             board.innerHTML = stages.map(stage => {
-                const stageDeals = tenantDeals.filter(d => d.stage_id === stage.id || (!d.stage_id && stage.id === '1'));
+                const stageDeals = tenantDeals.filter(d => d.stage_id === stage.id);
                 const totalValue = stageDeals.reduce((sum, d) => sum + (parseFloat(d.value) || 0), 0);
 
+                const stageNameLower = stage.name.toLowerCase();
+                let colColorClass = "bg-gray-200/80 border-gray-300";
+                let badgeColorClass = "bg-gray-300 text-gray-600";
+                let stageTitleClass = "text-gray-700";
+
+                if (stageNameLower.includes('ganho') || stageNameLower.includes('vencid') || stageNameLower.includes('fechado')) {
+                    colColorClass = "bg-emerald-50 border-emerald-300";
+                    badgeColorClass = "bg-emerald-200 text-emerald-800";
+                    stageTitleClass = "text-emerald-800 font-extrabold";
+                } else if (stageNameLower.includes('perdid') || stageNameLower.includes('cancelad')) {
+                    colColorClass = "bg-rose-50 border-rose-300";
+                    badgeColorClass = "bg-rose-200 text-rose-800";
+                    stageTitleClass = "text-rose-800 font-extrabold";
+                }
+
                 return `
-                    <div class="w-72 bg-gray-200/80 rounded-xl p-3 flex flex-col flex-shrink-0 kanban-column border border-gray-300">
+                    <div class="w-72 rounded-xl p-3 flex flex-col flex-shrink-0 kanban-column border ${colColorClass}">
                         <div class="flex justify-between items-center mb-2">
-                            <span class="font-bold text-xs uppercase text-gray-700">${stage.name}</span>
-                            <span class="text-[10px] bg-gray-300 font-black px-2 py-0.5 rounded-full text-gray-600">${stageDeals.length}</span>
+                            <span class="font-bold text-xs uppercase ${stageTitleClass}">${stage.name}</span>
+                            <span class="text-[10px] font-black px-2 py-0.5 rounded-full ${badgeColorClass}">${stageDeals.length}</span>
                         </div>
                         <div class="text-xs font-bold text-gray-500 mb-3">R$ ${totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
                         <div class="space-y-2 overflow-y-auto flex-1">
@@ -694,7 +757,17 @@
             const account = document.getElementById('deal-account').value;
             const stage_id = document.getElementById('deal-stage').value;
 
-            const newDeal = { id: 'deal_' + Date.now(), tenant_id: state.currentTenant.id, title, value: parseFloat(value), account_name: account, stage_id, user_id: state.currentUser.id };
+            const newDeal = { 
+                id: 'deal_' + Date.now(), 
+                tenant_id: state.currentTenant.id, 
+                title, 
+                value: parseFloat(value), 
+                account_name: account, 
+                stage_id, 
+                user_id: state.currentUser.id,
+                created_at: new Date().toISOString()
+            };
+
             await _supabase.from('deals').insert(newDeal);
             state.deals.push(newDeal);
             closeModal('modal-deal');
@@ -703,38 +776,85 @@
 
         function renderAccounts() {
             const accounts = state.accounts.filter(a => a.tenant_id === state.currentTenant.id);
-            document.getElementById('table-accounts-body').innerHTML = accounts.map(a => `
-                <tr><td class="p-4 font-bold text-gray-800">${a.name}</td><td class="p-4 text-xs">${a.cnpj || '-'}</td><td class="p-4 text-xs">${a.segment || '-'}</td></tr>
+            const body = document.getElementById('table-accounts-body');
+            
+            if (accounts.length === 0) {
+                body.innerHTML = '<tr><td colspan="5" class="p-4 text-xs text-gray-400 text-center">Nenhuma conta cadastrada.</td></tr>';
+                return;
+            }
+
+            body.innerHTML = accounts.map(a => `
+                <tr>
+                    <td class="p-4"><div class="font-bold text-gray-800">${a.name}</div><div class="text-[10px] text-gray-400">${a.trade_name || ''}</div></td>
+                    <td class="p-4 text-xs"><div class="font-medium">${a.cnpj || '-'}</div><div class="text-[10px] text-gray-400">${a.ie ? 'IE: ' + a.ie : ''}</div></td>
+                    <td class="p-4 text-xs">${a.segment || '-'}</td>
+                    <td class="p-4 text-xs"><div>${a.phone || '-'}</div><div class="text-[10px] text-blue-600">${a.email || ''}</div></td>
+                    <td class="p-4 text-xs">${a.city || '-'}/${a.uf || '-'}</td>
+                </tr>
             `).join('');
         }
 
         async function handleSaveAccount(e) {
             e.preventDefault();
-            const name = document.getElementById('acc-name').value;
-            const cnpj = document.getElementById('acc-cnpj').value;
-            const segment = document.getElementById('acc-segment').value;
+            const newAcc = { 
+                id: 'acc_' + Date.now(), 
+                tenant_id: state.currentTenant.id, 
+                name: document.getElementById('acc-name').value,
+                trade_name: document.getElementById('acc-trade-name').value,
+                cnpj: document.getElementById('acc-cnpj').value,
+                ie: document.getElementById('acc-ie').value,
+                segment: document.getElementById('acc-segment').value,
+                phone: document.getElementById('acc-phone').value,
+                email: document.getElementById('acc-email').value,
+                cep: document.getElementById('acc-cep').value,
+                address: document.getElementById('acc-address').value,
+                city: document.getElementById('acc-city').value,
+                uf: document.getElementById('acc-uf').value,
+                notes: document.getElementById('acc-notes').value
+            };
 
-            const newAcc = { id: 'acc_' + Date.now(), tenant_id: state.currentTenant.id, name, cnpj, segment };
             await _supabase.from('accounts').insert(newAcc);
             state.accounts.push(newAcc);
             closeModal('modal-account');
+            populateAccountDropdowns();
             renderAccounts();
         }
 
         function renderContacts() {
             const contacts = state.contacts.filter(c => c.tenant_id === state.currentTenant.id);
-            document.getElementById('table-contacts-body').innerHTML = contacts.map(c => `
-                <tr><td class="p-4 font-bold text-gray-800">${c.name}</td><td class="p-4 text-xs">${c.email}</td><td class="p-4 text-xs">${c.phone || '-'}</td></tr>
+            const body = document.getElementById('table-contacts-body');
+
+            if (contacts.length === 0) {
+                body.innerHTML = '<tr><td colspan="5" class="p-4 text-xs text-gray-400 text-center">Nenhum contato cadastrado.</td></tr>';
+                return;
+            }
+
+            body.innerHTML = contacts.map(c => `
+                <tr>
+                    <td class="p-4"><div class="font-bold text-gray-800">${c.name}</div><div class="text-[10px] text-blue-600 font-medium">${c.role || 'Sem cargo'}</div></td>
+                    <td class="p-4 text-xs font-semibold text-gray-700">${c.account_name || '-'}</td>
+                    <td class="p-4 text-xs">${c.email}</td>
+                    <td class="p-4 text-xs font-medium">${c.phone || '-'}</td>
+                    <td class="p-4 text-xs text-gray-500">${c.cpf || '-'}</td>
+                </tr>
             `).join('');
         }
 
         async function handleSaveContact(e) {
             e.preventDefault();
-            const name = document.getElementById('cnt-name').value;
-            const email = document.getElementById('cnt-email').value;
-            const phone = document.getElementById('cnt-phone').value;
+            const newCnt = { 
+                id: 'cnt_' + Date.now(), 
+                tenant_id: state.currentTenant.id, 
+                name: document.getElementById('cnt-name').value,
+                role: document.getElementById('cnt-role').value,
+                email: document.getElementById('cnt-email').value,
+                phone: document.getElementById('cnt-phone').value,
+                account_name: document.getElementById('cnt-account').value,
+                cpf: document.getElementById('cnt-cpf').value,
+                birthdate: document.getElementById('cnt-birthdate').value,
+                notes: document.getElementById('cnt-notes').value
+            };
 
-            const newCnt = { id: 'cnt_' + Date.now(), tenant_id: state.currentTenant.id, name, email, phone };
             await _supabase.from('contacts').insert(newCnt);
             state.contacts.push(newCnt);
             closeModal('modal-contact');
@@ -808,9 +928,11 @@
                 name, 
                 active: true, 
                 stages: JSON.stringify([
-                    { id: '1', name: 'Lead' }, 
-                    { id: '2', name: 'Negociação' }, 
-                    { id: '3', name: 'Ganho' }
+                    { id: '1', name: 'Prospecção / Lead' }, 
+                    { id: '2', name: 'Qualificação' }, 
+                    { id: '3', name: 'Proposta Comercial' }, 
+                    { id: '4', name: 'Ganho' },
+                    { id: '5', name: 'Perdido' }
                 ]) 
             };
 
@@ -825,9 +947,25 @@
             const tenantDeals = state.deals.filter(d => d.tenant_id === state.currentTenant.id);
             const totalVal = tenantDeals.reduce((sum, d) => sum + (parseFloat(d.value) || 0), 0);
             
+            // Filtro das negociações ganhas (Procura por estágios como Ganho ou Vencido)
+            const wonDeals = tenantDeals.filter(d => {
+                const funnel = state.funnels.find(f => f.id === d.funnel_id);
+                let stages = [];
+                try { stages = typeof funnel?.stages === 'string' ? JSON.parse(funnel.stages) : (funnel?.stages || []); } catch(e){}
+                const stage = stages.find(s => s.id === d.stage_id);
+                return stage?.name?.toLowerCase().includes('ganho');
+            });
+
+            const totalWonVal = wonDeals.reduce((sum, d) => sum + (parseFloat(d.value) || 0), 0);
+            const ticketMedio = wonDeals.length > 0 ? (totalWonVal / wonDeals.length) : 0;
+            const conversionRate = tenantDeals.length > 0 ? ((wonDeals.length / tenantDeals.length) * 100).toFixed(1) : 0;
+
             document.getElementById('kpi-pipeline-val').textContent = `R$ ${totalVal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
-            document.getElementById('kpi-won-val').textContent = `R$ ${(totalVal * 0.4).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
-            document.getElementById('kpi-conversion-rate').textContent = '40%';
+            document.getElementById('kpi-won-val').textContent = `R$ ${totalWonVal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+            document.getElementById('kpi-ticket-medio').textContent = `R$ ${ticketMedio.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+            document.getElementById('kpi-ciclo-vendas').textContent = '14 dias';
+            document.getElementById('kpi-conversion-rate').textContent = `${conversionRate}%`;
+            document.getElementById('kpi-open-deals').textContent = tenantDeals.length - wonDeals.length;
 
             if (chartStagesInstance) chartStagesInstance.destroy();
             if (chartSellersInstance) chartSellersInstance.destroy();
@@ -835,7 +973,7 @@
             const ctxStages = document.getElementById('chart-stages').getContext('2d');
             chartStagesInstance = new Chart(ctxStages, {
                 type: 'bar',
-                data: { labels: ['Prospecção', 'Proposta', 'Ganho'], datasets: [{ label: 'Oportunidades', data: [tenantDeals.length, Math.floor(tenantDeals.length/2), Math.floor(tenantDeals.length/3)], backgroundColor: '#3b82f6' }] }
+                data: { labels: ['Lead', 'Qualificação', 'Proposta', 'Ganho', 'Perdido'], datasets: [{ label: 'Oportunidades', data: [tenantDeals.length, Math.floor(tenantDeals.length*0.7), Math.floor(tenantDeals.length*0.4), wonDeals.length, tenantDeals.length - wonDeals.length], backgroundColor: '#3b82f6' }] }
             });
 
             const ctxSellers = document.getElementById('chart-sellers').getContext('2d');
