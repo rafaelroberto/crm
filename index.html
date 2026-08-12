@@ -132,7 +132,7 @@
                             <li class="flex items-center"><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Gestão de Contas & Contatos</li>
                         </ul>
                     </div>
-                    <button type="button" onclick="openRegisterModal()" class="w-full py-2.5 bg-gray-800 hover:bg-gray-900 text-white font-bold text-xs rounded-lg transition">Start Grátis</button>
+                    <button type="button" onclick="closeModal('modal-plans'); openRegisterModal();" class="w-full py-2.5 bg-gray-800 hover:bg-gray-900 text-white font-bold text-xs rounded-lg transition">Start Grátis</button>
                 </div>
 
                 <div class="border-2 border-blue-600 rounded-xl p-5 flex flex-col justify-between shadow-lg relative bg-blue-50/30">
@@ -173,7 +173,7 @@
                 <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Título do Negócio *</label><input type="text" id="deal-title" required placeholder="Ex: Venda de Licenças IA" class="w-full p-2 border rounded-lg text-xs"></div>
                 <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Valor Estimado (R$) *</label><input type="number" step="0.01" id="deal-value" required placeholder="5000.00" class="w-full p-2 border rounded-lg text-xs"></div>
                 <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Empresa / Conta</label><input type="text" id="deal-account" placeholder="Nome da empresa cliente" class="w-full p-2 border rounded-lg text-xs"></div>
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Estágio Inicial</label><select id="deal-stage" class="w-full p-2 border rounded-lg text-xs bg-white"></select></div>
+                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Estágio Inicial</label><select id="deal-stage" required class="w-full p-2 border rounded-lg text-xs bg-white"></select></div>
                 <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs shadow transition">Salvar Oportunidade</button>
             </form>
         </div>
@@ -296,7 +296,7 @@
                             </div>
                             <div id="wrapper-seller-filter"><label class="text-[10px] font-bold uppercase text-gray-500 block">Filtrar Vendedor</label><select id="pipeline-seller-filter" onchange="renderKanban()" class="p-2 border rounded-lg text-xs font-bold bg-gray-50"></select></div>
                         </div>
-                        <button type="button" onclick="openModal('modal-deal')" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow transition">+ Nova Oportunidade</button>
+                        <button type="button" onclick="openDealModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow transition">+ Nova Oportunidade</button>
                     </div>
                     <div id="kanban-board" class="flex space-x-4 overflow-x-auto pb-4"></div>
                 </section>
@@ -329,11 +329,11 @@
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-2xl font-bold text-gray-800">Contas (Empresas Clientes)</h2>
                         <div class="space-x-2">
-                            <button type="button" onclick="exportToExcel('table-accounts-body', 'Contas')" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition"><i class="fa-solid fa-file-excel mr-1"></i> Exportar</button>
+                            <button type="button" onclick="exportToExcel('table-accounts-container', 'Contas')" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition"><i class="fa-solid fa-file-excel mr-1"></i> Exportar</button>
                             <button type="button" onclick="openModal('modal-account')" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow transition">+ Nova Conta</button>
                         </div>
                     </div>
-                    <div class="bg-white rounded-xl shadow border overflow-hidden">
+                    <div id="table-accounts-container" class="bg-white rounded-xl shadow border overflow-hidden">
                         <table class="w-full text-left text-sm">
                             <thead class="bg-gray-100 text-xs font-bold text-gray-600 uppercase">
                                 <tr><th class="p-4">Empresa</th><th class="p-4">CNPJ</th><th class="p-4">Segmento</th></tr>
@@ -348,11 +348,11 @@
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-2xl font-bold text-gray-800">Contatos (Pessoas)</h2>
                         <div class="space-x-2">
-                            <button type="button" onclick="exportToExcel('table-contacts-body', 'Contatos')" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition"><i class="fa-solid fa-file-excel mr-1"></i> Exportar</button>
+                            <button type="button" onclick="exportToExcel('table-contacts-container', 'Contatos')" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition"><i class="fa-solid fa-file-excel mr-1"></i> Exportar</button>
                             <button type="button" onclick="openModal('modal-contact')" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow transition">+ Novo Contato</button>
                         </div>
                     </div>
-                    <div class="bg-white rounded-xl shadow border overflow-hidden">
+                    <div id="table-contacts-container" class="bg-white rounded-xl shadow border overflow-hidden">
                         <table class="w-full text-left text-sm">
                             <thead class="bg-gray-100 text-xs font-bold text-gray-600 uppercase">
                                 <tr><th class="p-4">Nome</th><th class="p-4">E-mail</th><th class="p-4">Telefone</th></tr>
@@ -450,7 +450,7 @@
     <script>
         const SUPABASE_URL = 'https://swphiblxorwigoywzyiu.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_6rNK9nsaERw5uC8MR0eHvg_gnFE_2zA';
-        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const _supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
         let state = { currentUser: null, currentTenant: null, tenants: [], users: [], funnels: [], accounts: [], contacts: [], deals: [] };
         let chartStagesInstance = null;
@@ -460,6 +460,7 @@
         function isManagerRole(role) { return ['Gerente', 'Diretor'].includes(role) || state.currentUser?.is_admin; }
 
         async function fetchAllDataFromSupabase() {
+            if (!_supabase) return;
             try {
                 const [tn, u, f, a, c, d] = await Promise.all([
                     _supabase.from('tenants').select('*'),
@@ -505,7 +506,7 @@
                     await _supabase.from('funnels').insert(defaultFunnel);
                     state.funnels = [defaultFunnel];
                 }
-            } catch (err) { console.error("Erro Supabase:", err); }
+            } catch (err) { console.error("Erro ao buscar dados no Supabase:", err); }
         }
 
         async function handleLogin(e) {
@@ -519,7 +520,7 @@
                 state.currentUser = user;
                 state.currentTenant = state.tenants.find(t => t.id === user.tenant_id) || state.tenants[0];
 
-                if (state.currentTenant.status === 'Canceled') {
+                if (state.currentTenant && state.currentTenant.status === 'Canceled') {
                     alert('Sua assinatura está cancelada. Entre em contato com o suporte.');
                     return;
                 }
@@ -528,8 +529,9 @@
                 document.getElementById('app-container').classList.remove('hidden');
                 initApp();
             } else {
-                document.getElementById('login-error').textContent = 'Usuário ou senha incorretos.';
-                document.getElementById('login-error').classList.remove('hidden');
+                const errorEl = document.getElementById('login-error');
+                errorEl.textContent = 'Usuário ou senha incorretos.';
+                errorEl.classList.remove('hidden');
             }
         }
 
@@ -552,7 +554,6 @@
 
             funnelSelect.innerHTML = tenantFunnels.map(f => `<option value="${f.id}">${f.name}</option>`).join('');
 
-            // Trava para Vendedores
             if (!isManagerRole(state.currentUser.role)) {
                 funnelSelect.disabled = true;
                 lockMsg.classList.remove('hidden');
@@ -564,6 +565,30 @@
             const sellerSelect = document.getElementById('pipeline-seller-filter');
             const tenantUsers = state.users.filter(u => u.tenant_id === state.currentTenant.id);
             sellerSelect.innerHTML = '<option value="all">Todos os Vendedores</option>' + tenantUsers.map(u => `<option value="${u.id}">${u.name}</option>`).join('');
+            
+            updateDealModalStages();
+        }
+
+        function updateDealModalStages() {
+            const funnelId = document.getElementById('pipeline-funnel-filter').value;
+            const currentFunnel = state.funnels.find(f => f.id === funnelId) || state.funnels.find(f => f.tenant_id === state.currentTenant.id) || state.funnels[0];
+            const dealStageSelect = document.getElementById('deal-stage');
+            
+            if (!currentFunnel) return;
+
+            let stages = [];
+            try { 
+                stages = typeof currentFunnel.stages === 'string' ? JSON.parse(currentFunnel.stages) : currentFunnel.stages; 
+            } catch (e) { 
+                stages = [{ id: '1', name: 'Geral' }]; 
+            }
+
+            dealStageSelect.innerHTML = stages.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+        }
+
+        function openDealModal() {
+            updateDealModalStages();
+            openModal('modal-deal');
         }
 
         async function handleRegisterTenant(e) {
@@ -599,7 +624,7 @@
             await _supabase.from('funnels').insert(defaultFunnel);
 
             closeModal('modal-register');
-            alert('Cadastro concluído com sucesso! Seu Funil Comercial Padrão foi gerado. Faça seu login.');
+            alert('Cadastro concluído com sucesso! Faça seu login.');
         }
 
         function switchTab(tab) {
@@ -618,15 +643,24 @@
 
         function renderKanban() {
             const funnelId = document.getElementById('pipeline-funnel-filter').value;
+            const sellerId = document.getElementById('pipeline-seller-filter').value;
             const currentFunnel = state.funnels.find(f => f.id === funnelId) || state.funnels.find(f => f.tenant_id === state.currentTenant.id) || state.funnels[0];
             const board = document.getElementById('kanban-board');
-            if (!currentFunnel) { board.innerHTML = '<div class="text-xs text-gray-400 p-4">Nenhum funil ativo encontrado.</div>'; return; }
+            
+            if (!currentFunnel) { 
+                board.innerHTML = '<div class="text-xs text-gray-400 p-4">Nenhum funil ativo encontrado.</div>'; 
+                return; 
+            }
 
             let stages = [];
             try { stages = typeof currentFunnel.stages === 'string' ? JSON.parse(currentFunnel.stages) : currentFunnel.stages; } 
             catch (e) { stages = [{ id: '1', name: 'Geral' }]; }
 
-            const tenantDeals = state.deals.filter(d => d.tenant_id === state.currentTenant.id);
+            let tenantDeals = state.deals.filter(d => d.tenant_id === state.currentTenant.id);
+            
+            if (sellerId !== 'all') {
+                tenantDeals = tenantDeals.filter(d => d.user_id === sellerId);
+            }
 
             board.innerHTML = stages.map(stage => {
                 const stageDeals = tenantDeals.filter(d => d.stage_id === stage.id || (!d.stage_id && stage.id === '1'));
@@ -732,6 +766,7 @@
             state.users.push(newUser);
             closeModal('modal-seller');
             renderSellers();
+            populateFilters();
         }
 
         function renderFunnels() {
@@ -860,9 +895,11 @@
             renderMasterSaaS();
         }
 
-        function exportToExcel(tableId, filename) {
-            const element = document.getElementById(tableId);
-            const wb = XLSX.utils.table_to_book(element.parentElement);
+        function exportToExcel(containerId, filename) {
+            const container = document.getElementById(containerId);
+            const table = container.querySelector('table');
+            if (!table) return;
+            const wb = XLSX.utils.table_to_book(table);
             XLSX.writeFile(wb, `${filename}_${Date.now()}.xlsx`);
         }
 
