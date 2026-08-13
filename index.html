@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IA-CRM V.1.6.0 - Advanced Qualification Edition</title>
+    <title>IA-CRM V.1.6.1 - Stable Edition</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -164,7 +164,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE NEGÓCIO (DEAL) COM CAMPOS DE QUALIFICAÇÃO -->
+    <!-- MODAL DE NEGÓCIO (DEAL) COM QUALIFICAÇÃO -->
     <div id="modal-deal" class="fixed inset-0 bg-black/75 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
             <button type="button" onclick="closeModal('modal-deal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold"><i class="fa-solid fa-xmark"></i></button>
@@ -179,20 +179,16 @@
                     <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Estágio Inicial</label><select id="deal-stage" required class="w-full p-2 border rounded-lg text-xs bg-white"></select></div>
                 </div>
 
-                <!-- FORMULÁRIO DINÂMICO DE QUALIFICAÇÃO DE LEAD -->
                 <div id="deal-qualification-container" class="pt-2">
                     <h4 class="text-xs font-black uppercase text-indigo-700 mb-2 flex items-center gap-1">
-                        <i class="fa-solid fa-clipboard-check"></i> Formulário de Qualificação do Lead
+                        <i class="fa-solid fa-clipboard-check"></i> Qualificação do Lead
                     </h4>
-                    <div id="deal-qualification-fields" class="space-y-3 bg-indigo-50/50 p-3 rounded-xl border border-indigo-100">
-                        <!-- Gerado via JS -->
-                    </div>
+                    <div id="deal-qualification-fields" class="space-y-3 bg-indigo-50/50 p-3 rounded-xl border border-indigo-100"></div>
                 </div>
 
-                <!-- BOTAO DE IA DE SUGESTÃO -->
                 <div id="ai-suggestion-box" class="hidden pt-2 border-t border-gray-100">
                     <button type="button" onclick="generateAiDealNote()" class="w-full py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 font-bold rounded-lg text-xs transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-wand-magic-sparkles text-purple-600"></i> Gerar Roteiro / Sugestão com IA
+                        <i class="fa-solid fa-wand-magic-sparkles text-purple-600"></i> Gerar Sugestão com IA
                     </button>
                     <div id="ai-suggestion-output" class="hidden mt-2 p-3 bg-purple-50 text-purple-900 text-xs rounded-lg border border-purple-200 whitespace-pre-line"></div>
                 </div>
@@ -202,7 +198,7 @@
         </div>
     </div>
 
-    <!-- MODAL: EDITAR FUNIL E SUAS ETAPAS -->
+    <!-- MODAL: EDITAR FUNIL -->
     <div id="modal-edit-funnel" class="fixed inset-0 bg-black/75 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
             <button type="button" onclick="closeModal('modal-edit-funnel')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold"><i class="fa-solid fa-xmark"></i></button>
@@ -219,17 +215,15 @@
                         <label class="block text-xs font-bold text-gray-600 uppercase">Etapas do Funil *</label>
                         <button type="button" onclick="addStageInputRow()" class="px-2 py-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-[10px] font-bold rounded transition">+ Etapa</button>
                     </div>
-                    <div id="edit-funnel-stages-list" class="space-y-2">
-                        <!-- Gerado via JS -->
-                    </div>
+                    <div id="edit-funnel-stages-list" class="space-y-2"></div>
                 </div>
 
-                <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs shadow transition">Salvar Alterações do Funil</button>
+                <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs shadow transition">Salvar Alterações</button>
             </form>
         </div>
     </div>
 
-    <!-- MODAL: CONTA (EMPRESA CLIENTE) -->
+    <!-- MODAL: CONTA -->
     <div id="modal-account" class="fixed inset-0 bg-black/75 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-6 relative max-h-[90vh] overflow-y-auto">
             <button type="button" onclick="closeModal('modal-account')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold"><i class="fa-solid fa-xmark"></i></button>
@@ -255,7 +249,7 @@
         </div>
     </div>
 
-    <!-- MODAL: CONTATO (PESSOA) -->
+    <!-- MODAL: CONTATO -->
     <div id="modal-contact" class="fixed inset-0 bg-black/75 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
             <button type="button" onclick="closeModal('modal-contact')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold"><i class="fa-solid fa-xmark"></i></button>
@@ -310,7 +304,7 @@
         </div>
     </div>
 
-    <!-- ESTRUTURA PRINCIPAL DA APLICAÇÃO -->
+    <!-- ESTRUTURA PRINCIPAL -->
     <div id="app-container" class="hidden flex-1 flex flex-col">
         <header class="bg-slate-900 text-white shadow-md flex items-center justify-between px-6 py-3 border-b border-slate-800">
             <div class="flex items-center space-x-3">
@@ -377,7 +371,7 @@
                     <div id="kanban-board" class="flex space-x-4 overflow-x-auto pb-4"></div>
                 </section>
 
-                <!-- VIEW: IMPORTAÇÃO DE LEADS -->
+                <!-- VIEW: IMPORTAR LEADS -->
                 <section id="view-importar" class="tab-content hidden">
                     <div class="max-w-4xl mx-auto">
                         <div class="flex justify-between items-center mb-6">
@@ -422,12 +416,11 @@
                     </div>
                 </section>
 
-                <!-- VIEW: CONFIGURAÇÕES DO ADMIN (PERMISSÕES E FORMULÁRIO DE QUALIFICAÇÃO) -->
+                <!-- VIEW: CONFIGURAÇÕES -->
                 <section id="view-configuracoes" class="tab-content hidden">
                     <div class="max-w-4xl mx-auto space-y-6">
                         <h2 class="text-2xl font-bold text-gray-900">Configurações & Formulários de Qualificação</h2>
 
-                        <!-- SEÇÃO 1: PERMISSÕES DE EXCLUSÃO -->
                         <div class="bg-white rounded-xl border shadow-sm p-6 space-y-6">
                             <div>
                                 <h3 class="text-sm font-bold text-gray-800 border-b pb-2 mb-4"><i class="fa-solid fa-user-shield text-blue-600 mr-2"></i>Controle de Permissões da Equipe</h3>
@@ -451,7 +444,6 @@
                             </div>
                         </div>
 
-                        <!-- SEÇÃO 2: FORMULÁRIO PERSONALIZADO DE QUALIFICAÇÃO -->
                         <div class="bg-white rounded-xl border shadow-sm p-6 space-y-4">
                             <div class="flex justify-between items-center border-b pb-3">
                                 <div>
@@ -461,12 +453,9 @@
                                 <button type="button" onclick="addQualificationFieldBuilderRow()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition">+ Novo Campo</button>
                             </div>
 
-                            <div id="qualification-builder-list" class="space-y-3">
-                                <!-- Lista de Campos da Qualificação (via JS) -->
-                            </div>
+                            <div id="qualification-builder-list" class="space-y-3"></div>
                         </div>
 
-                        <!-- SEÇÃO 3: IA & CHAVE API -->
                         <div class="bg-white rounded-xl border shadow-sm p-6 space-y-4">
                             <h3 class="text-sm font-bold text-gray-800 border-b pb-2 mb-2"><i class="fa-solid fa-wand-magic-sparkles text-purple-600 mr-2"></i>Inteligência Artificial (Sugestão de Roteiros)</h3>
                             <div class="space-y-4">
@@ -484,7 +473,7 @@
                             </div>
                         </div>
 
-                        <button type="button" onclick="saveAdminSettings()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs shadow-lg transition">Salvar Todas as Configurações & Campos</button>
+                        <button type="button" onclick="saveAdminSettings()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs shadow-lg transition">Salvar Configurações</button>
                     </div>
                 </section>
 
@@ -593,7 +582,7 @@
                     </div>
                 </section>
 
-                <!-- VIEW: GESTÃO DE FUNIS (COM EDIÇÃO DE ETAPAS) -->
+                <!-- VIEW: GESTÃO DE FUNIS -->
                 <section id="view-funis" class="tab-content hidden">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-2xl font-bold text-gray-800">Funis de Vendas</h2>
@@ -661,7 +650,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT OPERACIONAL INTEGRADO -->
+    <!-- SCRIPT OPERACIONAL INTEGRADO COM FAIL-SAFE -->
     <script>
         const SUPABASE_URL = 'https://swphiblxorwigoywzyiu.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_6rNK9nsaERw5uC8MR0eHvg_gnFE_2zA';
@@ -688,43 +677,30 @@
 
         async function fetchAllDataFromSupabase() {
             if (!_supabase) return;
-            try {
-                const [tn, u, f, a, c, d, st, qf] = await Promise.all([
-                    _supabase.from('tenants').select('*'),
-                    _supabase.from('users').select('*'),
-                    _supabase.from('funnels').select('*'),
-                    _supabase.from('accounts').select('*'),
-                    _supabase.from('contacts').select('*'),
-                    _supabase.from('deals').select('*'),
-                    _supabase.from('settings').select('*'),
-                    _supabase.from('qualification_fields').select('*')
-                ]);
 
-                state.tenants = tn.data || [];
-                state.users = u.data || [];
-                state.funnels = f.data || [];
-                state.accounts = a.data || [];
-                state.contacts = c.data || [];
-                state.deals = d.data || [];
-                state.qualificationFields = qf.data || [];
+            // BUSCA SEPARADA COM FAIL-SAFE INDIVIDUAL PARA CADA TABELA
+            try { const res = await _supabase.from('tenants').select('*'); state.tenants = res.data || []; } catch(e){ console.warn("Aviso tenants:", e); }
+            try { const res = await _supabase.from('users').select('*'); state.users = res.data || []; } catch(e){ console.warn("Aviso users:", e); }
+            try { const res = await _supabase.from('funnels').select('*'); state.funnels = res.data || []; } catch(e){ console.warn("Aviso funnels:", e); }
+            try { const res = await _supabase.from('accounts').select('*'); state.accounts = res.data || []; } catch(e){ console.warn("Aviso accounts:", e); }
+            try { const res = await _supabase.from('contacts').select('*'); state.contacts = res.data || []; } catch(e){ console.warn("Aviso contacts:", e); }
+            try { const res = await _supabase.from('deals').select('*'); state.deals = res.data || []; } catch(e){ console.warn("Aviso deals:", e); }
+            try { const res = await _supabase.from('settings').select('*'); if(res.data && res.data[0]) state.settings = res.data[0].config; } catch(e){ console.warn("Aviso settings:", e); }
+            try { const res = await _supabase.from('qualification_fields').select('*'); state.qualificationFields = res.data || []; } catch(e){ console.warn("Aviso qual fields:", e); }
 
-                if (st.data && st.data.length > 0) {
-                    const currentSet = st.data.find(s => s.tenant_id === state.currentTenant?.id);
-                    if (currentSet) state.settings = currentSet.config;
-                }
+            // SE NÃO HOUVER TENANT MASTER, CRIA O INICIAL
+            if (state.tenants.length === 0) {
+                const masterTenant = { id: 'master_1', name: 'Master IA-CRM', cnpj: '00000000000100', city: 'Goiânia', uf: 'GO', plan: 'Enterprise', status: 'Active' };
+                try { await _supabase.from('tenants').insert(masterTenant); } catch(e){}
+                state.tenants = [masterTenant];
+            }
 
-                if (state.tenants.length === 0) {
-                    const masterTenant = { id: 'master_1', name: 'Master IA-CRM', cnpj: '00000000000100', city: 'Goiânia', uf: 'GO', plan: 'Enterprise', status: 'Active' };
-                    await _supabase.from('tenants').insert(masterTenant);
-                    state.tenants = [masterTenant];
-                }
-
-                if (state.users.length === 0) {
-                    const masterUser = { id: 'user_master', tenant_id: 'master_1', name: 'Rafael Roberto', email: 'rafaelroberto@gmail.com', pass: 'lifeapps123', role: 'Diretor', is_admin: true, is_superadmin: true, active: true };
-                    await _supabase.from('users').insert(masterUser);
-                    state.users = [masterUser];
-                }
-            } catch (err) { console.error("Erro ao buscar dados no Supabase:", err); }
+            // SE NÃO HOUVER USUÁRIO MASTER, CRIA O INICIAL
+            if (state.users.length === 0) {
+                const masterUser = { id: 'user_master', tenant_id: 'master_1', name: 'Rafael Roberto', email: 'rafaelroberto@gmail.com', pass: 'lifeapps123', role: 'Diretor', is_admin: true, is_superadmin: true, active: true };
+                try { await _supabase.from('users').insert(masterUser); } catch(e){}
+                state.users = [masterUser];
+            }
         }
 
         async function handleLogin(e) {
@@ -846,7 +822,6 @@
             dealStageSelect.innerHTML = stages.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
         }
 
-        /* --- MONTAGEM DO FORMULÁRIO DE QUALIFICAÇÃO NO MODAL DE NEGÓCIO --- */
         function renderDealQualificationForm(dealAnswers = {}) {
             const fields = state.qualificationFields.filter(q => q.tenant_id === state.currentTenant.id);
             const container = document.getElementById('deal-qualification-fields');
@@ -938,7 +913,6 @@
             const account = document.getElementById('deal-account').value;
             const stage_id = document.getElementById('deal-stage').value;
 
-            // Validação dos Campos Obrigatórios de Qualificação
             const qualInputs = document.querySelectorAll('.qual-input');
             const qualificationAnswers = {};
             let missingFields = false;
@@ -973,21 +947,22 @@
                 created_at: new Date().toISOString()
             };
 
-            if (dealId) {
-                await _supabase.from('deals').update(dealData).eq('id', dealId);
-                const idx = state.deals.findIndex(d => d.id === dealId);
-                if (idx !== -1) state.deals[idx] = { ...state.deals[idx], ...dealData };
-            } else {
-                const newDeal = { id: 'deal_' + Date.now(), ...dealData };
-                await _supabase.from('deals').insert(newDeal);
-                state.deals.push(newDeal);
-            }
+            try {
+                if (dealId) {
+                    await _supabase.from('deals').update(dealData).eq('id', dealId);
+                    const idx = state.deals.findIndex(d => d.id === dealId);
+                    if (idx !== -1) state.deals[idx] = { ...state.deals[idx], ...dealData };
+                } else {
+                    const newDeal = { id: 'deal_' + Date.now(), ...dealData };
+                    await _supabase.from('deals').insert(newDeal);
+                    state.deals.push(newDeal);
+                }
+            } catch(e) { console.error("Erro ao salvar negócio:", e); }
 
             closeModal('modal-deal');
             renderKanban();
         }
 
-        /* --- RENDERIZAÇÃO DO KANBAN COM HISTÓRICO DE QUALIFICAÇÃO --- */
         function renderKanban() {
             const funnelId = document.getElementById('pipeline-funnel-filter').value;
             const sellerId = document.getElementById('pipeline-seller-filter').value;
@@ -1067,267 +1042,25 @@
             }).join('');
         }
 
-        /* --- GESTÃO DE FUNIS E EDIÇÃO DE ETAPAS --- */
-        function renderFunnels() {
-            const funnels = state.funnels.filter(f => f.tenant_id === state.currentTenant.id);
-            const body = document.getElementById('table-funnels-body');
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`view-${tab}`)?.classList.remove('hidden');
 
-            if (funnels.length === 0) {
-                body.innerHTML = '<tr><td colspan="3" class="p-4 text-xs text-gray-400">Nenhum funil cadastrado para esta conta.</td></tr>';
-                return;
-            }
-
-            body.innerHTML = funnels.map(f => {
-                let stages = [];
-                try { stages = typeof f.stages === 'string' ? JSON.parse(f.stages) : f.stages; } catch(e){}
-                const stageNames = stages.length ? stages.map(s => s.name).join(' ➔ ') : 'Etapas não configuradas';
-
-                return `
-                    <tr>
-                        <td class="p-4 font-bold text-gray-800">${f.name}</td>
-                        <td class="p-4 text-xs text-gray-600">${stageNames}</td>
-                        <td class="p-4 text-xs space-x-2">
-                            ${isManagerRole(state.currentUser.role) ? `<button type="button" onclick="openEditFunnelModal('${f.id}')" class="text-blue-600 font-bold hover:underline"><i class="fa-solid fa-pen-to-square"></i> Editar Etapas</button>` : '<span class="text-gray-400">Apenas Leitura</span>'}
-                        </td>
-                    </tr>
-                `;
-            }).join('');
+            if (tab === 'vendas') renderKanban();
+            if (tab === 'analytics') renderAnalytics();
+            if (tab === 'contas') renderAccounts();
+            if (tab === 'contatos') renderContacts();
+            if (tab === 'vendedores') renderSellers();
+            if (tab === 'funis') renderFunnels();
+            if (tab === 'minha-assinatura') renderMinhaAssinatura();
+            if (tab === 'master-saas') renderMasterSaaS();
         }
 
-        function openEditFunnelModal(funnelId) {
-            const funnel = state.funnels.find(f => f.id === funnelId);
-            if (!funnel) return;
-
-            document.getElementById('edit-funnel-id').value = funnel.id;
-            document.getElementById('edit-funnel-name').value = funnel.name;
-
-            let stages = [];
-            try { stages = typeof funnel.stages === 'string' ? JSON.parse(funnel.stages) : funnel.stages; } catch(e){}
-
-            const list = document.getElementById('edit-funnel-stages-list');
-            list.innerHTML = '';
-
-            stages.forEach(s => addStageInputRow(s.name, s.id));
-            openModal('modal-edit-funnel');
-        }
-
-        function addStageInputRow(name = '', id = '') {
-            const list = document.getElementById('edit-funnel-stages-list');
-            const stageId = id || 'stage_' + Date.now() + Math.floor(Math.random()*100);
-            
-            const div = document.createElement('div');
-            div.className = "flex items-center gap-2 stage-row";
-            div.innerHTML = `
-                <input type="hidden" class="stage-id-input" value="${stageId}">
-                <input type="text" class="stage-name-input flex-1 p-2 border rounded-lg text-xs font-semibold" value="${name}" placeholder="Nome da etapa" required>
-                <button type="button" onclick="this.parentElement.remove()" class="p-2 text-rose-600 hover:bg-rose-50 rounded-lg text-xs"><i class="fa-solid fa-trash"></i></button>
-            `;
-            list.appendChild(div);
-        }
-
-        async function handleSaveFunnelEdit(e) {
-            e.preventDefault();
-            const funnelId = document.getElementById('edit-funnel-id').value;
-            const funnelName = document.getElementById('edit-funnel-name').value;
-
-            const stageRows = document.querySelectorAll('.stage-row');
-            if (stageRows.length === 0) {
-                alert("O funil deve conter pelo menos 1 etapa!");
-                return;
-            }
-
-            const updatedStages = [];
-            stageRows.forEach((row, idx) => {
-                const sId = row.querySelector('.stage-id-input').value;
-                const sName = row.querySelector('.stage-name-input').value.trim();
-                if (sName) updatedStages.push({ id: sId || String(idx+1), name: sName });
-            });
-
-            await _supabase.from('funnels').update({
-                name: funnelName,
-                stages: JSON.stringify(updatedStages)
-            }).eq('id', funnelId);
-
-            const idx = state.funnels.findIndex(f => f.id === funnelId);
-            if (idx !== -1) {
-                state.funnels[idx].name = funnelName;
-                state.funnels[idx].stages = JSON.stringify(updatedStages);
-            }
-
-            closeModal('modal-edit-funnel');
-            populateFilters();
-            renderFunnels();
-            renderKanban();
-        }
-
-        async function handleSaveFunnel(e) {
-            e.preventDefault();
-
-            if (!isManagerRole(state.currentUser.role)) {
-                alert('Apenas o Administrador ou Gestor Comercial pode criar funis de vendas.');
-                return;
-            }
-
-            const funnelsCount = state.funnels.filter(f => f.tenant_id === state.currentTenant.id).length;
-            if (state.currentTenant.plan === 'Basic' && funnelsCount >= 1) {
-                alert('O Plano Basic permite apenas 1 Funil de Vendas! Faça upgrade para o Plano Professional.');
-                return;
-            }
-
-            const name = document.getElementById('fun-name').value;
-            const newFunnel = { 
-                id: 'funnel_' + Date.now(), 
-                tenant_id: state.currentTenant.id, 
-                name, 
-                active: true, 
-                stages: JSON.stringify([
-                    { id: '1', name: 'Prospecção / Lead' }, 
-                    { id: '2', name: 'Qualificação' }, 
-                    { id: '3', name: 'Proposta Comercial' }, 
-                    { id: '4', name: 'Ganho' },
-                    { id: '5', name: 'Perdido' }
-                ]) 
-            };
-
-            await _supabase.from('funnels').insert(newFunnel);
-            state.funnels.push(newFunnel);
-            closeModal('modal-funnel');
-            populateFilters();
-            renderFunnels();
-        }
-
-        /* --- BUILDER DE QUALIFICAÇÃO NO PAINEL ADMIN --- */
-        function renderQualificationBuilder() {
-            const fields = state.qualificationFields.filter(q => q.tenant_id === state.currentTenant.id);
-            const list = document.getElementById('qualification-builder-list');
-            if (!list) return;
-
-            list.innerHTML = '';
-            if (fields.length === 0) {
-                list.innerHTML = '<div class="text-xs text-gray-400 p-2 italic">Nenhum campo de qualificação criado ainda.</div>';
-                return;
-            }
-
-            fields.forEach(f => addQualificationFieldBuilderRow(f));
-        }
-
-        function addQualificationFieldBuilderRow(field = null) {
-            const list = document.getElementById('qualification-builder-list');
-            const fieldId = field?.id || 'qfield_' + Date.now() + Math.floor(Math.random()*100);
-            
-            const div = document.createElement('div');
-            div.className = "p-3 border rounded-xl bg-gray-50 flex flex-col sm:flex-row items-start sm:items-center gap-3 qfield-builder-row";
-            div.innerHTML = `
-                <input type="hidden" class="qfield-id" value="${fieldId}">
-                <div class="flex-1 w-full">
-                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Título / Pergunta *</label>
-                    <input type="text" class="qfield-label w-full p-2 border rounded-lg text-xs font-semibold" value="${field?.label || ''}" placeholder="Ex: Possui orçamento aprovado?" required>
-                </div>
-                <div class="w-full sm:w-40">
-                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Tipo de Resposta</label>
-                    <select class="qfield-type w-full p-2 border rounded-lg text-xs font-semibold bg-white">
-                        <option value="boolean" ${field?.type === 'boolean' ? 'selected' : ''}>Sim / Não</option>
-                        <option value="text_short" ${field?.type === 'text_short' ? 'selected' : ''}>Texto Curto</option>
-                        <option value="text_long" ${field?.type === 'text_long' ? 'selected' : ''}>Texto Longo</option>
-                        <option value="select" ${field?.type === 'select' ? 'selected' : ''}>Múltipla Escolha</option>
-                    </select>
-                </div>
-                <div class="w-full sm:w-44">
-                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Opções (Separadas por vírgula)</label>
-                    <input type="text" class="qfield-options w-full p-2 border rounded-lg text-xs" value="${field?.options || ''}" placeholder="Opção 1, Opção 2">
-                </div>
-                <div class="flex items-center gap-2 pt-3 sm:pt-0">
-                    <label class="flex items-center text-xs font-bold text-gray-700 cursor-pointer">
-                        <input type="checkbox" class="qfield-required w-4 h-4 text-indigo-600 rounded mr-1" ${field?.required ? 'checked' : ''}> Obrigatório
-                    </label>
-                    <button type="button" onclick="this.closest('.qfield-builder-row').remove()" class="p-2 text-rose-600 hover:bg-rose-100 rounded-lg text-xs"><i class="fa-solid fa-trash"></i></button>
-                </div>
-            `;
-            list.appendChild(div);
-        }
-
-        function loadAdminSettingsForm() {
-            document.getElementById('cfg-delete-accounts').checked = !!state.settings.allowUserDeleteAccounts;
-            document.getElementById('cfg-delete-contacts').checked = !!state.settings.allowUserDeleteContacts;
-            document.getElementById('cfg-enable-ai').checked = !!state.settings.enableAi;
-            document.getElementById('cfg-ai-key').value = state.settings.aiKey || '';
-        }
-
-        async function saveAdminSettings() {
-            if (!isManagerRole(state.currentUser.role)) {
-                alert("Apenas administradores podem alterar configurações.");
-                return;
-            }
-
-            const newSettings = {
-                allowUserDeleteAccounts: document.getElementById('cfg-delete-accounts').checked,
-                allowUserDeleteContacts: document.getElementById('cfg-delete-contacts').checked,
-                enableAi: document.getElementById('cfg-enable-ai').checked,
-                aiKey: document.getElementById('cfg-ai-key').value
-            };
-
-            state.settings = newSettings;
-
-            // Salva Configurações Gerais
-            await _supabase.from('settings').upsert({
-                tenant_id: state.currentTenant.id,
-                config: newSettings
-            });
-
-            // Salva Campos de Qualificação
-            const builderRows = document.querySelectorAll('.qfield-builder-row');
-            const updatedQualificationFields = [];
-
-            builderRows.forEach(row => {
-                const qId = row.querySelector('.qfield-id').value;
-                const label = row.querySelector('.qfield-label').value.trim();
-                const type = row.querySelector('.qfield-type').value;
-                const options = row.querySelector('.qfield-options').value.trim();
-                const required = row.querySelector('.qfield-required').checked;
-
-                if (label) {
-                    updatedQualificationFields.push({
-                        id: qId,
-                        tenant_id: state.currentTenant.id,
-                        label,
-                        type,
-                        options,
-                        required
-                    });
-                }
-            });
-
-            // Deleta os antigos e insere os novos no Supabase
-            await _supabase.from('qualification_fields').delete().eq('tenant_id', state.currentTenant.id);
-            if (updatedQualificationFields.length > 0) {
-                await _supabase.from('qualification_fields').insert(updatedQualificationFields);
-            }
-            state.qualificationFields = updatedQualificationFields;
-
-            alert("Todas as configurações e campos de qualificação foram salvos com sucesso!");
-            location.reload();
-        }
-
-        function generateAiDealNote() {
-            const title = document.getElementById('deal-title').value || 'Oportunidade Comercial';
-            const value = document.getElementById('deal-value').value || '0.00';
-            const account = document.getElementById('deal-account').value || 'Cliente';
-
-            const output = document.getElementById('ai-suggestion-output');
-            output.classList.remove('hidden');
-            output.textContent = `🤖 Sugestão de Abordagem IA:\n\n"Olá! Vi que vocês da ${account} estão avaliando a proposta do negócio '${title}' no valor de R$ ${value}. Gostaria de agendar uma breve conversa de 15 minutos para tirar dúvidas técnicas e avançarmos."`;
-        }
-
-        /* --- CONTAS & CONTATOS (FUNÇÕES OPERACIONAIS) --- */
+        /* --- DEMAIS MÓDULOS DE RENDERIZAÇÃO --- */
         function renderAccounts() {
             const accounts = state.accounts.filter(a => a.tenant_id === state.currentTenant.id);
             const body = document.getElementById('table-accounts-body');
-            
-            if (accounts.length === 0) {
-                body.innerHTML = '<tr><td colspan="6" class="p-4 text-xs text-gray-400 text-center">Nenhuma conta cadastrada.</td></tr>';
-                return;
-            }
-
+            if (accounts.length === 0) { body.innerHTML = '<tr><td colspan="6" class="p-4 text-xs text-gray-400 text-center">Nenhuma conta cadastrada.</td></tr>'; return; }
             body.innerHTML = accounts.map(a => `
                 <tr>
                     <td class="p-4"><div class="font-bold text-gray-800">${a.name}</div><div class="text-[10px] text-gray-400">${a.trade_name || ''}</div></td>
@@ -1343,94 +1076,10 @@
             `).join('');
         }
 
-        function openNewAccountModal() {
-            document.getElementById('acc-id').value = '';
-            document.getElementById('account-modal-title').textContent = 'Nova Conta (Empresa Cliente)';
-            openModal('modal-account');
-        }
-
-        function editAccount(id) {
-            const acc = state.accounts.find(a => a.id === id);
-            if (!acc) return;
-
-            document.getElementById('acc-id').value = acc.id;
-            document.getElementById('acc-name').value = acc.name || '';
-            document.getElementById('acc-trade-name').value = acc.trade_name || '';
-            document.getElementById('acc-cnpj').value = acc.cnpj || '';
-            document.getElementById('acc-ie').value = acc.ie || '';
-            document.getElementById('acc-segment').value = acc.segment || '';
-            document.getElementById('acc-phone').value = acc.phone || '';
-            document.getElementById('acc-email').value = acc.email || '';
-            document.getElementById('acc-cep').value = acc.cep || '';
-            document.getElementById('acc-address').value = acc.address || '';
-            document.getElementById('acc-city').value = acc.city || '';
-            document.getElementById('acc-uf').value = acc.uf || '';
-            document.getElementById('acc-notes').value = acc.notes || '';
-
-            document.getElementById('account-modal-title').textContent = 'Editar Conta';
-            openModal('modal-account');
-        }
-
-        async function handleSaveAccount(e) {
-            e.preventDefault();
-            const id = document.getElementById('acc-id').value;
-
-            const accData = { 
-                tenant_id: state.currentTenant.id, 
-                name: document.getElementById('acc-name').value,
-                trade_name: document.getElementById('acc-trade-name').value,
-                cnpj: document.getElementById('acc-cnpj').value,
-                ie: document.getElementById('acc-ie').value,
-                segment: document.getElementById('acc-segment').value,
-                phone: document.getElementById('acc-phone').value,
-                email: document.getElementById('acc-email').value,
-                cep: document.getElementById('acc-cep').value,
-                address: document.getElementById('acc-address').value,
-                city: document.getElementById('acc-city').value,
-                uf: document.getElementById('acc-uf').value,
-                notes: document.getElementById('acc-notes').value
-            };
-
-            if (id) {
-                await _supabase.from('accounts').update(accData).eq('id', id);
-                const idx = state.accounts.findIndex(a => a.id === id);
-                if (idx !== -1) state.accounts[idx] = { ...state.accounts[idx], ...accData };
-            } else {
-                const newAcc = { id: 'acc_' + Date.now(), user_id: state.currentUser.id, ...accData };
-                await _supabase.from('accounts').insert(newAcc);
-                state.accounts.push(newAcc);
-            }
-
-            closeModal('modal-account');
-            populateAccountDropdowns();
-            renderAccounts();
-        }
-
-        async function deleteAccount(id, ownerUserId) {
-            const isOwner = ownerUserId === state.currentUser.id;
-            const canDelete = isManagerRole(state.currentUser.role) || (isOwner && state.settings.allowUserDeleteAccounts);
-
-            if (!canDelete) {
-                alert("Você não tem permissão para excluir esta conta.");
-                return;
-            }
-
-            if (confirm("Tem certeza que deseja excluir esta empresa?")) {
-                await _supabase.from('accounts').delete().eq('id', id);
-                state.accounts = state.accounts.filter(a => a.id !== id);
-                renderAccounts();
-            }
-        }
-
         function renderContacts() {
             const contacts = state.contacts.filter(c => c.tenant_id === state.currentTenant.id);
             const body = document.getElementById('table-contacts-body');
-
-            if (contacts.length === 0) {
-                body.innerHTML = '<tr><td colspan="6" class="p-4 text-xs text-gray-400 text-center">Nenhum contato cadastrado.</td></tr>';
-                return;
-            }
-
+            if (contacts.length === 0) { body.innerHTML = '<tr><td colspan="6" class="p-4 text-xs text-gray-400 text-center">Nenhum contato cadastrado.</td></tr>'; return; }
             body.innerHTML = contacts.map(c => `
                 <tr>
                     <td class="p-4"><div class="font-bold text-gray-800">${c.name}</div><div class="text-[10px] text-blue-600 font-medium">${c.role || 'Sem cargo'}</div></td>
@@ -1446,74 +1095,24 @@
             `).join('');
         }
 
-        function openNewContactModal() {
-            document.getElementById('cnt-id').value = '';
-            document.getElementById('contact-modal-title').textContent = 'Novo Contato';
-            openModal('modal-contact');
-        }
-
-        function editContact(id) {
-            const cnt = state.contacts.find(c => c.id === id);
-            if (!cnt) return;
-
-            document.getElementById('cnt-id').value = cnt.id;
-            document.getElementById('cnt-name').value = cnt.name || '';
-            document.getElementById('cnt-role').value = cnt.role || '';
-            document.getElementById('cnt-email').value = cnt.email || '';
-            document.getElementById('cnt-phone').value = cnt.phone || '';
-            document.getElementById('cnt-account').value = cnt.account_name || '';
-            document.getElementById('cnt-cpf').value = cnt.cpf || '';
-            document.getElementById('cnt-birthdate').value = cnt.birthdate || '';
-            document.getElementById('cnt-notes').value = cnt.notes || '';
-
-            document.getElementById('contact-modal-title').textContent = 'Editar Contato';
-            openModal('modal-contact');
-        }
-
-        async function handleSaveContact(e) {
-            e.preventDefault();
-            const id = document.getElementById('cnt-id').value;
-
-            const cntData = { 
-                tenant_id: state.currentTenant.id, 
-                name: document.getElementById('cnt-name').value,
-                role: document.getElementById('cnt-role').value,
-                email: document.getElementById('cnt-email').value,
-                phone: document.getElementById('cnt-phone').value,
-                account_name: document.getElementById('cnt-account').value,
-                cpf: document.getElementById('cnt-cpf').value,
-                birthdate: document.getElementById('cnt-birthdate').value,
-                notes: document.getElementById('cnt-notes').value
-            };
-
-            if (id) {
-                await _supabase.from('contacts').update(cntData).eq('id', id);
-                const idx = state.contacts.findIndex(c => c.id === id);
-                if (idx !== -1) state.contacts[idx] = { ...state.contacts[idx], ...cntData };
-            } else {
-                const newCnt = { id: 'cnt_' + Date.now(), user_id: state.currentUser.id, ...cntData };
-                await _supabase.from('contacts').insert(newCnt);
-                state.contacts.push(newCnt);
-            }
-
-            closeModal('modal-contact');
-            renderContacts();
-        }
-
-        async function deleteContact(id, ownerUserId) {
-            const isOwner = ownerUserId === state.currentUser.id;
-            const canDelete = isManagerRole(state.currentUser.role) || (isOwner && state.settings.allowUserDeleteContacts);
-
-            if (!canDelete) {
-                alert("Você não tem permissão para excluir este contato.");
-                return;
-            }
-
-            if (confirm("Tem certeza que deseja excluir este contato?")) {
-                await _supabase.from('contacts').delete().eq('id', id);
-                state.contacts = state.contacts.filter(c => c.id !== id);
-                renderContacts();
-            }
+        function renderFunnels() {
+            const funnels = state.funnels.filter(f => f.tenant_id === state.currentTenant.id);
+            const body = document.getElementById('table-funnels-body');
+            if (funnels.length === 0) { body.innerHTML = '<tr><td colspan="3" class="p-4 text-xs text-gray-400">Nenhum funil cadastrado para esta conta.</td></tr>'; return; }
+            body.innerHTML = funnels.map(f => {
+                let stages = [];
+                try { stages = typeof f.stages === 'string' ? JSON.parse(f.stages) : f.stages; } catch(e){}
+                const stageNames = stages.length ? stages.map(s => s.name).join(' ➔ ') : 'Etapas não configuradas';
+                return `
+                    <tr>
+                        <td class="p-4 font-bold text-gray-800">${f.name}</td>
+                        <td class="p-4 text-xs text-gray-600">${stageNames}</td>
+                        <td class="p-4 text-xs space-x-2">
+                            ${isManagerRole(state.currentUser.role) ? `<button type="button" onclick="openEditFunnelModal('${f.id}')" class="text-blue-600 font-bold hover:underline"><i class="fa-solid fa-pen-to-square"></i> Editar Etapas</button>` : '<span class="text-gray-400">Apenas Leitura</span>'}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
         }
 
         function renderSellers() {
@@ -1521,28 +1120,6 @@
             document.getElementById('table-sellers-body').innerHTML = users.map(u => `
                 <tr><td class="p-4 font-bold text-gray-800">${u.name}</td><td class="p-4 text-xs">${u.email}</td><td class="p-4 text-xs font-bold text-blue-600">${u.role}</td><td class="p-4 text-xs text-emerald-600 font-bold">${u.active ? 'Ativo' : 'Inativo'}</td></tr>
             `).join('');
-        }
-
-        async function handleSaveSeller(e) {
-            e.preventDefault();
-            const usersCount = state.users.filter(u => u.tenant_id === state.currentTenant.id).length;
-            if (state.currentTenant.plan === 'Basic' && usersCount >= 3) {
-                alert('Limite do Plano Basic atingido (Máximo 3 Vendedores)! Faça upgrade para o Plano Professional.');
-                return;
-            }
-
-            const name = document.getElementById('sel-name').value;
-            const email = document.getElementById('sel-email').value;
-            const pass = document.getElementById('sel-pass').value;
-            const role = document.getElementById('sel-role').value;
-
-            const newUser = { id: 'user_' + Date.now(), tenant_id: state.currentTenant.id, name, email, pass, role, active: true };
-            await _supabase.from('users').insert(newUser);
-            state.users.push(newUser);
-            closeModal('modal-seller');
-            renderSellers();
-            populateFilters();
-            populateImportAssignees();
         }
 
         function renderAnalytics() {
@@ -1584,11 +1161,399 @@
             });
         }
 
+        /* --- AUXILIARES E MODAIS --- */
+        function openNewAccountModal() { document.getElementById('acc-id').value = ''; document.getElementById('account-modal-title').textContent = 'Nova Conta (Empresa Cliente)'; openModal('modal-account'); }
+        function openNewContactModal() { document.getElementById('cnt-id').value = ''; document.getElementById('contact-modal-title').textContent = 'Novo Contato'; openModal('modal-contact'); }
+        function openEditFunnelModal(funnelId) {
+            const funnel = state.funnels.find(f => f.id === funnelId);
+            if (!funnel) return;
+            document.getElementById('edit-funnel-id').value = funnel.id;
+            document.getElementById('edit-funnel-name').value = funnel.name;
+            let stages = [];
+            try { stages = typeof funnel.stages === 'string' ? JSON.parse(funnel.stages) : funnel.stages; } catch(e){}
+            const list = document.getElementById('edit-funnel-stages-list');
+            list.innerHTML = '';
+            stages.forEach(s => addStageInputRow(s.name, s.id));
+            openModal('modal-edit-funnel');
+        }
+
+        function addStageInputRow(name = '', id = '') {
+            const list = document.getElementById('edit-funnel-stages-list');
+            const stageId = id || 'stage_' + Date.now() + Math.floor(Math.random()*100);
+            const div = document.createElement('div');
+            div.className = "flex items-center gap-2 stage-row";
+            div.innerHTML = `
+                <input type="hidden" class="stage-id-input" value="${stageId}">
+                <input type="text" class="stage-name-input flex-1 p-2 border rounded-lg text-xs font-semibold" value="${name}" placeholder="Nome da etapa" required>
+                <button type="button" onclick="this.parentElement.remove()" class="p-2 text-rose-600 hover:bg-rose-50 rounded-lg text-xs"><i class="fa-solid fa-trash"></i></button>
+            `;
+            list.appendChild(div);
+        }
+
+        async function handleSaveFunnelEdit(e) {
+            e.preventDefault();
+            const funnelId = document.getElementById('edit-funnel-id').value;
+            const funnelName = document.getElementById('edit-funnel-name').value;
+            const stageRows = document.querySelectorAll('.stage-row');
+            if (stageRows.length === 0) { alert("O funil deve conter pelo menos 1 etapa!"); return; }
+
+            const updatedStages = [];
+            stageRows.forEach((row, idx) => {
+                const sId = row.querySelector('.stage-id-input').value;
+                const sName = row.querySelector('.stage-name-input').value.trim();
+                if (sName) updatedStages.push({ id: sId || String(idx+1), name: sName });
+            });
+
+            try {
+                await _supabase.from('funnels').update({ name: funnelName, stages: JSON.stringify(updatedStages) }).eq('id', funnelId);
+                const idx = state.funnels.findIndex(f => f.id === funnelId);
+                if (idx !== -1) { state.funnels[idx].name = funnelName; state.funnels[idx].stages = JSON.stringify(updatedStages); }
+            }catch(e){}
+
+            closeModal('modal-edit-funnel');
+            populateFilters();
+            renderFunnels();
+            renderKanban();
+        }
+
+        async function handleSaveFunnel(e) {
+            e.preventDefault();
+            if (!isManagerRole(state.currentUser.role)) { alert('Apenas o Administrador ou Gestor Comercial pode criar funis de vendas.'); return; }
+            const name = document.getElementById('fun-name').value;
+            const newFunnel = { 
+                id: 'funnel_' + Date.now(), 
+                tenant_id: state.currentTenant.id, 
+                name, 
+                active: true, 
+                stages: JSON.stringify([
+                    { id: '1', name: 'Prospecção / Lead' }, 
+                    { id: '2', name: 'Qualificação' }, 
+                    { id: '3', name: 'Proposta Comercial' }, 
+                    { id: '4', name: 'Ganho' },
+                    { id: '5', name: 'Perdido' }
+                ]) 
+            };
+
+            try { await _supabase.from('funnels').insert(newFunnel); }catch(e){}
+            state.funnels.push(newFunnel);
+            closeModal('modal-funnel');
+            populateFilters();
+            renderFunnels();
+        }
+
+        function renderQualificationBuilder() {
+            const fields = state.qualificationFields.filter(q => q.tenant_id === state.currentTenant.id);
+            const list = document.getElementById('qualification-builder-list');
+            if (!list) return;
+            list.innerHTML = '';
+            if (fields.length === 0) { list.innerHTML = '<div class="text-xs text-gray-400 p-2 italic">Nenhum campo de qualificação criado ainda.</div>'; return; }
+            fields.forEach(f => addQualificationFieldBuilderRow(f));
+        }
+
+        function addQualificationFieldBuilderRow(field = null) {
+            const list = document.getElementById('qualification-builder-list');
+            const fieldId = field?.id || 'qfield_' + Date.now() + Math.floor(Math.random()*100);
+            const div = document.createElement('div');
+            div.className = "p-3 border rounded-xl bg-gray-50 flex flex-col sm:flex-row items-start sm:items-center gap-3 qfield-builder-row";
+            div.innerHTML = `
+                <input type="hidden" class="qfield-id" value="${fieldId}">
+                <div class="flex-1 w-full">
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Título / Pergunta *</label>
+                    <input type="text" class="qfield-label w-full p-2 border rounded-lg text-xs font-semibold" value="${field?.label || ''}" placeholder="Ex: Possui orçamento aprovado?" required>
+                </div>
+                <div class="w-full sm:w-40">
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Tipo de Resposta</label>
+                    <select class="qfield-type w-full p-2 border rounded-lg text-xs font-semibold bg-white">
+                        <option value="boolean" ${field?.type === 'boolean' ? 'selected' : ''}>Sim / Não</option>
+                        <option value="text_short" ${field?.type === 'text_short' ? 'selected' : ''}>Texto Curto</option>
+                        <option value="text_long" ${field?.type === 'text_long' ? 'selected' : ''}>Texto Longo</option>
+                        <option value="select" ${field?.type === 'select' ? 'selected' : ''}>Múltipla Escolha</option>
+                    </select>
+                </div>
+                <div class="w-full sm:w-44">
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Opções (Separadas por vírgula)</label>
+                    <input type="text" class="qfield-options w-full p-2 border rounded-lg text-xs" value="${field?.options || ''}" placeholder="Opção 1, Opção 2">
+                </div>
+                <div class="flex items-center gap-2 pt-3 sm:pt-0">
+                    <label class="flex items-center text-xs font-bold text-gray-700 cursor-pointer">
+                        <input type="checkbox" class="qfield-required w-4 h-4 text-indigo-600 rounded mr-1" ${field?.required ? 'checked' : ''}> Obrigatório
+                    </label>
+                    <button type="button" onclick="this.closest('.qfield-builder-row').remove()" class="p-2 text-rose-600 hover:bg-rose-100 rounded-lg text-xs"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            `;
+            list.appendChild(div);
+        }
+
+        function loadAdminSettingsForm() {
+            document.getElementById('cfg-delete-accounts').checked = !!state.settings.allowUserDeleteAccounts;
+            document.getElementById('cfg-delete-contacts').checked = !!state.settings.allowUserDeleteContacts;
+            document.getElementById('cfg-enable-ai').checked = !!state.settings.enableAi;
+            document.getElementById('cfg-ai-key').value = state.settings.aiKey || '';
+        }
+
+        async function saveAdminSettings() {
+            if (!isManagerRole(state.currentUser.role)) { alert("Apenas administradores podem alterar configurações."); return; }
+            const newSettings = {
+                allowUserDeleteAccounts: document.getElementById('cfg-delete-accounts').checked,
+                allowUserDeleteContacts: document.getElementById('cfg-delete-contacts').checked,
+                enableAi: document.getElementById('cfg-enable-ai').checked,
+                aiKey: document.getElementById('cfg-ai-key').value
+            };
+            state.settings = newSettings;
+
+            try { await _supabase.from('settings').upsert({ tenant_id: state.currentTenant.id, config: newSettings }); }catch(e){}
+
+            const builderRows = document.querySelectorAll('.qfield-builder-row');
+            const updatedQualificationFields = [];
+            builderRows.forEach(row => {
+                const qId = row.querySelector('.qfield-id').value;
+                const label = row.querySelector('.qfield-label').value.trim();
+                const type = row.querySelector('.qfield-type').value;
+                const options = row.querySelector('.qfield-options').value.trim();
+                const required = row.querySelector('.qfield-required').checked;
+                if (label) updatedQualificationFields.push({ id: qId, tenant_id: state.currentTenant.id, label, type, options, required });
+            });
+
+            try {
+                await _supabase.from('qualification_fields').delete().eq('tenant_id', state.currentTenant.id);
+                if (updatedQualificationFields.length > 0) await _supabase.from('qualification_fields').insert(updatedQualificationFields);
+            }catch(e){}
+
+            state.qualificationFields = updatedQualificationFields;
+            alert("Todas as configurações foram salvas!");
+            location.reload();
+        }
+
+        function generateAiDealNote() {
+            const title = document.getElementById('deal-title').value || 'Oportunidade Comercial';
+            const value = document.getElementById('deal-value').value || '0.00';
+            const account = document.getElementById('deal-account').value || 'Cliente';
+            const output = document.getElementById('ai-suggestion-output');
+            output.classList.remove('hidden');
+            output.textContent = `🤖 Sugestão de Abordagem IA:\n\n"Olá! Vi que vocês da ${account} estão avaliando a proposta do negócio '${title}' no valor de R$ ${value}. Gostaria de agendar uma breve conversa de 15 minutos para tirar dúvidas técnicas e avançarmos."`;
+        }
+
+        async function handleSaveAccount(e) {
+            e.preventDefault();
+            const id = document.getElementById('acc-id').value;
+            const accData = { 
+                tenant_id: state.currentTenant.id, 
+                name: document.getElementById('acc-name').value,
+                trade_name: document.getElementById('acc-trade-name').value,
+                cnpj: document.getElementById('acc-cnpj').value,
+                ie: document.getElementById('acc-ie').value,
+                segment: document.getElementById('acc-segment').value,
+                phone: document.getElementById('acc-phone').value,
+                email: document.getElementById('acc-email').value,
+                cep: document.getElementById('acc-cep').value,
+                address: document.getElementById('acc-address').value,
+                city: document.getElementById('acc-city').value,
+                uf: document.getElementById('acc-uf').value,
+                notes: document.getElementById('acc-notes').value
+            };
+
+            try {
+                if (id) {
+                    await _supabase.from('accounts').update(accData).eq('id', id);
+                    const idx = state.accounts.findIndex(a => a.id === id);
+                    if (idx !== -1) state.accounts[idx] = { ...state.accounts[idx], ...accData };
+                } else {
+                    const newAcc = { id: 'acc_' + Date.now(), user_id: state.currentUser.id, ...accData };
+                    await _supabase.from('accounts').insert(newAcc);
+                    state.accounts.push(newAcc);
+                }
+            }catch(e){}
+
+            closeModal('modal-account');
+            populateAccountDropdowns();
+            renderAccounts();
+        }
+
+        function editAccount(id) {
+            const acc = state.accounts.find(a => a.id === id);
+            if (!acc) return;
+            document.getElementById('acc-id').value = acc.id;
+            document.getElementById('acc-name').value = acc.name || '';
+            document.getElementById('acc-trade-name').value = acc.trade_name || '';
+            document.getElementById('acc-cnpj').value = acc.cnpj || '';
+            document.getElementById('acc-ie').value = acc.ie || '';
+            document.getElementById('acc-segment').value = acc.segment || '';
+            document.getElementById('acc-phone').value = acc.phone || '';
+            document.getElementById('acc-email').value = acc.email || '';
+            document.getElementById('acc-cep').value = acc.cep || '';
+            document.getElementById('acc-address').value = acc.address || '';
+            document.getElementById('acc-city').value = acc.city || '';
+            document.getElementById('acc-uf').value = acc.uf || '';
+            document.getElementById('acc-notes').value = acc.notes || '';
+            document.getElementById('account-modal-title').textContent = 'Editar Conta';
+            openModal('modal-account');
+        }
+
+        async function deleteAccount(id, ownerUserId) {
+            const isOwner = ownerUserId === state.currentUser.id;
+            const canDelete = isManagerRole(state.currentUser.role) || (isOwner && state.settings.allowUserDeleteAccounts);
+            if (!canDelete) { alert("Você não tem permissão para excluir esta conta."); return; }
+            if (confirm("Tem certeza que deseja excluir esta empresa?")) {
+                try { await _supabase.from('accounts').delete().eq('id', id); }catch(e){}
+                state.accounts = state.accounts.filter(a => a.id !== id);
+                renderAccounts();
+            }
+        }
+
+        async function handleSaveContact(e) {
+            e.preventDefault();
+            const id = document.getElementById('cnt-id').value;
+            const cntData = { 
+                tenant_id: state.currentTenant.id, 
+                name: document.getElementById('cnt-name').value,
+                role: document.getElementById('cnt-role').value,
+                email: document.getElementById('cnt-email').value,
+                phone: document.getElementById('cnt-phone').value,
+                account_name: document.getElementById('cnt-account').value,
+                cpf: document.getElementById('cnt-cpf').value,
+                birthdate: document.getElementById('cnt-birthdate').value,
+                notes: document.getElementById('cnt-notes').value
+            };
+
+            try {
+                if (id) {
+                    await _supabase.from('contacts').update(cntData).eq('id', id);
+                    const idx = state.contacts.findIndex(c => c.id === id);
+                    if (idx !== -1) state.contacts[idx] = { ...state.contacts[idx], ...cntData };
+                } else {
+                    const newCnt = { id: 'cnt_' + Date.now(), user_id: state.currentUser.id, ...cntData };
+                    await _supabase.from('contacts').insert(newCnt);
+                    state.contacts.push(newCnt);
+                }
+            }catch(e){}
+
+            closeModal('modal-contact');
+            renderContacts();
+        }
+
+        function editContact(id) {
+            const cnt = state.contacts.find(c => c.id === id);
+            if (!cnt) return;
+            document.getElementById('cnt-id').value = cnt.id;
+            document.getElementById('cnt-name').value = cnt.name || '';
+            document.getElementById('cnt-role').value = cnt.role || '';
+            document.getElementById('cnt-email').value = cnt.email || '';
+            document.getElementById('cnt-phone').value = cnt.phone || '';
+            document.getElementById('cnt-account').value = cnt.account_name || '';
+            document.getElementById('cnt-cpf').value = cnt.cpf || '';
+            document.getElementById('cnt-birthdate').value = cnt.birthdate || '';
+            document.getElementById('cnt-notes').value = cnt.notes || '';
+            document.getElementById('contact-modal-title').textContent = 'Editar Contato';
+            openModal('modal-contact');
+        }
+
+        async function deleteContact(id, ownerUserId) {
+            const isOwner = ownerUserId === state.currentUser.id;
+            const canDelete = isManagerRole(state.currentUser.role) || (isOwner && state.settings.allowUserDeleteContacts);
+            if (!canDelete) { alert("Você não tem permissão para excluir este contato."); return; }
+            if (confirm("Tem certeza que deseja excluir este contato?")) {
+                try { await _supabase.from('contacts').delete().eq('id', id); }catch(e){}
+                state.contacts = state.contacts.filter(c => c.id !== id);
+                renderContacts();
+            }
+        }
+
+        async function handleSaveSeller(e) {
+            e.preventDefault();
+            const usersCount = state.users.filter(u => u.tenant_id === state.currentTenant.id).length;
+            if (state.currentTenant.plan === 'Basic' && usersCount >= 3) { alert('Limite do Plano Basic atingido (Máximo 3 Vendedores)!'); return; }
+
+            const newUser = { 
+                id: 'user_' + Date.now(), 
+                tenant_id: state.currentTenant.id, 
+                name: document.getElementById('sel-name').value, 
+                email: document.getElementById('sel-email').value, 
+                pass: document.getElementById('sel-pass').value, 
+                role: document.getElementById('sel-role').value, 
+                active: true 
+            };
+
+            try { await _supabase.from('users').insert(newUser); }catch(e){}
+            state.users.push(newUser);
+            closeModal('modal-seller');
+            renderSellers();
+            populateFilters();
+            populateImportAssignees();
+        }
+
+        function downloadImportTemplate() {
+            const data = [
+                ["Empresa", "Contato", "Telefone", "E-mail", "CNPJ"],
+                ["Tech Solutions Ltda", "Carlos Silva", "(62) 99999-8888", "carlos@techsolutions.com", "12.345.678/0001-90"]
+            ];
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Modelo_Importacao");
+            XLSX.writeFile(wb, "Modelo_Importacao_IACRM.xlsx");
+        }
+
+        async function processImportFile() {
+            if (!isManagerRole(state.currentUser.role)) { alert("Apenas administradores podem importar planilhas."); return; }
+            const fileInput = document.getElementById('import-file');
+            const assignee = document.getElementById('import-assignee').value;
+            const logBox = document.getElementById('import-log');
+
+            if (!fileInput.files.length) { alert("Selecione um arquivo .XLSX!"); return; }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            logBox.classList.remove('hidden');
+            logBox.innerHTML = "Iniciando processamento...\n";
+
+            reader.onload = async function (e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const sheetName = workbook.SheetNames[0];
+                    const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+
+                    if (rows.length === 0) { logBox.innerHTML += "Erro: Planilha vazia.\n"; return; }
+
+                    const tenantUsers = state.users.filter(u => u.tenant_id === state.currentTenant.id);
+                    const importBatchNo = "LOT-" + Math.floor(1000 + Math.random() * 9000);
+                    const importDate = new Date().toLocaleString('pt-BR');
+                    let successCount = 0;
+
+                    for (let i = 0; i < rows.length; i++) {
+                        const row = rows[i];
+                        const companyName = row["Empresa"] || row["empresa"] || "Empresa " + (i + 1);
+                        const contactName = row["Contato"] || row["contato"] || "Contato " + (i + 1);
+                        const phone = row["Telefone"] || row["telefone"] || "";
+                        const email = row["E-mail"] || row["email"] || "";
+                        const cnpj = row["CNPJ"] || row["cnpj"] || "";
+
+                        let assignedUserId = assignee;
+                        if (assignee === "all" && tenantUsers.length > 0) assignedUserId = tenantUsers[i % tenantUsers.length].id;
+
+                        const newAcc = { id: 'acc_imp_' + Date.now() + '_' + i, tenant_id: state.currentTenant.id, name: companyName, cnpj, phone, email, user_id: assignedUserId, tag: 'Importado', import_date: importDate, import_batch: importBatchNo };
+                        const newCnt = { id: 'cnt_imp_' + Date.now() + '_' + i, tenant_id: state.currentTenant.id, name: contactName, account_name: companyName, email, phone, user_id: assignedUserId, tag: 'Importado', import_date: importDate, import_batch: importBatchNo };
+
+                        try { await _supabase.from('accounts').insert(newAcc); }catch(err){}
+                        try { await _supabase.from('contacts').insert(newCnt); }catch(err){}
+
+                        state.accounts.push(newAcc);
+                        state.contacts.push(newCnt);
+                        successCount++;
+                    }
+
+                    logBox.innerHTML += ` Sucesso! ${successCount} registros importados.\nLote: ${importBatchNo}\n`;
+                    populateAccountDropdowns();
+                    renderAccounts();
+                    renderContacts();
+                } catch (err) { logBox.innerHTML += ` Erro: ${err.message}\n`; }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
         function renderMinhaAssinatura() {
             const tenant = state.currentTenant;
             const usersCount = state.users.filter(u => u.tenant_id === tenant.id).length;
             const funnelsCount = state.funnels.filter(f => f.tenant_id === tenant.id).length;
-
             document.getElementById('sub-plan-name').textContent = tenant.plan.toUpperCase();
             document.getElementById('sub-plan-status').textContent = tenant.status === 'Active' ? 'Ativa' : tenant.status;
             document.getElementById('sub-users-usage').textContent = tenant.plan === 'Basic' ? `${usersCount} / 3` : `${usersCount} (Ilimitado)`;
@@ -1597,7 +1562,7 @@
 
         async function cancelMySubscription() {
             if (confirm("Tem certeza que deseja cancelar sua assinatura?")) {
-                await _supabase.from('tenants').update({ status: 'Canceled' }).eq('id', state.currentTenant.id);
+                try { await _supabase.from('tenants').update({ status: 'Canceled' }).eq('id', state.currentTenant.id); }catch(e){}
                 alert('Assinatura cancelada.');
                 location.reload();
             }
@@ -1609,7 +1574,6 @@
             const proCount = state.tenants.filter(t => t.plan === 'Professional' && t.status === 'Active').length;
             const entCount = state.tenants.filter(t => t.plan === 'Enterprise' && t.status === 'Active').length;
             const mrr = (proCount * 149) + (entCount * 299);
-
             document.getElementById('master-mrr-value').textContent = `R$ ${mrr.toLocaleString('pt-BR')},00`;
             document.getElementById('master-basic-count').textContent = state.tenants.filter(t => t.plan === 'Basic').length;
 
@@ -1629,7 +1593,7 @@
         }
 
         async function updateTenantStatus(tenantId, newStatus) {
-            await _supabase.from('tenants').update({ status: newStatus }).eq('id', tenantId);
+            try { await _supabase.from('tenants').update({ status: newStatus }).eq('id', tenantId); }catch(e){}
             await fetchAllDataFromSupabase();
             renderMasterSaaS();
         }
