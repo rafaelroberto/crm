@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IA-CRM V.1.5.0 - SaaS Complete Edition</title>
+    <title>IA-CRM V.1.6.0 - Advanced Qualification Edition</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -164,17 +164,31 @@
         </div>
     </div>
 
-    <!-- MODAL DE NEGÓCIO (DEAL) -->
+    <!-- MODAL DE NEGÓCIO (DEAL) COM CAMPOS DE QUALIFICAÇÃO -->
     <div id="modal-deal" class="fixed inset-0 bg-black/75 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
             <button type="button" onclick="closeModal('modal-deal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="text-lg font-bold text-gray-900 mb-4"><i class="fa-solid fa-plus-circle text-blue-600 mr-2"></i>Nova Oportunidade</h3>
+            <h3 class="text-lg font-bold text-gray-900 mb-4"><i class="fa-solid fa-plus-circle text-blue-600 mr-2"></i><span id="deal-modal-title">Nova Oportunidade</span></h3>
+            
             <form onsubmit="handleSaveDeal(event)" class="space-y-3">
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Título do Negócio *</label><input type="text" id="deal-title" required placeholder="Ex: Venda de Licenças IA" class="w-full p-2 border rounded-lg text-xs"></div>
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Valor Estimado (R$) *</label><input type="number" step="0.01" id="deal-value" required placeholder="5000.00" class="w-full p-2 border rounded-lg text-xs"></div>
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Empresa / Conta</label><select id="deal-account" class="w-full p-2 border rounded-lg text-xs bg-white"></select></div>
-                <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Estágio Inicial</label><select id="deal-stage" required class="w-full p-2 border rounded-lg text-xs bg-white"></select></div>
-                
+                <input type="hidden" id="deal-id">
+                <div class="space-y-3 border-b pb-3">
+                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Título do Negócio *</label><input type="text" id="deal-title" required placeholder="Ex: Venda de Licenças IA" class="w-full p-2 border rounded-lg text-xs"></div>
+                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Valor Estimado (R$) *</label><input type="number" step="0.01" id="deal-value" required placeholder="5000.00" class="w-full p-2 border rounded-lg text-xs"></div>
+                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Empresa / Conta</label><select id="deal-account" class="w-full p-2 border rounded-lg text-xs bg-white"></select></div>
+                    <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Estágio Inicial</label><select id="deal-stage" required class="w-full p-2 border rounded-lg text-xs bg-white"></select></div>
+                </div>
+
+                <!-- FORMULÁRIO DINÂMICO DE QUALIFICAÇÃO DE LEAD -->
+                <div id="deal-qualification-container" class="pt-2">
+                    <h4 class="text-xs font-black uppercase text-indigo-700 mb-2 flex items-center gap-1">
+                        <i class="fa-solid fa-clipboard-check"></i> Formulário de Qualificação do Lead
+                    </h4>
+                    <div id="deal-qualification-fields" class="space-y-3 bg-indigo-50/50 p-3 rounded-xl border border-indigo-100">
+                        <!-- Gerado via JS -->
+                    </div>
+                </div>
+
                 <!-- BOTAO DE IA DE SUGESTÃO -->
                 <div id="ai-suggestion-box" class="hidden pt-2 border-t border-gray-100">
                     <button type="button" onclick="generateAiDealNote()" class="w-full py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 font-bold rounded-lg text-xs transition flex items-center justify-center gap-2">
@@ -184,6 +198,33 @@
                 </div>
 
                 <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs shadow transition">Salvar Oportunidade</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: EDITAR FUNIL E SUAS ETAPAS -->
+    <div id="modal-edit-funnel" class="fixed inset-0 bg-black/75 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
+            <button type="button" onclick="closeModal('modal-edit-funnel')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-lg font-bold text-gray-900 mb-4"><i class="fa-solid fa-pen-to-square text-blue-600 mr-2"></i>Editar Funil & Etapas</h3>
+            <form onsubmit="handleSaveFunnelEdit(event)" class="space-y-4">
+                <input type="hidden" id="edit-funnel-id">
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nome do Funil *</label>
+                    <input type="text" id="edit-funnel-name" required class="w-full p-2 border rounded-lg text-xs font-bold">
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="block text-xs font-bold text-gray-600 uppercase">Etapas do Funil *</label>
+                        <button type="button" onclick="addStageInputRow()" class="px-2 py-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-[10px] font-bold rounded transition">+ Etapa</button>
+                    </div>
+                    <div id="edit-funnel-stages-list" class="space-y-2">
+                        <!-- Gerado via JS -->
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs shadow transition">Salvar Alterações do Funil</button>
             </form>
         </div>
     </div>
@@ -257,7 +298,7 @@
         </div>
     </div>
 
-    <!-- MODAL: FUNIL DE VENDAS -->
+    <!-- MODAL: NOVO FUNIL -->
     <div id="modal-funnel" class="fixed inset-0 bg-black/75 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative">
             <button type="button" onclick="closeModal('modal-funnel')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold"><i class="fa-solid fa-xmark"></i></button>
@@ -349,7 +390,6 @@
                             </button>
                         </div>
 
-                        <!-- CARD INSTRUÇÕES -->
                         <div class="bg-blue-50 border border-blue-200 rounded-xl p-5 mb-6 text-xs text-blue-900 space-y-2">
                             <h3 class="font-bold text-sm text-blue-950 flex items-center gap-2"><i class="fa-solid fa-circle-info"></i> Como funciona a importação?</h3>
                             <ul class="list-disc list-inside space-y-1 text-blue-800">
@@ -360,7 +400,6 @@
                             </ul>
                         </div>
 
-                        <!-- FORMULARIO DE UPLOAD -->
                         <div class="bg-white p-6 rounded-xl border shadow-sm space-y-4">
                             <div>
                                 <label class="block text-xs font-bold uppercase text-gray-700 mb-1">1. Escolha o Proprietário / Vendedor Responsável *</label>
@@ -383,11 +422,12 @@
                     </div>
                 </section>
 
-                <!-- VIEW: CONFIGURAÇÕES DO ADMIN -->
+                <!-- VIEW: CONFIGURAÇÕES DO ADMIN (PERMISSÕES E FORMULÁRIO DE QUALIFICAÇÃO) -->
                 <section id="view-configuracoes" class="tab-content hidden">
-                    <div class="max-w-3xl mx-auto">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Configurações da Empresa & Permissões</h2>
+                    <div class="max-w-4xl mx-auto space-y-6">
+                        <h2 class="text-2xl font-bold text-gray-900">Configurações & Formulários de Qualificação</h2>
 
+                        <!-- SEÇÃO 1: PERMISSÕES DE EXCLUSÃO -->
                         <div class="bg-white rounded-xl border shadow-sm p-6 space-y-6">
                             <div>
                                 <h3 class="text-sm font-bold text-gray-800 border-b pb-2 mb-4"><i class="fa-solid fa-user-shield text-blue-600 mr-2"></i>Controle de Permissões da Equipe</h3>
@@ -409,26 +449,42 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="border-t pt-6">
-                                <h3 class="text-sm font-bold text-gray-800 border-b pb-2 mb-4"><i class="fa-solid fa-wand-magic-sparkles text-purple-600 mr-2"></i>Inteligência Artificial (Sugestão de Roteiros)</h3>
-                                <div class="space-y-4">
-                                    <div class="flex items-center justify-between">
-                                        <div>
-                                            <label class="font-bold text-xs text-gray-800 block">Ativar Modo IA para Sugestão de Texto em Oportunidades?</label>
-                                            <span class="text-[11px] text-gray-500">Exibe um assistente que sugere mensagens de abordagem e acompanhamento.</span>
-                                        </div>
-                                        <input type="checkbox" id="cfg-enable-ai" class="w-5 h-5 text-purple-600 rounded">
-                                    </div>
-                                    <div>
-                                        <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Chave de API OpenAI (Opcional)</label>
-                                        <input type="password" id="cfg-ai-key" placeholder="sk-..." class="w-full p-2 border rounded-lg text-xs">
-                                    </div>
+                        <!-- SEÇÃO 2: FORMULÁRIO PERSONALIZADO DE QUALIFICAÇÃO -->
+                        <div class="bg-white rounded-xl border shadow-sm p-6 space-y-4">
+                            <div class="flex justify-between items-center border-b pb-3">
+                                <div>
+                                    <h3 class="text-sm font-bold text-gray-800"><i class="fa-solid fa-list-check text-indigo-600 mr-2"></i>Campos Personalizados de Qualificação do Lead</h3>
+                                    <p class="text-[11px] text-gray-500">Crie perguntas obrigatórias ou opcionais para os vendedores responderem ao abrir oportunidades.</p>
                                 </div>
+                                <button type="button" onclick="addQualificationFieldBuilderRow()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition">+ Novo Campo</button>
                             </div>
 
-                            <button type="button" onclick="saveAdminSettings()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs shadow transition">Salvar Configurações</button>
+                            <div id="qualification-builder-list" class="space-y-3">
+                                <!-- Lista de Campos da Qualificação (via JS) -->
+                            </div>
                         </div>
+
+                        <!-- SEÇÃO 3: IA & CHAVE API -->
+                        <div class="bg-white rounded-xl border shadow-sm p-6 space-y-4">
+                            <h3 class="text-sm font-bold text-gray-800 border-b pb-2 mb-2"><i class="fa-solid fa-wand-magic-sparkles text-purple-600 mr-2"></i>Inteligência Artificial (Sugestão de Roteiros)</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <label class="font-bold text-xs text-gray-800 block">Ativar Modo IA para Sugestão de Texto em Oportunidades?</label>
+                                        <span class="text-[11px] text-gray-500">Exibe um assistente que sugere mensagens de abordagem e acompanhamento.</span>
+                                    </div>
+                                    <input type="checkbox" id="cfg-enable-ai" class="w-5 h-5 text-purple-600 rounded">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Chave de API OpenAI (Opcional)</label>
+                                    <input type="password" id="cfg-ai-key" placeholder="sk-..." class="w-full p-2 border rounded-lg text-xs">
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="button" onclick="saveAdminSettings()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs shadow-lg transition">Salvar Todas as Configurações & Campos</button>
                     </div>
                 </section>
 
@@ -537,7 +593,7 @@
                     </div>
                 </section>
 
-                <!-- VIEW: GESTÃO DE FUNIS -->
+                <!-- VIEW: GESTÃO DE FUNIS (COM EDIÇÃO DE ETAPAS) -->
                 <section id="view-funis" class="tab-content hidden">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-2xl font-bold text-gray-800">Funis de Vendas</h2>
@@ -546,7 +602,7 @@
                     <div class="bg-white rounded-xl shadow border overflow-hidden">
                         <table class="w-full text-left text-sm">
                             <thead class="bg-gray-100 text-xs font-bold text-gray-600 uppercase">
-                                <tr><th class="p-4">Nome do Funil</th><th class="p-4">Estágios Configurados</th><th class="p-4">Status</th></tr>
+                                <tr><th class="p-4">Nome do Funil</th><th class="p-4">Estágios Configurados</th><th class="p-4">Ações</th></tr>
                             </thead>
                             <tbody id="table-funnels-body" class="divide-y"></tbody>
                         </table>
@@ -620,6 +676,7 @@
             accounts: [], 
             contacts: [], 
             deals: [],
+            qualificationFields: [],
             settings: { allowUserDeleteAccounts: false, allowUserDeleteContacts: false, enableAi: false, aiKey: '' } 
         };
 
@@ -632,14 +689,15 @@
         async function fetchAllDataFromSupabase() {
             if (!_supabase) return;
             try {
-                const [tn, u, f, a, c, d, st] = await Promise.all([
+                const [tn, u, f, a, c, d, st, qf] = await Promise.all([
                     _supabase.from('tenants').select('*'),
                     _supabase.from('users').select('*'),
                     _supabase.from('funnels').select('*'),
                     _supabase.from('accounts').select('*'),
                     _supabase.from('contacts').select('*'),
                     _supabase.from('deals').select('*'),
-                    _supabase.from('settings').select('*')
+                    _supabase.from('settings').select('*'),
+                    _supabase.from('qualification_fields').select('*')
                 ]);
 
                 state.tenants = tn.data || [];
@@ -648,6 +706,7 @@
                 state.accounts = a.data || [];
                 state.contacts = c.data || [];
                 state.deals = d.data || [];
+                state.qualificationFields = qf.data || [];
 
                 if (st.data && st.data.length > 0) {
                     const currentSet = st.data.find(s => s.tenant_id === state.currentTenant?.id);
@@ -711,7 +770,6 @@
                 }
             }
 
-            // Exibir caixa de sugestao IA se configurada
             if (state.settings.enableAi) {
                 document.getElementById('ai-suggestion-box')?.classList.remove('hidden');
             }
@@ -719,6 +777,7 @@
             populateFilters();
             populateImportAssignees();
             loadAdminSettingsForm();
+            renderQualificationBuilder();
             switchTab('vendas');
         }
 
@@ -787,207 +846,148 @@
             dealStageSelect.innerHTML = stages.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
         }
 
-        function openDealModal() {
+        /* --- MONTAGEM DO FORMULÁRIO DE QUALIFICAÇÃO NO MODAL DE NEGÓCIO --- */
+        function renderDealQualificationForm(dealAnswers = {}) {
+            const fields = state.qualificationFields.filter(q => q.tenant_id === state.currentTenant.id);
+            const container = document.getElementById('deal-qualification-fields');
+
+            if (fields.length === 0) {
+                container.innerHTML = '<div class="text-[11px] text-gray-500 italic">Nenhum campo de qualificação configurado pelo Administrador.</div>';
+                return;
+            }
+
+            container.innerHTML = fields.map(field => {
+                const val = dealAnswers[field.id] || '';
+                const reqStar = field.required ? '<span class="text-rose-600 font-bold">*</span>' : '';
+                const reqAttr = field.required ? 'data-required="true"' : 'data-required="false"';
+
+                let inputHtml = '';
+                if (field.type === 'boolean') {
+                    inputHtml = `
+                        <select class="qual-input w-full p-2 border rounded-lg text-xs bg-white font-semibold" data-field-id="${field.id}" ${reqAttr}>
+                            <option value="">Selecione...</option>
+                            <option value="Sim" ${val === 'Sim' ? 'selected' : ''}>Sim</option>
+                            <option value="Não" ${val === 'Não' ? 'selected' : ''}>Não</option>
+                        </select>
+                    `;
+                } else if (field.type === 'select') {
+                    const options = (field.options || '').split(',').map(o => o.trim());
+                    inputHtml = `
+                        <select class="qual-input w-full p-2 border rounded-lg text-xs bg-white font-semibold" data-field-id="${field.id}" ${reqAttr}>
+                            <option value="">Selecione uma opção...</option>
+                            ${options.map(o => `<option value="${o}" ${val === o ? 'selected' : ''}>${o}</option>`).join('')}
+                        </select>
+                    `;
+                } else if (field.type === 'text_long') {
+                    inputHtml = `
+                        <textarea class="qual-input w-full p-2 border rounded-lg text-xs" rows="2" data-field-id="${field.id}" ${reqAttr} placeholder="Digite a resposta detalhada...">${val}</textarea>
+                    `;
+                } else {
+                    inputHtml = `
+                        <input type="text" class="qual-input w-full p-2 border rounded-lg text-xs" data-field-id="${field.id}" ${reqAttr} value="${val}" placeholder="Digite aqui...">
+                    `;
+                }
+
+                return `
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-700 uppercase mb-1">${field.label} ${reqStar}</label>
+                        ${inputHtml}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openDealModal(dealId = null) {
             const tenantFunnels = state.funnels.filter(f => f.tenant_id === state.currentTenant.id);
             if (tenantFunnels.length === 0) {
                 alert("Nenhum Funil de Vendas ativo. Solicite ao seu Administrador a criação do funil.");
                 return;
             }
+            
             updateDealModalStages();
+
+            if (dealId) {
+                const deal = state.deals.find(d => d.id === dealId);
+                if (!deal) return;
+                document.getElementById('deal-id').value = deal.id;
+                document.getElementById('deal-title').value = deal.title;
+                document.getElementById('deal-value').value = deal.value;
+                document.getElementById('deal-account').value = deal.account_name || '';
+                document.getElementById('deal-stage').value = deal.stage_id;
+                document.getElementById('deal-modal-title').textContent = 'Editar Oportunidade';
+                
+                let answers = {};
+                try { answers = typeof deal.qualification_answers === 'string' ? JSON.parse(deal.qualification_answers) : (deal.qualification_answers || {}); } catch(e){}
+                renderDealQualificationForm(answers);
+            } else {
+                document.getElementById('deal-id').value = '';
+                document.getElementById('deal-title').value = '';
+                document.getElementById('deal-value').value = '';
+                document.getElementById('deal-modal-title').textContent = 'Nova Oportunidade';
+                renderDealQualificationForm({});
+            }
+
             openModal('modal-deal');
         }
 
-        async function handleRegisterTenant(e) {
+        async function handleSaveDeal(e) {
             e.preventDefault();
-            const companyName = document.getElementById('reg-company-name').value;
-            const cnpj = document.getElementById('reg-cnpj').value;
-            const city = document.getElementById('reg-city').value;
-            const uf = document.getElementById('reg-uf').value;
-            const userName = document.getElementById('reg-user-name').value;
-            const userEmail = document.getElementById('reg-user-email').value;
-            const userPass = document.getElementById('reg-user-pass').value;
+            const dealId = document.getElementById('deal-id').value;
+            const title = document.getElementById('deal-title').value;
+            const value = document.getElementById('deal-value').value;
+            const account = document.getElementById('deal-account').value;
+            const stage_id = document.getElementById('deal-stage').value;
 
-            const tenantId = 'tenant_' + Date.now();
-            const newTenant = { id: tenantId, name: companyName, cnpj, city, uf, plan: 'Basic', status: 'Active' };
-            const userId = 'user_' + Date.now();
-            const newUser = { id: userId, tenant_id: tenantId, name: userName, email: userEmail, pass: userPass, role: 'Diretor', is_admin: true, active: true };
+            // Validação dos Campos Obrigatórios de Qualificação
+            const qualInputs = document.querySelectorAll('.qual-input');
+            const qualificationAnswers = {};
+            let missingFields = false;
 
-            await _supabase.from('tenants').insert(newTenant);
-            await _supabase.from('users').insert(newUser);
+            qualInputs.forEach(input => {
+                const fieldId = input.getAttribute('data-field-id');
+                const isRequired = input.getAttribute('data-required') === 'true';
+                const val = input.value.trim();
 
-            closeModal('modal-register');
-            alert('Cadastro concluído com sucesso! Faça seu login e acesse o painel para criar seu Funil de Vendas.');
-        }
-
-        function switchTab(tab) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById(`view-${tab}`)?.classList.remove('hidden');
-
-            if (tab === 'vendas') renderKanban();
-            if (tab === 'analytics') renderAnalytics();
-            if (tab === 'contas') renderAccounts();
-            if (tab === 'contatos') renderContacts();
-            if (tab === 'vendedores') renderSellers();
-            if (tab === 'funis') renderFunnels();
-            if (tab === 'minha-assinatura') renderMinhaAssinatura();
-            if (tab === 'master-saas') renderMasterSaaS();
-        }
-
-        /* --- IMPORTAÇÃO DE LEADS --- */
-        function downloadImportTemplate() {
-            const data = [
-                ["Empresa", "Contato", "Telefone", "E-mail", "CNPJ"],
-                ["Tech Solutions Ltda", "Carlos Silva", "(62) 99999-8888", "carlos@techsolutions.com", "12.345.678/0001-90"],
-                ["Comércio de Alimentos SA", "Mariana Souza", "(11) 98888-7777", "mariana@comercio.com", "98.765.432/0001-10"]
-            ];
-            const ws = XLSX.utils.aoa_to_sheet(data);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Modelo_Importacao");
-            XLSX.writeFile(wb, "Modelo_Importacao_IACRM.xlsx");
-        }
-
-        async function processImportFile() {
-            if (!isManagerRole(state.currentUser.role)) {
-                alert("Apenas administradores podem importar planilhas de leads.");
-                return;
-            }
-
-            const fileInput = document.getElementById('import-file');
-            const assignee = document.getElementById('import-assignee').value;
-            const logBox = document.getElementById('import-log');
-
-            if (!fileInput.files.length) {
-                alert("Selecione um arquivo .XLSX para importar.");
-                return;
-            }
-
-            const file = fileInput.files[0];
-            const reader = new FileReader();
-
-            logBox.classList.remove('hidden');
-            logBox.innerHTML = "Iniciando processamento...\n";
-
-            reader.onload = async function (e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const sheetName = workbook.SheetNames[0];
-                    const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
-
-                    if (rows.length === 0) {
-                        logBox.innerHTML += "Erro: Planilha vazia.\n";
-                        return;
-                    }
-
-                    const tenantUsers = state.users.filter(u => u.tenant_id === state.currentTenant.id);
-                    const importBatchNo = "LOT-" + Math.floor(1000 + Math.random() * 9000);
-                    const importDate = new Date().toLocaleString('pt-BR');
-
-                    let successCount = 0;
-
-                    for (let i = 0; i < rows.length; i++) {
-                        const row = rows[i];
-                        const companyName = row["Empresa"] || row["empresa"] || "Empresa Importada " + (i + 1);
-                        const contactName = row["Contato"] || row["contato"] || "Contato Importado " + (i + 1);
-                        const phone = row["Telefone"] || row["telefone"] || "";
-                        const email = row["E-mail"] || row["email"] || "";
-                        const cnpj = row["CNPJ"] || row["cnpj"] || "";
-
-                        // Atribuição Round-Robin se "all" selecionado
-                        let assignedUserId = assignee;
-                        if (assignee === "all" && tenantUsers.length > 0) {
-                            assignedUserId = tenantUsers[i % tenantUsers.length].id;
-                        }
-
-                        const accountId = 'acc_imp_' + Date.now() + '_' + i;
-                        const newAcc = {
-                            id: accountId,
-                            tenant_id: state.currentTenant.id,
-                            name: companyName,
-                            cnpj: cnpj,
-                            phone: phone,
-                            email: email,
-                            user_id: assignedUserId,
-                            tag: 'Importado',
-                            import_date: importDate,
-                            import_batch: importBatchNo
-                        };
-
-                        const newCnt = {
-                            id: 'cnt_imp_' + Date.now() + '_' + i,
-                            tenant_id: state.currentTenant.id,
-                            name: contactName,
-                            account_name: companyName,
-                            email: email,
-                            phone: phone,
-                            user_id: assignedUserId,
-                            tag: 'Importado',
-                            import_date: importDate,
-                            import_batch: importBatchNo
-                        };
-
-                        await _supabase.from('accounts').insert(newAcc);
-                        await _supabase.from('contacts').insert(newCnt);
-
-                        state.accounts.push(newAcc);
-                        state.contacts.push(newCnt);
-                        successCount++;
-                    }
-
-                    logBox.innerHTML += ` Sucesso! ${successCount} registros importados com sucesso.\nLote: ${importBatchNo} | Data: ${importDate}\n`;
-                    populateAccountDropdowns();
-                    renderAccounts();
-                    renderContacts();
-                } catch (err) {
-                    logBox.innerHTML += ` Erro crítico ao processar planilha: ${err.message}\n`;
+                if (isRequired && !val) {
+                    missingFields = true;
+                    input.classList.add('border-rose-500');
+                } else {
+                    input.classList.remove('border-rose-500');
                 }
-            };
-
-            reader.readAsArrayBuffer(file);
-        }
-
-        /* --- CONFIGURAÇÕES DO ADMIN --- */
-        function loadAdminSettingsForm() {
-            document.getElementById('cfg-delete-accounts').checked = !!state.settings.allowUserDeleteAccounts;
-            document.getElementById('cfg-delete-contacts').checked = !!state.settings.allowUserDeleteContacts;
-            document.getElementById('cfg-enable-ai').checked = !!state.settings.enableAi;
-            document.getElementById('cfg-ai-key').value = state.settings.aiKey || '';
-        }
-
-        async function saveAdminSettings() {
-            if (!isManagerRole(state.currentUser.role)) {
-                alert("Apenas administradores podem alterar configurações.");
-                return;
-            }
-
-            const newSettings = {
-                allowUserDeleteAccounts: document.getElementById('cfg-delete-accounts').checked,
-                allowUserDeleteContacts: document.getElementById('cfg-delete-contacts').checked,
-                enableAi: document.getElementById('cfg-enable-ai').checked,
-                aiKey: document.getElementById('cfg-ai-key').value
-            };
-
-            state.settings = newSettings;
-
-            await _supabase.from('settings').upsert({
-                tenant_id: state.currentTenant.id,
-                config: newSettings
+                qualificationAnswers[fieldId] = val;
             });
 
-            alert("Configurações salvas com sucesso!");
-            location.reload();
+            if (missingFields) {
+                alert("Preencha todos os campos obrigatórios do formulário de qualificação antes de salvar!");
+                return;
+            }
+
+            const dealData = { 
+                tenant_id: state.currentTenant.id, 
+                title, 
+                value: parseFloat(value), 
+                account_name: account, 
+                stage_id, 
+                user_id: state.currentUser.id,
+                qualification_answers: JSON.stringify(qualificationAnswers),
+                created_at: new Date().toISOString()
+            };
+
+            if (dealId) {
+                await _supabase.from('deals').update(dealData).eq('id', dealId);
+                const idx = state.deals.findIndex(d => d.id === dealId);
+                if (idx !== -1) state.deals[idx] = { ...state.deals[idx], ...dealData };
+            } else {
+                const newDeal = { id: 'deal_' + Date.now(), ...dealData };
+                await _supabase.from('deals').insert(newDeal);
+                state.deals.push(newDeal);
+            }
+
+            closeModal('modal-deal');
+            renderKanban();
         }
 
-        function generateAiDealNote() {
-            const title = document.getElementById('deal-title').value || 'Oportunidade Comercial';
-            const value = document.getElementById('deal-value').value || '0.00';
-            const account = document.getElementById('deal-account').value || 'Cliente';
-
-            const output = document.getElementById('ai-suggestion-output');
-            output.classList.remove('hidden');
-            output.textContent = `🤖 Sugestão de Abordagem IA:\n\n"Olá! Vi que vocês da ${account} estão avaliando a proposta do negócio '${title}' no valor de R$ ${value}. Gostaria de agendar uma breve conversa de 15 minutos para tirar dúvidas técnicas e avançarmos."`;
-        }
-
+        /* --- RENDERIZAÇÃO DO KANBAN COM HISTÓRICO DE QUALIFICAÇÃO --- */
         function renderKanban() {
             const funnelId = document.getElementById('pipeline-funnel-filter').value;
             const sellerId = document.getElementById('pipeline-seller-filter').value;
@@ -1012,10 +1012,7 @@
             catch (e) { stages = []; }
 
             let tenantDeals = state.deals.filter(d => d.tenant_id === state.currentTenant.id);
-            
-            if (sellerId !== 'all') {
-                tenantDeals = tenantDeals.filter(d => d.user_id === sellerId);
-            }
+            if (sellerId !== 'all') tenantDeals = tenantDeals.filter(d => d.user_id === sellerId);
 
             board.innerHTML = stages.map(stage => {
                 const stageDeals = tenantDeals.filter(d => d.stage_id === stage.id);
@@ -1044,44 +1041,284 @@
                         </div>
                         <div class="text-xs font-bold text-gray-500 mb-3">R$ ${totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
                         <div class="space-y-2 overflow-y-auto flex-1">
-                            ${stageDeals.map(deal => `
-                                <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
-                                    <div class="font-bold text-xs text-gray-800">${deal.title}</div>
-                                    <div class="text-[11px] font-semibold text-blue-600 mt-1">R$ ${(parseFloat(deal.value) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
-                                    <div class="text-[10px] text-gray-400 mt-1">${deal.account_name || 'Sem empresa'}</div>
-                                </div>
-                            `).join('')}
+                            ${stageDeals.map(deal => {
+                                let qualBadge = '<span class="text-[9px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded font-bold">Sem qualificação</span>';
+                                try {
+                                    const answers = typeof deal.qualification_answers === 'string' ? JSON.parse(deal.qualification_answers) : deal.qualification_answers;
+                                    if (answers && Object.keys(answers).length > 0) {
+                                        qualBadge = '<span class="text-[9px] bg-indigo-100 text-indigo-800 px-1.5 py-0.5 rounded font-bold"><i class="fa-solid fa-check mr-1"></i>Qualificado</span>';
+                                    }
+                                }catch(e){}
+
+                                return `
+                                    <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-200 hover:border-blue-400 transition cursor-pointer" onclick="openDealModal('${deal.id}')">
+                                        <div class="flex justify-between items-start">
+                                            <div class="font-bold text-xs text-gray-800">${deal.title}</div>
+                                            ${qualBadge}
+                                        </div>
+                                        <div class="text-[11px] font-semibold text-blue-600 mt-1">R$ ${(parseFloat(deal.value) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                                        <div class="text-[10px] text-gray-400 mt-1">${deal.account_name || 'Sem empresa'}</div>
+                                    </div>
+                                `;
+                            }).join('')}
                         </div>
                     </div>
                 `;
             }).join('');
         }
 
-        async function handleSaveDeal(e) {
+        /* --- GESTÃO DE FUNIS E EDIÇÃO DE ETAPAS --- */
+        function renderFunnels() {
+            const funnels = state.funnels.filter(f => f.tenant_id === state.currentTenant.id);
+            const body = document.getElementById('table-funnels-body');
+
+            if (funnels.length === 0) {
+                body.innerHTML = '<tr><td colspan="3" class="p-4 text-xs text-gray-400">Nenhum funil cadastrado para esta conta.</td></tr>';
+                return;
+            }
+
+            body.innerHTML = funnels.map(f => {
+                let stages = [];
+                try { stages = typeof f.stages === 'string' ? JSON.parse(f.stages) : f.stages; } catch(e){}
+                const stageNames = stages.length ? stages.map(s => s.name).join(' ➔ ') : 'Etapas não configuradas';
+
+                return `
+                    <tr>
+                        <td class="p-4 font-bold text-gray-800">${f.name}</td>
+                        <td class="p-4 text-xs text-gray-600">${stageNames}</td>
+                        <td class="p-4 text-xs space-x-2">
+                            ${isManagerRole(state.currentUser.role) ? `<button type="button" onclick="openEditFunnelModal('${f.id}')" class="text-blue-600 font-bold hover:underline"><i class="fa-solid fa-pen-to-square"></i> Editar Etapas</button>` : '<span class="text-gray-400">Apenas Leitura</span>'}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function openEditFunnelModal(funnelId) {
+            const funnel = state.funnels.find(f => f.id === funnelId);
+            if (!funnel) return;
+
+            document.getElementById('edit-funnel-id').value = funnel.id;
+            document.getElementById('edit-funnel-name').value = funnel.name;
+
+            let stages = [];
+            try { stages = typeof funnel.stages === 'string' ? JSON.parse(funnel.stages) : funnel.stages; } catch(e){}
+
+            const list = document.getElementById('edit-funnel-stages-list');
+            list.innerHTML = '';
+
+            stages.forEach(s => addStageInputRow(s.name, s.id));
+            openModal('modal-edit-funnel');
+        }
+
+        function addStageInputRow(name = '', id = '') {
+            const list = document.getElementById('edit-funnel-stages-list');
+            const stageId = id || 'stage_' + Date.now() + Math.floor(Math.random()*100);
+            
+            const div = document.createElement('div');
+            div.className = "flex items-center gap-2 stage-row";
+            div.innerHTML = `
+                <input type="hidden" class="stage-id-input" value="${stageId}">
+                <input type="text" class="stage-name-input flex-1 p-2 border rounded-lg text-xs font-semibold" value="${name}" placeholder="Nome da etapa" required>
+                <button type="button" onclick="this.parentElement.remove()" class="p-2 text-rose-600 hover:bg-rose-50 rounded-lg text-xs"><i class="fa-solid fa-trash"></i></button>
+            `;
+            list.appendChild(div);
+        }
+
+        async function handleSaveFunnelEdit(e) {
             e.preventDefault();
-            const title = document.getElementById('deal-title').value;
-            const value = document.getElementById('deal-value').value;
-            const account = document.getElementById('deal-account').value;
-            const stage_id = document.getElementById('deal-stage').value;
+            const funnelId = document.getElementById('edit-funnel-id').value;
+            const funnelName = document.getElementById('edit-funnel-name').value;
 
-            const newDeal = { 
-                id: 'deal_' + Date.now(), 
-                tenant_id: state.currentTenant.id, 
-                title, 
-                value: parseFloat(value), 
-                account_name: account, 
-                stage_id, 
-                user_id: state.currentUser.id,
-                created_at: new Date().toISOString()
-            };
+            const stageRows = document.querySelectorAll('.stage-row');
+            if (stageRows.length === 0) {
+                alert("O funil deve conter pelo menos 1 etapa!");
+                return;
+            }
 
-            await _supabase.from('deals').insert(newDeal);
-            state.deals.push(newDeal);
-            closeModal('modal-deal');
+            const updatedStages = [];
+            stageRows.forEach((row, idx) => {
+                const sId = row.querySelector('.stage-id-input').value;
+                const sName = row.querySelector('.stage-name-input').value.trim();
+                if (sName) updatedStages.push({ id: sId || String(idx+1), name: sName });
+            });
+
+            await _supabase.from('funnels').update({
+                name: funnelName,
+                stages: JSON.stringify(updatedStages)
+            }).eq('id', funnelId);
+
+            const idx = state.funnels.findIndex(f => f.id === funnelId);
+            if (idx !== -1) {
+                state.funnels[idx].name = funnelName;
+                state.funnels[idx].stages = JSON.stringify(updatedStages);
+            }
+
+            closeModal('modal-edit-funnel');
+            populateFilters();
+            renderFunnels();
             renderKanban();
         }
 
-        /* --- GERENCIAMENTO DE CONTAS COM EDIÇÃO E EXCLUSÃO --- */
+        async function handleSaveFunnel(e) {
+            e.preventDefault();
+
+            if (!isManagerRole(state.currentUser.role)) {
+                alert('Apenas o Administrador ou Gestor Comercial pode criar funis de vendas.');
+                return;
+            }
+
+            const funnelsCount = state.funnels.filter(f => f.tenant_id === state.currentTenant.id).length;
+            if (state.currentTenant.plan === 'Basic' && funnelsCount >= 1) {
+                alert('O Plano Basic permite apenas 1 Funil de Vendas! Faça upgrade para o Plano Professional.');
+                return;
+            }
+
+            const name = document.getElementById('fun-name').value;
+            const newFunnel = { 
+                id: 'funnel_' + Date.now(), 
+                tenant_id: state.currentTenant.id, 
+                name, 
+                active: true, 
+                stages: JSON.stringify([
+                    { id: '1', name: 'Prospecção / Lead' }, 
+                    { id: '2', name: 'Qualificação' }, 
+                    { id: '3', name: 'Proposta Comercial' }, 
+                    { id: '4', name: 'Ganho' },
+                    { id: '5', name: 'Perdido' }
+                ]) 
+            };
+
+            await _supabase.from('funnels').insert(newFunnel);
+            state.funnels.push(newFunnel);
+            closeModal('modal-funnel');
+            populateFilters();
+            renderFunnels();
+        }
+
+        /* --- BUILDER DE QUALIFICAÇÃO NO PAINEL ADMIN --- */
+        function renderQualificationBuilder() {
+            const fields = state.qualificationFields.filter(q => q.tenant_id === state.currentTenant.id);
+            const list = document.getElementById('qualification-builder-list');
+            if (!list) return;
+
+            list.innerHTML = '';
+            if (fields.length === 0) {
+                list.innerHTML = '<div class="text-xs text-gray-400 p-2 italic">Nenhum campo de qualificação criado ainda.</div>';
+                return;
+            }
+
+            fields.forEach(f => addQualificationFieldBuilderRow(f));
+        }
+
+        function addQualificationFieldBuilderRow(field = null) {
+            const list = document.getElementById('qualification-builder-list');
+            const fieldId = field?.id || 'qfield_' + Date.now() + Math.floor(Math.random()*100);
+            
+            const div = document.createElement('div');
+            div.className = "p-3 border rounded-xl bg-gray-50 flex flex-col sm:flex-row items-start sm:items-center gap-3 qfield-builder-row";
+            div.innerHTML = `
+                <input type="hidden" class="qfield-id" value="${fieldId}">
+                <div class="flex-1 w-full">
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Título / Pergunta *</label>
+                    <input type="text" class="qfield-label w-full p-2 border rounded-lg text-xs font-semibold" value="${field?.label || ''}" placeholder="Ex: Possui orçamento aprovado?" required>
+                </div>
+                <div class="w-full sm:w-40">
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Tipo de Resposta</label>
+                    <select class="qfield-type w-full p-2 border rounded-lg text-xs font-semibold bg-white">
+                        <option value="boolean" ${field?.type === 'boolean' ? 'selected' : ''}>Sim / Não</option>
+                        <option value="text_short" ${field?.type === 'text_short' ? 'selected' : ''}>Texto Curto</option>
+                        <option value="text_long" ${field?.type === 'text_long' ? 'selected' : ''}>Texto Longo</option>
+                        <option value="select" ${field?.type === 'select' ? 'selected' : ''}>Múltipla Escolha</option>
+                    </select>
+                </div>
+                <div class="w-full sm:w-44">
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Opções (Separadas por vírgula)</label>
+                    <input type="text" class="qfield-options w-full p-2 border rounded-lg text-xs" value="${field?.options || ''}" placeholder="Opção 1, Opção 2">
+                </div>
+                <div class="flex items-center gap-2 pt-3 sm:pt-0">
+                    <label class="flex items-center text-xs font-bold text-gray-700 cursor-pointer">
+                        <input type="checkbox" class="qfield-required w-4 h-4 text-indigo-600 rounded mr-1" ${field?.required ? 'checked' : ''}> Obrigatório
+                    </label>
+                    <button type="button" onclick="this.closest('.qfield-builder-row').remove()" class="p-2 text-rose-600 hover:bg-rose-100 rounded-lg text-xs"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            `;
+            list.appendChild(div);
+        }
+
+        function loadAdminSettingsForm() {
+            document.getElementById('cfg-delete-accounts').checked = !!state.settings.allowUserDeleteAccounts;
+            document.getElementById('cfg-delete-contacts').checked = !!state.settings.allowUserDeleteContacts;
+            document.getElementById('cfg-enable-ai').checked = !!state.settings.enableAi;
+            document.getElementById('cfg-ai-key').value = state.settings.aiKey || '';
+        }
+
+        async function saveAdminSettings() {
+            if (!isManagerRole(state.currentUser.role)) {
+                alert("Apenas administradores podem alterar configurações.");
+                return;
+            }
+
+            const newSettings = {
+                allowUserDeleteAccounts: document.getElementById('cfg-delete-accounts').checked,
+                allowUserDeleteContacts: document.getElementById('cfg-delete-contacts').checked,
+                enableAi: document.getElementById('cfg-enable-ai').checked,
+                aiKey: document.getElementById('cfg-ai-key').value
+            };
+
+            state.settings = newSettings;
+
+            // Salva Configurações Gerais
+            await _supabase.from('settings').upsert({
+                tenant_id: state.currentTenant.id,
+                config: newSettings
+            });
+
+            // Salva Campos de Qualificação
+            const builderRows = document.querySelectorAll('.qfield-builder-row');
+            const updatedQualificationFields = [];
+
+            builderRows.forEach(row => {
+                const qId = row.querySelector('.qfield-id').value;
+                const label = row.querySelector('.qfield-label').value.trim();
+                const type = row.querySelector('.qfield-type').value;
+                const options = row.querySelector('.qfield-options').value.trim();
+                const required = row.querySelector('.qfield-required').checked;
+
+                if (label) {
+                    updatedQualificationFields.push({
+                        id: qId,
+                        tenant_id: state.currentTenant.id,
+                        label,
+                        type,
+                        options,
+                        required
+                    });
+                }
+            });
+
+            // Deleta os antigos e insere os novos no Supabase
+            await _supabase.from('qualification_fields').delete().eq('tenant_id', state.currentTenant.id);
+            if (updatedQualificationFields.length > 0) {
+                await _supabase.from('qualification_fields').insert(updatedQualificationFields);
+            }
+            state.qualificationFields = updatedQualificationFields;
+
+            alert("Todas as configurações e campos de qualificação foram salvos com sucesso!");
+            location.reload();
+        }
+
+        function generateAiDealNote() {
+            const title = document.getElementById('deal-title').value || 'Oportunidade Comercial';
+            const value = document.getElementById('deal-value').value || '0.00';
+            const account = document.getElementById('deal-account').value || 'Cliente';
+
+            const output = document.getElementById('ai-suggestion-output');
+            output.classList.remove('hidden');
+            output.textContent = `🤖 Sugestão de Abordagem IA:\n\n"Olá! Vi que vocês da ${account} estão avaliando a proposta do negócio '${title}' no valor de R$ ${value}. Gostaria de agendar uma breve conversa de 15 minutos para tirar dúvidas técnicas e avançarmos."`;
+        }
+
+        /* --- CONTAS & CONTATOS (FUNÇÕES OPERACIONAIS) --- */
         function renderAccounts() {
             const accounts = state.accounts.filter(a => a.tenant_id === state.currentTenant.id);
             const body = document.getElementById('table-accounts-body');
@@ -1185,7 +1422,6 @@
             }
         }
 
-        /* --- GERENCIAMENTO DE CONTATOS COM EDIÇÃO E EXCLUSÃO --- */
         function renderContacts() {
             const contacts = state.contacts.filter(c => c.tenant_id === state.currentTenant.id);
             const body = document.getElementById('table-contacts-body');
@@ -1307,66 +1543,6 @@
             renderSellers();
             populateFilters();
             populateImportAssignees();
-        }
-
-        function renderFunnels() {
-            const funnels = state.funnels.filter(f => f.tenant_id === state.currentTenant.id);
-            const body = document.getElementById('table-funnels-body');
-
-            if (funnels.length === 0) {
-                body.innerHTML = '<tr><td colspan="3" class="p-4 text-xs text-gray-400">Nenhum funil cadastrado para esta conta.</td></tr>';
-                return;
-            }
-
-            body.innerHTML = funnels.map(f => {
-                let stages = [];
-                try { stages = typeof f.stages === 'string' ? JSON.parse(f.stages) : f.stages; } catch(e){}
-                const stageNames = stages.length ? stages.map(s => s.name).join(' ➔ ') : 'Etapas não configuradas';
-
-                return `
-                    <tr>
-                        <td class="p-4 font-bold text-gray-800">${f.name}</td>
-                        <td class="p-4 text-xs text-gray-600">${stageNames}</td>
-                        <td class="p-4 text-xs text-emerald-600 font-bold">Ativo</td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        async function handleSaveFunnel(e) {
-            e.preventDefault();
-
-            if (!isManagerRole(state.currentUser.role)) {
-                alert('Apenas o Administrador ou Gestor Comercial pode criar funis de vendas.');
-                return;
-            }
-
-            const funnelsCount = state.funnels.filter(f => f.tenant_id === state.currentTenant.id).length;
-            if (state.currentTenant.plan === 'Basic' && funnelsCount >= 1) {
-                alert('O Plano Basic permite apenas 1 Funil de Vendas! Faça upgrade para o Plano Professional.');
-                return;
-            }
-
-            const name = document.getElementById('fun-name').value;
-            const newFunnel = { 
-                id: 'funnel_' + Date.now(), 
-                tenant_id: state.currentTenant.id, 
-                name, 
-                active: true, 
-                stages: JSON.stringify([
-                    { id: '1', name: 'Prospecção / Lead' }, 
-                    { id: '2', name: 'Qualificação' }, 
-                    { id: '3', name: 'Proposta Comercial' }, 
-                    { id: '4', name: 'Ganho' },
-                    { id: '5', name: 'Perdido' }
-                ]) 
-            };
-
-            await _supabase.from('funnels').insert(newFunnel);
-            state.funnels.push(newFunnel);
-            closeModal('modal-funnel');
-            populateFilters();
-            renderFunnels();
         }
 
         function renderAnalytics() {
