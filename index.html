@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IA-CRM V.1.4.1 - SaaS Complete Edition</title>
+    <title>IA-CRM V.1.5.0 - SaaS Complete Edition</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- SheetJS (XLSX Export) -->
+    <!-- SheetJS (XLSX Export/Import) -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <!-- Supabase JS Client v2 -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -174,6 +174,15 @@
                 <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Valor Estimado (R$) *</label><input type="number" step="0.01" id="deal-value" required placeholder="5000.00" class="w-full p-2 border rounded-lg text-xs"></div>
                 <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Empresa / Conta</label><select id="deal-account" class="w-full p-2 border rounded-lg text-xs bg-white"></select></div>
                 <div><label class="block text-xs font-bold text-gray-600 uppercase mb-1">Estágio Inicial</label><select id="deal-stage" required class="w-full p-2 border rounded-lg text-xs bg-white"></select></div>
+                
+                <!-- BOTAO DE IA DE SUGESTÃO -->
+                <div id="ai-suggestion-box" class="hidden pt-2 border-t border-gray-100">
+                    <button type="button" onclick="generateAiDealNote()" class="w-full py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 font-bold rounded-lg text-xs transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles text-purple-600"></i> Gerar Roteiro / Sugestão com IA
+                    </button>
+                    <div id="ai-suggestion-output" class="hidden mt-2 p-3 bg-purple-50 text-purple-900 text-xs rounded-lg border border-purple-200 whitespace-pre-line"></div>
+                </div>
+
                 <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs shadow transition">Salvar Oportunidade</button>
             </form>
         </div>
@@ -183,8 +192,9 @@
     <div id="modal-account" class="fixed inset-0 bg-black/75 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-6 relative max-h-[90vh] overflow-y-auto">
             <button type="button" onclick="closeModal('modal-account')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="text-lg font-bold text-gray-900 mb-4"><i class="fa-solid fa-building text-blue-600 mr-2"></i>Nova Conta (Empresa Cliente)</h3>
+            <h3 class="text-lg font-bold text-gray-900 mb-4"><i class="fa-solid fa-building text-blue-600 mr-2"></i><span id="account-modal-title">Nova Conta (Empresa Cliente)</span></h3>
             <form onsubmit="handleSaveAccount(event)" class="space-y-4">
+                <input type="hidden" id="acc-id">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div><label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Razão Social *</label><input type="text" id="acc-name" required class="w-full p-2 border rounded-lg text-xs"></div>
                     <div><label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Nome Fantasia</label><input type="text" id="acc-trade-name" class="w-full p-2 border rounded-lg text-xs"></div>
@@ -199,7 +209,7 @@
                     <div><label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">UF</label><input type="text" id="acc-uf" maxlength="2" placeholder="GO" class="w-full p-2 border rounded-lg text-xs"></div>
                 </div>
                 <div><label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Observações / Histórico</label><textarea id="acc-notes" rows="2" class="w-full p-2 border rounded-lg text-xs"></textarea></div>
-                <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs shadow transition">Cadastrar Empresa</button>
+                <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs shadow transition">Salvar Empresa</button>
             </form>
         </div>
     </div>
@@ -208,8 +218,9 @@
     <div id="modal-contact" class="fixed inset-0 bg-black/75 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
             <button type="button" onclick="closeModal('modal-contact')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="text-lg font-bold text-gray-900 mb-4"><i class="fa-solid fa-address-book text-blue-600 mr-2"></i>Novo Contato</h3>
+            <h3 class="text-lg font-bold text-gray-900 mb-4"><i class="fa-solid fa-address-book text-blue-600 mr-2"></i><span id="contact-modal-title">Novo Contato</span></h3>
             <form onsubmit="handleSaveContact(event)" class="space-y-3">
+                <input type="hidden" id="cnt-id">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div class="md:col-span-2"><label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Nome Completo *</label><input type="text" id="cnt-name" required class="w-full p-2 border rounded-lg text-xs"></div>
                     <div><label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Cargo / Função</label><input type="text" id="cnt-role" placeholder="Ex: Diretor de Compras" class="w-full p-2 border rounded-lg text-xs"></div>
@@ -220,7 +231,7 @@
                     <div><label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Data de Aniversário</label><input type="date" id="cnt-birthdate" class="w-full p-2 border rounded-lg text-xs"></div>
                 </div>
                 <div><label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Observações do Contato</label><textarea id="cnt-notes" rows="2" class="w-full p-2 border rounded-lg text-xs"></textarea></div>
-                <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs shadow transition">Cadastrar Contato</button>
+                <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs shadow transition">Salvar Contato</button>
             </form>
         </div>
     </div>
@@ -293,15 +304,17 @@
 
                     <div id="admin-menu" class="hidden pt-4 mt-4 border-t border-slate-700">
                         <div class="px-4 text-xs font-bold uppercase text-slate-500 mb-2 admin-title">Painel de Gestão</div>
+                        <button type="button" onclick="switchTab('importar')" id="nav-importar" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium hover:bg-slate-700 transition"><i class="fa-solid fa-file-import w-5 text-indigo-400"></i><span class="sidebar-text">Importar Leads</span></button>
                         <button type="button" onclick="switchTab('analytics')" id="nav-analytics" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium hover:bg-slate-700 transition"><i class="fa-solid fa-chart-pie w-5 text-emerald-400"></i><span class="sidebar-text">KPIs & Analytics</span></button>
                         <button type="button" onclick="switchTab('funis')" id="nav-funis" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium hover:bg-slate-700 transition"><i class="fa-solid fa-diagram-project w-5 text-amber-400"></i><span class="sidebar-text">Gestão de Funis</span></button>
                         <button type="button" onclick="switchTab('vendedores')" id="nav-vendedores" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium hover:bg-slate-700 transition"><i class="fa-solid fa-users-gear w-5 text-amber-400"></i><span class="sidebar-text">Vendedores</span></button>
+                        <button type="button" onclick="switchTab('configuracoes')" id="nav-configuracoes" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium hover:bg-slate-700 transition"><i class="fa-solid fa-gears w-5 text-cyan-400"></i><span class="sidebar-text">Configurações</span></button>
                         <button type="button" onclick="switchTab('minha-assinatura')" id="nav-minha-assinatura" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium hover:bg-slate-700 transition"><i class="fa-solid fa-crown w-5 text-yellow-400"></i><span class="sidebar-text">Minha Assinatura</span></button>
                     </div>
 
                     <div id="superadmin-menu" class="hidden pt-4 mt-4 border-t border-yellow-500/30">
                         <div class="px-4 text-[10px] font-black uppercase text-yellow-400 mb-2 admin-title tracking-wider">Master CRM (Dono)</div>
-                        <button type="button" onclick="switchTab('master-saas')" id="nav-master-saas" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-bold bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 transition"><i class="fa-solid fa-gears w-5"></i><span class="sidebar-text">Gestão de Clientes SaaS</span></button>
+                        <button type="button" onclick="switchTab('master-saas')" id="nav-master-saas" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-bold bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 transition"><i class="fa-solid fa-shield-halved w-5"></i><span class="sidebar-text">Gestão de Clientes SaaS</span></button>
                     </div>
                 </nav>
             </aside>
@@ -321,6 +334,102 @@
                         <button type="button" onclick="openDealModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow transition">+ Nova Oportunidade</button>
                     </div>
                     <div id="kanban-board" class="flex space-x-4 overflow-x-auto pb-4"></div>
+                </section>
+
+                <!-- VIEW: IMPORTAÇÃO DE LEADS -->
+                <section id="view-importar" class="tab-content hidden">
+                    <div class="max-w-4xl mx-auto">
+                        <div class="flex justify-between items-center mb-6">
+                            <div>
+                                <h2 class="text-2xl font-bold text-gray-900">Importar Leads via Planilha XLSX</h2>
+                                <p class="text-xs text-gray-500">Cadastre empresas e contatos em massa vinculando aos seus vendedores.</p>
+                            </div>
+                            <button type="button" onclick="downloadImportTemplate()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow transition flex items-center gap-2">
+                                <i class="fa-solid fa-file-excel"></i> Baixar Planilha Modelo
+                            </button>
+                        </div>
+
+                        <!-- CARD INSTRUÇÕES -->
+                        <div class="bg-blue-50 border border-blue-200 rounded-xl p-5 mb-6 text-xs text-blue-900 space-y-2">
+                            <h3 class="font-bold text-sm text-blue-950 flex items-center gap-2"><i class="fa-solid fa-circle-info"></i> Como funciona a importação?</h3>
+                            <ul class="list-disc list-inside space-y-1 text-blue-800">
+                                <li>Utilize estritamente os campos: <strong>Empresa, Contato, Telefone, E-mail, CNPJ</strong>.</li>
+                                <li>Cada linha criará uma Conta (Empresa) e um Contato vinculado.</li>
+                                <li>Ao importar, todos os dados recebem automaticamente a Tag <span class="bg-blue-200 text-blue-900 font-bold px-1.5 py-0.5 rounded">Importado</span>, a Data Atual e o Número do Lote.</li>
+                                <li>Escolha a quem atribuir a propriedade dos dados importados abaixo.</li>
+                            </ul>
+                        </div>
+
+                        <!-- FORMULARIO DE UPLOAD -->
+                        <div class="bg-white p-6 rounded-xl border shadow-sm space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-gray-700 mb-1">1. Escolha o Proprietário / Vendedor Responsável *</label>
+                                <select id="import-assignee" class="w-full p-2.5 border rounded-lg text-xs bg-white font-semibold">
+                                    <option value="all">Distribuir entre Todos os Vendedores (Round-Robin)</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-gray-700 mb-1">2. Selecione o Arquivo .XLSX *</label>
+                                <input type="file" id="import-file" accept=".xlsx, .xls" class="w-full p-2 border rounded-lg text-xs">
+                            </div>
+
+                            <button type="button" onclick="processImportFile()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg text-xs shadow transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> Processar e Importar Lista
+                            </button>
+                        </div>
+
+                        <div id="import-log" class="hidden mt-6 p-4 rounded-xl text-xs font-mono bg-slate-900 text-slate-200 max-h-60 overflow-y-auto"></div>
+                    </div>
+                </section>
+
+                <!-- VIEW: CONFIGURAÇÕES DO ADMIN -->
+                <section id="view-configuracoes" class="tab-content hidden">
+                    <div class="max-w-3xl mx-auto">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Configurações da Empresa & Permissões</h2>
+
+                        <div class="bg-white rounded-xl border shadow-sm p-6 space-y-6">
+                            <div>
+                                <h3 class="text-sm font-bold text-gray-800 border-b pb-2 mb-4"><i class="fa-solid fa-user-shield text-blue-600 mr-2"></i>Controle de Permissões da Equipe</h3>
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <label class="font-bold text-xs text-gray-800 block">Usuários (Vendedores) podem excluir Contas (Empresas)?</label>
+                                            <span class="text-[11px] text-gray-500">Se desativado, apenas Administradores poderão remover empresas.</span>
+                                        </div>
+                                        <input type="checkbox" id="cfg-delete-accounts" class="w-5 h-5 text-blue-600 rounded">
+                                    </div>
+
+                                    <div class="flex items-center justify-between border-t pt-4">
+                                        <div>
+                                            <label class="font-bold text-xs text-gray-800 block">Usuários (Vendedores) podem excluir Contatos?</label>
+                                            <span class="text-[11px] text-gray-500">Se desativado, apenas Administradores poderão remover contatos individuais.</span>
+                                        </div>
+                                        <input type="checkbox" id="cfg-delete-contacts" class="w-5 h-5 text-blue-600 rounded">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="border-t pt-6">
+                                <h3 class="text-sm font-bold text-gray-800 border-b pb-2 mb-4"><i class="fa-solid fa-wand-magic-sparkles text-purple-600 mr-2"></i>Inteligência Artificial (Sugestão de Roteiros)</h3>
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <label class="font-bold text-xs text-gray-800 block">Ativar Modo IA para Sugestão de Texto em Oportunidades?</label>
+                                            <span class="text-[11px] text-gray-500">Exibe um assistente que sugere mensagens de abordagem e acompanhamento.</span>
+                                        </div>
+                                        <input type="checkbox" id="cfg-enable-ai" class="w-5 h-5 text-purple-600 rounded">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Chave de API OpenAI (Opcional)</label>
+                                        <input type="password" id="cfg-ai-key" placeholder="sk-..." class="w-full p-2 border rounded-lg text-xs">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="button" onclick="saveAdminSettings()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs shadow transition">Salvar Configurações</button>
+                        </div>
+                    </div>
                 </section>
 
                 <!-- VIEW: ANALYTICS & KPIS -->
@@ -366,7 +475,7 @@
                         <h2 class="text-2xl font-bold text-gray-800">Contas (Empresas Clientes)</h2>
                         <div class="space-x-2">
                             <button type="button" onclick="exportToExcel('table-accounts-container', 'Contas')" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition"><i class="fa-solid fa-file-excel mr-1"></i> Exportar</button>
-                            <button type="button" onclick="openModal('modal-account')" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow transition">+ Nova Conta</button>
+                            <button type="button" onclick="openNewAccountModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow transition">+ Nova Conta</button>
                         </div>
                     </div>
                     <div id="table-accounts-container" class="bg-white rounded-xl shadow border overflow-x-auto">
@@ -377,7 +486,8 @@
                                     <th class="p-4">CNPJ / IE</th>
                                     <th class="p-4">Segmento</th>
                                     <th class="p-4">Contato / E-mail</th>
-                                    <th class="p-4">Cidade/UF</th>
+                                    <th class="p-4">Origem / Tag</th>
+                                    <th class="p-4">Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="table-accounts-body" class="divide-y"></tbody>
@@ -391,7 +501,7 @@
                         <h2 class="text-2xl font-bold text-gray-800">Contatos (Pessoas)</h2>
                         <div class="space-x-2">
                             <button type="button" onclick="exportToExcel('table-contacts-container', 'Contatos')" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition"><i class="fa-solid fa-file-excel mr-1"></i> Exportar</button>
-                            <button type="button" onclick="openModal('modal-contact')" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow transition">+ Novo Contato</button>
+                            <button type="button" onclick="openNewContactModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow transition">+ Novo Contato</button>
                         </div>
                     </div>
                     <div id="table-contacts-container" class="bg-white rounded-xl shadow border overflow-x-auto">
@@ -402,7 +512,8 @@
                                     <th class="p-4">Empresa Vinculada</th>
                                     <th class="p-4">E-mail</th>
                                     <th class="p-4">Telefone / WhatsApp</th>
-                                    <th class="p-4">CPF</th>
+                                    <th class="p-4">Origem / Tag</th>
+                                    <th class="p-4">Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="table-contacts-body" class="divide-y"></tbody>
@@ -500,7 +611,18 @@
         const SUPABASE_KEY = 'sb_publishable_6rNK9nsaERw5uC8MR0eHvg_gnFE_2zA';
         const _supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
-        let state = { currentUser: null, currentTenant: null, tenants: [], users: [], funnels: [], accounts: [], contacts: [], deals: [] };
+        let state = { 
+            currentUser: null, 
+            currentTenant: null, 
+            tenants: [], 
+            users: [], 
+            funnels: [], 
+            accounts: [], 
+            contacts: [], 
+            deals: [],
+            settings: { allowUserDeleteAccounts: false, allowUserDeleteContacts: false, enableAi: false, aiKey: '' } 
+        };
+
         let chartStagesInstance = null;
         let chartSellersInstance = null;
 
@@ -510,13 +632,14 @@
         async function fetchAllDataFromSupabase() {
             if (!_supabase) return;
             try {
-                const [tn, u, f, a, c, d] = await Promise.all([
+                const [tn, u, f, a, c, d, st] = await Promise.all([
                     _supabase.from('tenants').select('*'),
                     _supabase.from('users').select('*'),
                     _supabase.from('funnels').select('*'),
                     _supabase.from('accounts').select('*'),
                     _supabase.from('contacts').select('*'),
-                    _supabase.from('deals').select('*')
+                    _supabase.from('deals').select('*'),
+                    _supabase.from('settings').select('*')
                 ]);
 
                 state.tenants = tn.data || [];
@@ -525,6 +648,11 @@
                 state.accounts = a.data || [];
                 state.contacts = c.data || [];
                 state.deals = d.data || [];
+
+                if (st.data && st.data.length > 0) {
+                    const currentSet = st.data.find(s => s.tenant_id === state.currentTenant?.id);
+                    if (currentSet) state.settings = currentSet.config;
+                }
 
                 if (state.tenants.length === 0) {
                     const masterTenant = { id: 'master_1', name: 'Master IA-CRM', cnpj: '00000000000100', city: 'Goiânia', uf: 'GO', plan: 'Enterprise', status: 'Active' };
@@ -583,7 +711,14 @@
                 }
             }
 
+            // Exibir caixa de sugestao IA se configurada
+            if (state.settings.enableAi) {
+                document.getElementById('ai-suggestion-box')?.classList.remove('hidden');
+            }
+
             populateFilters();
+            populateImportAssignees();
+            loadAdminSettingsForm();
             switchTab('vendas');
         }
 
@@ -598,7 +733,6 @@
                 funnelSelect.innerHTML = tenantFunnels.map(f => `<option value="${f.id}">${f.name}</option>`).join('');
             }
 
-            // O Usuário Vendedor fica SEMPRE travado no funil definido pelo Administrador
             if (!isManagerRole(state.currentUser.role)) {
                 funnelSelect.disabled = true;
                 lockMsg.classList.remove('hidden');
@@ -613,6 +747,14 @@
             
             populateAccountDropdowns();
             updateDealModalStages();
+        }
+
+        function populateImportAssignees() {
+            const select = document.getElementById('import-assignee');
+            if (!select) return;
+            const tenantUsers = state.users.filter(u => u.tenant_id === state.currentTenant.id);
+            select.innerHTML = '<option value="all">Distribuir entre Todos os Vendedores (Round-Robin)</option>' + 
+                tenantUsers.map(u => `<option value="${u.id}">${u.name} (${u.role})</option>`).join('');
         }
 
         function populateAccountDropdowns() {
@@ -689,6 +831,161 @@
             if (tab === 'funis') renderFunnels();
             if (tab === 'minha-assinatura') renderMinhaAssinatura();
             if (tab === 'master-saas') renderMasterSaaS();
+        }
+
+        /* --- IMPORTAÇÃO DE LEADS --- */
+        function downloadImportTemplate() {
+            const data = [
+                ["Empresa", "Contato", "Telefone", "E-mail", "CNPJ"],
+                ["Tech Solutions Ltda", "Carlos Silva", "(62) 99999-8888", "carlos@techsolutions.com", "12.345.678/0001-90"],
+                ["Comércio de Alimentos SA", "Mariana Souza", "(11) 98888-7777", "mariana@comercio.com", "98.765.432/0001-10"]
+            ];
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Modelo_Importacao");
+            XLSX.writeFile(wb, "Modelo_Importacao_IACRM.xlsx");
+        }
+
+        async function processImportFile() {
+            if (!isManagerRole(state.currentUser.role)) {
+                alert("Apenas administradores podem importar planilhas de leads.");
+                return;
+            }
+
+            const fileInput = document.getElementById('import-file');
+            const assignee = document.getElementById('import-assignee').value;
+            const logBox = document.getElementById('import-log');
+
+            if (!fileInput.files.length) {
+                alert("Selecione um arquivo .XLSX para importar.");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            logBox.classList.remove('hidden');
+            logBox.innerHTML = "Iniciando processamento...\n";
+
+            reader.onload = async function (e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const sheetName = workbook.SheetNames[0];
+                    const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+
+                    if (rows.length === 0) {
+                        logBox.innerHTML += "Erro: Planilha vazia.\n";
+                        return;
+                    }
+
+                    const tenantUsers = state.users.filter(u => u.tenant_id === state.currentTenant.id);
+                    const importBatchNo = "LOT-" + Math.floor(1000 + Math.random() * 9000);
+                    const importDate = new Date().toLocaleString('pt-BR');
+
+                    let successCount = 0;
+
+                    for (let i = 0; i < rows.length; i++) {
+                        const row = rows[i];
+                        const companyName = row["Empresa"] || row["empresa"] || "Empresa Importada " + (i + 1);
+                        const contactName = row["Contato"] || row["contato"] || "Contato Importado " + (i + 1);
+                        const phone = row["Telefone"] || row["telefone"] || "";
+                        const email = row["E-mail"] || row["email"] || "";
+                        const cnpj = row["CNPJ"] || row["cnpj"] || "";
+
+                        // Atribuição Round-Robin se "all" selecionado
+                        let assignedUserId = assignee;
+                        if (assignee === "all" && tenantUsers.length > 0) {
+                            assignedUserId = tenantUsers[i % tenantUsers.length].id;
+                        }
+
+                        const accountId = 'acc_imp_' + Date.now() + '_' + i;
+                        const newAcc = {
+                            id: accountId,
+                            tenant_id: state.currentTenant.id,
+                            name: companyName,
+                            cnpj: cnpj,
+                            phone: phone,
+                            email: email,
+                            user_id: assignedUserId,
+                            tag: 'Importado',
+                            import_date: importDate,
+                            import_batch: importBatchNo
+                        };
+
+                        const newCnt = {
+                            id: 'cnt_imp_' + Date.now() + '_' + i,
+                            tenant_id: state.currentTenant.id,
+                            name: contactName,
+                            account_name: companyName,
+                            email: email,
+                            phone: phone,
+                            user_id: assignedUserId,
+                            tag: 'Importado',
+                            import_date: importDate,
+                            import_batch: importBatchNo
+                        };
+
+                        await _supabase.from('accounts').insert(newAcc);
+                        await _supabase.from('contacts').insert(newCnt);
+
+                        state.accounts.push(newAcc);
+                        state.contacts.push(newCnt);
+                        successCount++;
+                    }
+
+                    logBox.innerHTML += ` Sucesso! ${successCount} registros importados com sucesso.\nLote: ${importBatchNo} | Data: ${importDate}\n`;
+                    populateAccountDropdowns();
+                    renderAccounts();
+                    renderContacts();
+                } catch (err) {
+                    logBox.innerHTML += ` Erro crítico ao processar planilha: ${err.message}\n`;
+                }
+            };
+
+            reader.readAsArrayBuffer(file);
+        }
+
+        /* --- CONFIGURAÇÕES DO ADMIN --- */
+        function loadAdminSettingsForm() {
+            document.getElementById('cfg-delete-accounts').checked = !!state.settings.allowUserDeleteAccounts;
+            document.getElementById('cfg-delete-contacts').checked = !!state.settings.allowUserDeleteContacts;
+            document.getElementById('cfg-enable-ai').checked = !!state.settings.enableAi;
+            document.getElementById('cfg-ai-key').value = state.settings.aiKey || '';
+        }
+
+        async function saveAdminSettings() {
+            if (!isManagerRole(state.currentUser.role)) {
+                alert("Apenas administradores podem alterar configurações.");
+                return;
+            }
+
+            const newSettings = {
+                allowUserDeleteAccounts: document.getElementById('cfg-delete-accounts').checked,
+                allowUserDeleteContacts: document.getElementById('cfg-delete-contacts').checked,
+                enableAi: document.getElementById('cfg-enable-ai').checked,
+                aiKey: document.getElementById('cfg-ai-key').value
+            };
+
+            state.settings = newSettings;
+
+            await _supabase.from('settings').upsert({
+                tenant_id: state.currentTenant.id,
+                config: newSettings
+            });
+
+            alert("Configurações salvas com sucesso!");
+            location.reload();
+        }
+
+        function generateAiDealNote() {
+            const title = document.getElementById('deal-title').value || 'Oportunidade Comercial';
+            const value = document.getElementById('deal-value').value || '0.00';
+            const account = document.getElementById('deal-account').value || 'Cliente';
+
+            const output = document.getElementById('ai-suggestion-output');
+            output.classList.remove('hidden');
+            output.textContent = `🤖 Sugestão de Abordagem IA:\n\n"Olá! Vi que vocês da ${account} estão avaliando a proposta do negócio '${title}' no valor de R$ ${value}. Gostaria de agendar uma breve conversa de 15 minutos para tirar dúvidas técnicas e avançarmos."`;
         }
 
         function renderKanban() {
@@ -784,12 +1081,13 @@
             renderKanban();
         }
 
+        /* --- GERENCIAMENTO DE CONTAS COM EDIÇÃO E EXCLUSÃO --- */
         function renderAccounts() {
             const accounts = state.accounts.filter(a => a.tenant_id === state.currentTenant.id);
             const body = document.getElementById('table-accounts-body');
             
             if (accounts.length === 0) {
-                body.innerHTML = '<tr><td colspan="5" class="p-4 text-xs text-gray-400 text-center">Nenhuma conta cadastrada.</td></tr>';
+                body.innerHTML = '<tr><td colspan="6" class="p-4 text-xs text-gray-400 text-center">Nenhuma conta cadastrada.</td></tr>';
                 return;
             }
 
@@ -799,15 +1097,48 @@
                     <td class="p-4 text-xs"><div class="font-medium">${a.cnpj || '-'}</div><div class="text-[10px] text-gray-400">${a.ie ? 'IE: ' + a.ie : ''}</div></td>
                     <td class="p-4 text-xs">${a.segment || '-'}</td>
                     <td class="p-4 text-xs"><div>${a.phone || '-'}</div><div class="text-[10px] text-blue-600">${a.email || ''}</div></td>
-                    <td class="p-4 text-xs">${a.city || '-'}/${a.uf || '-'}</td>
+                    <td class="p-4 text-xs"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${a.tag === 'Importado' ? 'bg-indigo-100 text-indigo-800' : 'bg-gray-100 text-gray-600'}">${a.tag || 'Direto'}</span></td>
+                    <td class="p-4 text-xs space-x-2">
+                        <button type="button" onclick="editAccount('${a.id}')" class="text-blue-600 font-bold hover:underline"><i class="fa-solid fa-pen-to-square"></i> Editar</button>
+                        <button type="button" onclick="deleteAccount('${a.id}', '${a.user_id}')" class="text-rose-600 font-bold hover:underline"><i class="fa-solid fa-trash"></i> Excluir</button>
+                    </td>
                 </tr>
             `).join('');
         }
 
+        function openNewAccountModal() {
+            document.getElementById('acc-id').value = '';
+            document.getElementById('account-modal-title').textContent = 'Nova Conta (Empresa Cliente)';
+            openModal('modal-account');
+        }
+
+        function editAccount(id) {
+            const acc = state.accounts.find(a => a.id === id);
+            if (!acc) return;
+
+            document.getElementById('acc-id').value = acc.id;
+            document.getElementById('acc-name').value = acc.name || '';
+            document.getElementById('acc-trade-name').value = acc.trade_name || '';
+            document.getElementById('acc-cnpj').value = acc.cnpj || '';
+            document.getElementById('acc-ie').value = acc.ie || '';
+            document.getElementById('acc-segment').value = acc.segment || '';
+            document.getElementById('acc-phone').value = acc.phone || '';
+            document.getElementById('acc-email').value = acc.email || '';
+            document.getElementById('acc-cep').value = acc.cep || '';
+            document.getElementById('acc-address').value = acc.address || '';
+            document.getElementById('acc-city').value = acc.city || '';
+            document.getElementById('acc-uf').value = acc.uf || '';
+            document.getElementById('acc-notes').value = acc.notes || '';
+
+            document.getElementById('account-modal-title').textContent = 'Editar Conta';
+            openModal('modal-account');
+        }
+
         async function handleSaveAccount(e) {
             e.preventDefault();
-            const newAcc = { 
-                id: 'acc_' + Date.now(), 
+            const id = document.getElementById('acc-id').value;
+
+            const accData = { 
                 tenant_id: state.currentTenant.id, 
                 name: document.getElementById('acc-name').value,
                 trade_name: document.getElementById('acc-trade-name').value,
@@ -823,19 +1154,44 @@
                 notes: document.getElementById('acc-notes').value
             };
 
-            await _supabase.from('accounts').insert(newAcc);
-            state.accounts.push(newAcc);
+            if (id) {
+                await _supabase.from('accounts').update(accData).eq('id', id);
+                const idx = state.accounts.findIndex(a => a.id === id);
+                if (idx !== -1) state.accounts[idx] = { ...state.accounts[idx], ...accData };
+            } else {
+                const newAcc = { id: 'acc_' + Date.now(), user_id: state.currentUser.id, ...accData };
+                await _supabase.from('accounts').insert(newAcc);
+                state.accounts.push(newAcc);
+            }
+
             closeModal('modal-account');
             populateAccountDropdowns();
             renderAccounts();
         }
 
+        async function deleteAccount(id, ownerUserId) {
+            const isOwner = ownerUserId === state.currentUser.id;
+            const canDelete = isManagerRole(state.currentUser.role) || (isOwner && state.settings.allowUserDeleteAccounts);
+
+            if (!canDelete) {
+                alert("Você não tem permissão para excluir esta conta.");
+                return;
+            }
+
+            if (confirm("Tem certeza que deseja excluir esta empresa?")) {
+                await _supabase.from('accounts').delete().eq('id', id);
+                state.accounts = state.accounts.filter(a => a.id !== id);
+                renderAccounts();
+            }
+        }
+
+        /* --- GERENCIAMENTO DE CONTATOS COM EDIÇÃO E EXCLUSÃO --- */
         function renderContacts() {
             const contacts = state.contacts.filter(c => c.tenant_id === state.currentTenant.id);
             const body = document.getElementById('table-contacts-body');
 
             if (contacts.length === 0) {
-                body.innerHTML = '<tr><td colspan="5" class="p-4 text-xs text-gray-400 text-center">Nenhum contato cadastrado.</td></tr>';
+                body.innerHTML = '<tr><td colspan="6" class="p-4 text-xs text-gray-400 text-center">Nenhum contato cadastrado.</td></tr>';
                 return;
             }
 
@@ -845,15 +1201,44 @@
                     <td class="p-4 text-xs font-semibold text-gray-700">${c.account_name || '-'}</td>
                     <td class="p-4 text-xs">${c.email}</td>
                     <td class="p-4 text-xs font-medium">${c.phone || '-'}</td>
-                    <td class="p-4 text-xs text-gray-500">${c.cpf || '-'}</td>
+                    <td class="p-4 text-xs"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${c.tag === 'Importado' ? 'bg-indigo-100 text-indigo-800' : 'bg-gray-100 text-gray-600'}">${c.tag || 'Direto'}</span></td>
+                    <td class="p-4 text-xs space-x-2">
+                        <button type="button" onclick="editContact('${c.id}')" class="text-blue-600 font-bold hover:underline"><i class="fa-solid fa-pen-to-square"></i> Editar</button>
+                        <button type="button" onclick="deleteContact('${c.id}', '${c.user_id}')" class="text-rose-600 font-bold hover:underline"><i class="fa-solid fa-trash"></i> Excluir</button>
+                    </td>
                 </tr>
             `).join('');
         }
 
+        function openNewContactModal() {
+            document.getElementById('cnt-id').value = '';
+            document.getElementById('contact-modal-title').textContent = 'Novo Contato';
+            openModal('modal-contact');
+        }
+
+        function editContact(id) {
+            const cnt = state.contacts.find(c => c.id === id);
+            if (!cnt) return;
+
+            document.getElementById('cnt-id').value = cnt.id;
+            document.getElementById('cnt-name').value = cnt.name || '';
+            document.getElementById('cnt-role').value = cnt.role || '';
+            document.getElementById('cnt-email').value = cnt.email || '';
+            document.getElementById('cnt-phone').value = cnt.phone || '';
+            document.getElementById('cnt-account').value = cnt.account_name || '';
+            document.getElementById('cnt-cpf').value = cnt.cpf || '';
+            document.getElementById('cnt-birthdate').value = cnt.birthdate || '';
+            document.getElementById('cnt-notes').value = cnt.notes || '';
+
+            document.getElementById('contact-modal-title').textContent = 'Editar Contato';
+            openModal('modal-contact');
+        }
+
         async function handleSaveContact(e) {
             e.preventDefault();
-            const newCnt = { 
-                id: 'cnt_' + Date.now(), 
+            const id = document.getElementById('cnt-id').value;
+
+            const cntData = { 
                 tenant_id: state.currentTenant.id, 
                 name: document.getElementById('cnt-name').value,
                 role: document.getElementById('cnt-role').value,
@@ -865,10 +1250,34 @@
                 notes: document.getElementById('cnt-notes').value
             };
 
-            await _supabase.from('contacts').insert(newCnt);
-            state.contacts.push(newCnt);
+            if (id) {
+                await _supabase.from('contacts').update(cntData).eq('id', id);
+                const idx = state.contacts.findIndex(c => c.id === id);
+                if (idx !== -1) state.contacts[idx] = { ...state.contacts[idx], ...cntData };
+            } else {
+                const newCnt = { id: 'cnt_' + Date.now(), user_id: state.currentUser.id, ...cntData };
+                await _supabase.from('contacts').insert(newCnt);
+                state.contacts.push(newCnt);
+            }
+
             closeModal('modal-contact');
             renderContacts();
+        }
+
+        async function deleteContact(id, ownerUserId) {
+            const isOwner = ownerUserId === state.currentUser.id;
+            const canDelete = isManagerRole(state.currentUser.role) || (isOwner && state.settings.allowUserDeleteContacts);
+
+            if (!canDelete) {
+                alert("Você não tem permissão para excluir este contato.");
+                return;
+            }
+
+            if (confirm("Tem certeza que deseja excluir este contato?")) {
+                await _supabase.from('contacts').delete().eq('id', id);
+                state.contacts = state.contacts.filter(c => c.id !== id);
+                renderContacts();
+            }
         }
 
         function renderSellers() {
@@ -897,6 +1306,7 @@
             closeModal('modal-seller');
             renderSellers();
             populateFilters();
+            populateImportAssignees();
         }
 
         function renderFunnels() {
@@ -926,7 +1336,6 @@
         async function handleSaveFunnel(e) {
             e.preventDefault();
 
-            // Validação de Permissão
             if (!isManagerRole(state.currentUser.role)) {
                 alert('Apenas o Administrador ou Gestor Comercial pode criar funis de vendas.');
                 return;
